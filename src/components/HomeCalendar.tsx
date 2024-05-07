@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { StyledCalendarContainer } from "./styles";
-import moment from "moment";
+import { format } from "date-fns";
 import Calendar from "react-calendar";
 import styled from "styled-components";
 import { color } from "../color";
@@ -50,18 +50,16 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece] | any;
 
 function HomeCalendar() {
-  const [value, setValue] = useState<Value>();
+  const [value] = useState<Value>();
 
-  const onClick = (value: any, event: any) => {
-    console.log(value);
-  };
+  const onClick = (value: any, event: any) => {};
 
   return (
     <StyledCalendarContainer>
       <Calendar
         value={value}
         onClickDay={(value, event) => onClick(value, event)}
-        formatDay={(locale, date) => moment(date).format("D")}
+        formatDay={(locale, date) => format(date, "d")}
         next2Label={null}
         prev2Label={null}
         showNeighboringMonth={false}
@@ -69,8 +67,8 @@ function HomeCalendar() {
         tileContent={({ date }) =>
           Trip.map((value, index) => {
             const isTripHit =
-              moment(date).format("YYYY-MM-DD") >= value[0] &&
-              moment(date).format("YYYY-MM-DD") <= value[1];
+              format(date, "yyyy-MM-dd") >= value[0] &&
+              format(date, "yyyy-MM-dd") <= value[1];
             if (!isTripHit) {
               return null;
             }
