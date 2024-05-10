@@ -1,5 +1,11 @@
 import styled from "styled-components";
 import { mainColor } from "../color";
+import { useNavigate } from "react-router-dom";
+import { toggleEnroll, toggleLogin } from "../counterSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import LoginForm from "./LoginForm";
+import EnrollForm from "./EnrollForm";
 
 const Container = styled.div`
   height: 80px;
@@ -62,16 +68,31 @@ const Span = styled.div`
 `;
 
 const Header = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const loginClicked = useSelector(
+    (state: RootState) => state.counter.loginClicked
+  );
+  const enrollClicked = useSelector(
+    (state: RootState) => state.counter.enrollClicked
+  );
+
+  const onLoginClicked = () => dispatch(toggleLogin());
+  const onCreateClicked = () => dispatch(toggleEnroll());
+
   return (
     <Container>
       <Box>
         <Logo>ODIRO</Logo>
         <Column>
-          <Span>홈</Span>
-          <Span>회원가입</Span>
-          <Span>로그인</Span>
+          <Span onClick={() => navigate("/")}>홈</Span>
+          <Span onClick={onCreateClicked}>회원가입</Span>
+          <Span onClick={onLoginClicked}>로그인</Span>
         </Column>
       </Box>
+      {loginClicked ? <LoginForm /> : null}
+      {enrollClicked ? <EnrollForm /> : null}
     </Container>
   );
 };

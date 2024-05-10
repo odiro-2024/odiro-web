@@ -57,22 +57,22 @@ const Trip = [
   ["2024-06-12", "2024-06-18"],
 ];
 
-const whatLine: number[] = [];
+const chooseLine: number[] = [];
 for (var i = 0; i < Trip.length; i++) {
   if (i === 0) {
-    whatLine.push(1);
+    chooseLine.push(1);
     continue;
   } else if (Trip[i][0] <= Trip[i - 1][1]) {
-    if (whatLine[i - 1] === 1) {
-      whatLine.push(2);
+    if (chooseLine[i - 1] === 1) {
+      chooseLine.push(2);
       continue;
     }
-    if (whatLine[i - 1] === 2) {
-      whatLine.push(1);
+    if (chooseLine[i - 1] === 2) {
+      chooseLine.push(1);
       continue;
     }
   } else {
-    whatLine.push(1);
+    chooseLine.push(1);
   }
 }
 
@@ -81,9 +81,11 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece] | any;
 
 function HomeCalendar() {
-  const [value] = useState<Value>();
+  const [value, setValue] = useState<Value>(new Date());
 
-  const onClick = (value: any, event: any) => {};
+  const onClick = (value: any, event: any) => {
+    setValue(value);
+  };
 
   return (
     <StyledCalendarContainer>
@@ -104,7 +106,7 @@ function HomeCalendar() {
               return null;
             }
 
-            if (whatLine[index] === 1) {
+            if (chooseLine[index] === 1) {
               return (
                 <TopLine
                   $i={index}
@@ -112,7 +114,7 @@ function HomeCalendar() {
                 ></TopLine>
               );
             }
-            if (whatLine[index] === 2) {
+            if (chooseLine[index] === 2) {
               return (
                 <BottomLine
                   $i={index}
@@ -127,7 +129,7 @@ function HomeCalendar() {
       />
       <ScheduleBox>
         <span>Schedule</span>
-        <div>2024년 05월 08일</div>
+        <div>{format(value, "yyyy년 MM월 dd일")}</div>
       </ScheduleBox>
     </StyledCalendarContainer>
   );
