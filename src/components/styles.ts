@@ -3,19 +3,20 @@ import styled from "styled-components";
 import { mainColor } from "./../color";
 
 export const StyledCalendarContainer = styled.div`
-  width: 1100px;
+  width: 80%;
+  max-width: 700px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 200px;
+  box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
   .react-calendar {
-    width: 500px;
+    width: 70%;
     height: 600px;
     background-color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 3em;
     border-radius: 0.5rem;
-    box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
     border: none;
     padding: 5px;
     -webkit-user-select: none;
@@ -60,19 +61,20 @@ export const StyledCalendarContainer = styled.div`
     background-color: white;
   }
   .react-calendar__tile {
+    position: relative;
     //display: flex;
     //flex-direction: column;
     //justify-content: center;
     //align-items: center;
   }
-  .react-calendar__month-view__days__day--weekend {
+  .react-calendar__month-view__days__day {
     color: black;
   }
   //날짜에 커서 올렸을 떄
   .react-calendar__tile:enabled:hover {
     background-color: white;
     color: black;
-    border-radius: 6px;
+    //border-radius: 6px;
   }
   .react-calendar__tile:enabled:focus {
     background-color: white;
