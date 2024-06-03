@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { toggleLogin } from "../counterSlice";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { mainColor } from "../color";
 
 const Overlay = styled(motion.div)`
@@ -149,8 +149,15 @@ interface FormData {
 }
 
 const LoginForm = () => {
+  const modalRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [errorMsg] = useState("");
+
+  const modalOutSideClick = (e: any) => {
+    if (modalRef.current === e.target) {
+      dispatch(toggleLogin());
+    }
+  };
 
   const {
     register,
@@ -170,6 +177,8 @@ const LoginForm = () => {
       initial="initial"
       animate="animate"
       exit="exit"
+      ref={modalRef}
+      onClick={(e: any) => modalOutSideClick(e)}
     >
       <LoginBox>
         <LoginBoxHeader>

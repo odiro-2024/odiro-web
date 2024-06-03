@@ -1,6 +1,6 @@
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import { mainColor } from "./../color";
+import { mainColor } from "../color";
 
 export const StyledCalendarContainer = styled.div`
   width: 80%;
@@ -8,7 +8,6 @@ export const StyledCalendarContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 200px;
   box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
   .react-calendar {
     width: 70%;
@@ -79,7 +78,7 @@ export const StyledCalendarContainer = styled.div`
   .react-calendar__tile:enabled:focus {
     background-color: white;
     color: black;
-    border-radius: 6px;
+    //border-radius: 6px;
   }
   //선택중인 타일 사이
   .react-calendar--selectRange .react-calendar__tile--hover {
@@ -93,13 +92,13 @@ export const StyledCalendarContainer = styled.div`
   }
   //선택된 타일 시작
   .react-calendar__tile--rangeStart {
-    border-radius: 6px;
+    //border-radius: 6px;
     background-color: ${mainColor};
     color: white;
   }
   //선택된 타일 끝 ///////////////
   .react-calendar__tile--rangeEnd {
-    border-radius: 6px;
+    //border-radius: 6px;
     background-color: white;
     color: black;
   }

@@ -14,7 +14,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2;
+  z-index: 99;
   background-color: white;
   box-shadow: 0px 1px 15px 2px rgba(0, 0, 0, 0.05);
 `;
@@ -91,8 +91,8 @@ const Header = () => {
           <Span onClick={onLoginClicked}>로그인</Span>
         </Column>
       </Box>
-      {loginClicked ? <LoginForm /> : null}
-      {enrollClicked ? <EnrollForm /> : null}
+      {loginClicked && <LoginForm />}
+      {enrollClicked && <EnrollForm />}
     </Container>
   );
 };

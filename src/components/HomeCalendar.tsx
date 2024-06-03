@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { StyledCalendarContainer } from "./styles";
+import { useEffect, useState } from "react";
+import { StyledCalendarContainer } from "./HomeCalendarStyles";
 import { format } from "date-fns";
 import Calendar from "react-calendar";
 import styled from "styled-components";
@@ -50,19 +50,19 @@ const ScheduleBox = styled.div`
   }
 `;
 
-const Trip = [
-  ["2024-05-18", "2024-05-23"],
-  ["2024-05-23", "2024-05-28"],
-  ["2024-06-08", "2024-06-13"],
-  ["2024-06-12", "2024-06-18"],
+const Plan = [
+  { id: 1, title: "Plan1", first_day: "2024-05-18", last_day: "2024-05-23" },
+  { id: 2, title: "Plan2", first_day: "2024-05-23", last_day: "2024-05-28" },
+  { id: 3, title: "Plan3", first_day: "2024-06-08", last_day: "2024-06-13" },
+  { id: 4, title: "Plan4", first_day: "2024-06-12", last_day: "2024-06-18" },
 ];
 
 const chooseLine: number[] = [];
-for (var i = 0; i < Trip.length; i++) {
+for (var i = 0; i < Plan.length; i++) {
   if (i === 0) {
     chooseLine.push(1);
     continue;
-  } else if (Trip[i][0] <= Trip[i - 1][1]) {
+  } else if (Plan[i].first_day <= Plan[i - 1].last_day) {
     if (chooseLine[i - 1] === 1) {
       chooseLine.push(2);
       continue;
@@ -80,8 +80,29 @@ type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece] | any;
 
+interface schedule {
+  id: number;
+  title: string;
+}
+
 function HomeCalendar() {
   const [value, setValue] = useState<Value>(new Date());
+  const [schedule, setSchedule] = useState<schedule[]>([]);
+
+  useEffect(() => {
+    setSchedule([]);
+    for (let i = 0; i < Plan.length; i++) {
+      const isPlanHit =
+        format(value, "yyyy-MM-dd") >= Plan[i].first_day &&
+        format(value, "yyyy-MM-dd") <= Plan[i].last_day;
+      if (isPlanHit) {
+        setSchedule((prev) => [
+          ...prev,
+          { id: Plan[i].id, title: Plan[i].title },
+        ]);
+      }
+    }
+  }, [value]);
 
   const onClick = (value: any, event: any) => {
     setValue(value);
@@ -98,11 +119,11 @@ function HomeCalendar() {
         showNeighboringMonth={false}
         showFixedNumberOfWeeks={false}
         tileContent={({ date }) =>
-          Trip.map((value, index) => {
-            const isTripHit =
-              format(date, "yyyy-MM-dd") >= value[0] &&
-              format(date, "yyyy-MM-dd") <= value[1];
-            if (!isTripHit) {
+          Plan.map((value, index) => {
+            const isPlanHit =
+              format(date, "yyyy-MM-dd") >= value.first_day &&
+              format(date, "yyyy-MM-dd") <= value.last_day;
+            if (!isPlanHit) {
               return null;
             }
 
@@ -130,6 +151,11 @@ function HomeCalendar() {
       <ScheduleBox>
         <span>Schedule</span>
         <div>{format(value, "yyyy년 MM월 dd일")}</div>
+        {schedule.map((value, index) => (
+          <span key={index} style={{ cursor: "pointer" }}>
+            {value.title}
+          </span>
+        ))}
       </ScheduleBox>
     </StyledCalendarContainer>
   );
