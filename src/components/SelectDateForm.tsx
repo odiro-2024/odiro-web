@@ -39,9 +39,10 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece] | any;
 
 const SelectDateForm = () => {
-  const [value] = useState<Value>();
+  const [value, setValue] = useState<Value>();
 
   const onChange = (value: any, event: any) => {
+    setValue(value);
     console.log(value);
   };
 
