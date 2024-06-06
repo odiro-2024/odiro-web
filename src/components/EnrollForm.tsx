@@ -23,10 +23,12 @@ const Overlay = styled(motion.div)`
 
 const EnrollBox = styled.div`
   max-width: 550px;
-  width: 100%;
-  height: 660px;
+  width: 60%;
+  max-height: 740px;
+  height: 80%;
   border-radius: 5px;
   background-color: white;
+  overflow: scroll;
   &::-webkit-scrollbar {
     width: 0px;
   }
@@ -71,13 +73,13 @@ const Form = styled.form`
   align-items: center;
 `;
 
-const Input = styled.input<{ isvalid: string }>`
+const Input = styled.input<{ $isvalid: string }>`
   width: 75%;
   height: 50px;
   border-radius: 20px;
   border: 1px solid
-    ${({ isvalid }) =>
-      isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
+    ${({ $isvalid }) =>
+      $isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
   outline: none;
   text-indent: 15px;
   font-size: 15px;
@@ -123,7 +125,7 @@ const SearchDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 30px;
+  margin: 30px 0;
   font-size: 15px;
   span {
     margin: 0 5px;
@@ -144,9 +146,10 @@ const overlayVariants = {
 };
 
 interface FormData {
-  username: string;
+  id: string;
   password: string;
   password2: string;
+  name: string;
   email: string;
 }
 
@@ -169,8 +172,8 @@ const EnrollForm = () => {
   } = useForm<FormData>();
 
   const onSubmitValid = () => {
-    const { username, password, password2, email } = getValues();
-    console.log(username, password, password2, email);
+    const { id, password, password2, name, email } = getValues();
+    console.log(id, password, password2, name, email);
   };
 
   return (
@@ -192,11 +195,11 @@ const EnrollForm = () => {
         <EnrollBoxContent>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <Input
-              {...register("username", { required: true })}
+              {...register("id", { required: true })}
               type="text"
-              name="username"
-              placeholder="유저네임을 입력해주세요"
-              isvalid={!errors?.username ? "true" : "false"}
+              name="id"
+              placeholder="아이디를 입력해주세요"
+              $isvalid={!errors?.id ? "true" : "false"}
             />
             <Input
               {...register("password", {
@@ -206,7 +209,7 @@ const EnrollForm = () => {
               type="password"
               name="password"
               placeholder="비밀번호를 입력해주세요"
-              isvalid={!errors?.password ? "true" : "false"}
+              $isvalid={!errors?.password ? "true" : "false"}
             />
             <Input
               {...register("password2", {
@@ -216,14 +219,21 @@ const EnrollForm = () => {
               type="password"
               name="password2"
               placeholder="비밀번호를 다시 입력해주세요"
-              isvalid={!errors?.password2 ? "true" : "false"}
+              $isvalid={!errors?.password2 ? "true" : "false"}
+            />{" "}
+            <Input
+              {...register("name", { required: true })}
+              type="text"
+              name="name"
+              placeholder="이름을 입력해주세요"
+              $isvalid={!errors?.name ? "true" : "false"}
             />
             <Input
               {...register("email", { required: true })}
               type="email"
               name="email"
               placeholder="이메일을 입력해주세요"
-              isvalid={!errors?.email ? "true" : "false"}
+              $isvalid={!errors?.email ? "true" : "false"}
             />
             <ErrorMsg>{errorMsg}</ErrorMsg>
             <Button>회원가입</Button>

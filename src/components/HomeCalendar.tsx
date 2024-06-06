@@ -104,7 +104,7 @@ function HomeCalendar() {
     }
   }, [value]);
 
-  const onClick = (value: any, event: any) => {
+  const onClicked = (value: any) => {
     setValue(value);
   };
 
@@ -112,8 +112,8 @@ function HomeCalendar() {
     <StyledCalendarContainer>
       <Calendar
         value={value}
-        onClickDay={(value, event) => onClick(value, event)}
-        formatDay={(locale, date) => format(date, "d")}
+        onClickDay={(value) => onClicked(value)}
+        formatDay={(_, date) => format(date, "d")}
         next2Label={null}
         prev2Label={null}
         showNeighboringMonth={false}

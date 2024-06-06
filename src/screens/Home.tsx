@@ -7,7 +7,6 @@ import { useRef, useState } from "react";
 
 const Container = styled.div`
   width: 100%;
-  height: 200vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,22 +61,24 @@ const Home = () => {
   };
 
   return (
-    <Container>
+    <>
       <Header />
-      <MakePlanDiv>
-        <MakePlanBtn onClick={() => setModalShow(true)}>새 여행</MakePlanBtn>
-        {modalShow && (
-          <>
-            <Overlay
-              ref={modalRef}
-              onClick={(e: any) => modalOutSideClick(e)}
-            ></Overlay>
-            <SelectDateForm></SelectDateForm>
-          </>
-        )}
-      </MakePlanDiv>
-      <HomeCalendar />
-    </Container>
+      <Container>
+        <MakePlanDiv>
+          <MakePlanBtn onClick={() => setModalShow(true)}>새 여행</MakePlanBtn>
+          {modalShow && (
+            <>
+              <Overlay
+                ref={modalRef}
+                onClick={(e: any) => modalOutSideClick(e)}
+              ></Overlay>
+              <SelectDateForm></SelectDateForm>
+            </>
+          )}
+        </MakePlanDiv>
+        <HomeCalendar />
+      </Container>
+    </>
   );
 };
 

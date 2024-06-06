@@ -23,10 +23,12 @@ const Overlay = styled(motion.div)`
 
 const LoginBox = styled.div`
   max-width: 550px;
-  width: 100%;
-  height: 600px;
+  width: 60%;
+  max-height: 600px;
+  height: 80%;
   border-radius: 5px;
   background-color: white;
+  overflow: scroll;
   &::-webkit-scrollbar {
     width: 0px;
   }
@@ -71,13 +73,13 @@ const Form = styled.form`
   align-items: center;
 `;
 
-const Input = styled.input<{ isvalid: string }>`
+const Input = styled.input<{ $isvalid: string }>`
   width: 75%;
   height: 50px;
   border-radius: 20px;
   border: 1px solid
-    ${({ isvalid }) =>
-      isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
+    ${({ $isvalid }) =>
+      $isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
   outline: none;
   text-indent: 15px;
   font-size: 15px;
@@ -123,7 +125,7 @@ const SearchDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 30px;
+  margin: 30px 0;
   font-size: 15px;
   span {
     margin: 0 5px;
@@ -144,7 +146,7 @@ const overlayVariants = {
 };
 
 interface FormData {
-  username: string;
+  id: string;
   password: string;
 }
 
@@ -167,8 +169,8 @@ const LoginForm = () => {
   } = useForm<FormData>();
 
   const onSubmitValid = () => {
-    const { username, password } = getValues();
-    console.log(username, password);
+    const { id, password } = getValues();
+    console.log(id, password);
   };
 
   return (
@@ -190,11 +192,11 @@ const LoginForm = () => {
         <LoginBoxContent>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <Input
-              {...register("username", { required: true })}
+              {...register("id", { required: true })}
               type="text"
-              name="username"
-              placeholder="유저네임을 입력해주세요"
-              isvalid={!errors?.username ? "true" : "false"}
+              name="id"
+              placeholder="아이디를 입력해주세요"
+              $isvalid={!errors?.id ? "true" : "false"}
             />
             <Input
               {...register("password", {
@@ -204,7 +206,7 @@ const LoginForm = () => {
               type="password"
               name="password"
               placeholder="비밀번호를 입력해주세요"
-              isvalid={!errors?.password ? "true" : "false"}
+              $isvalid={!errors?.password ? "true" : "false"}
             />
             <ErrorMsg>{errorMsg}</ErrorMsg>
             <Button>로그인</Button>

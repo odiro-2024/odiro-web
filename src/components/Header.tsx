@@ -41,6 +41,7 @@ const Logo = styled.div`
   color: ${mainColor};
   font-size: 30px;
   margin-left: 25px;
+  cursor: pointer;
 `;
 
 const Column = styled.div`
@@ -84,7 +85,7 @@ const Header = () => {
   return (
     <Container>
       <Box>
-        <Logo>ODIRO</Logo>
+        <Logo onClick={() => navigate("/")}>ODIRO</Logo>
         <Column>
           <Span onClick={() => navigate("/")}>홈</Span>
           <Span onClick={onCreateClicked}>회원가입</Span>

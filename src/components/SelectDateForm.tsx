@@ -4,6 +4,7 @@ import Calendar from "react-calendar";
 import { useState } from "react";
 import { format } from "date-fns";
 import { mainColor } from "../color";
+import { useNavigate } from "react-router-dom";
 
 const Div = styled.div`
   width: 100%;
@@ -16,7 +17,7 @@ const Div = styled.div`
   align-items: center;
 `;
 
-const Button = styled.div`
+const Button = styled.button`
   color: white;
   font-size: 16px;
   width: 55px;
@@ -27,31 +28,52 @@ const Button = styled.div`
   margin: 15px 10px;
   border-radius: 10px;
   background-color: ${mainColor};
+  border: none;
   cursor: pointer;
   font-weight: 600;
   &:hover {
     scale: 1.05;
   }
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+    &:hover {
+      scale: 1;
+    }
+  }
 `;
 
 type ValuePiece = Date | null;
 
-type Value = ValuePiece | [ValuePiece, ValuePiece] | any;
+type Value = [ValuePiece, ValuePiece];
 
 const SelectDateForm = () => {
   const [value, setValue] = useState<Value>();
+  const [disabled, setDisabled] = useState(true);
+  const navigate = useNavigate();
 
-  const onChange = (value: any, event: any) => {
+  const onChange = (value: any) => {
     setValue(value);
-    console.log(value);
+    setDisabled(false);
+  };
+
+  const onClicked = () => {
+    if (value) {
+      navigate("/create", {
+        state: {
+          first_day: value[0],
+          last_day: value[1],
+        },
+      });
+    }
   };
 
   return (
     <StyledCalendarContainer>
       <Calendar
         value={value}
-        onChange={(value, event) => onChange(value, event)}
-        formatDay={(locale, date) => format(date, "d")}
+        onChange={(value) => onChange(value)}
+        formatDay={(_, date) => format(date, "d")}
         next2Label={null}
         prev2Label={null}
         showNeighboringMonth={false}
@@ -61,7 +83,9 @@ const SelectDateForm = () => {
         returnValue="range"
       />
       <Div>
-        <Button>완료</Button>
+        <Button disabled={disabled} onClick={onClicked}>
+          완료
+        </Button>
       </Div>
     </StyledCalendarContainer>
   );
