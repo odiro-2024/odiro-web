@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { mainColor } from "./../color";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -90,22 +91,40 @@ interface FormData {
   title: string;
 }
 
+const checkBoxList = [
+  "혼자만",
+  "여럿이서",
+  "느긋하게",
+  "바쁘게",
+  "남자만",
+  "여자만",
+  "비용절약",
+  "플렉스",
+  "맛집위주",
+  "활동적인",
+  "인생샷",
+  "힐링여행",
+];
+
 const CreatePlan = () => {
-  //const location = useLocation();
-  //const first_day = location.state.first_day;
-  //const last_day = location.state.last_day;
-  const [solo, setSolo] = useState(false);
-  const [multi, setMulti] = useState(false);
-  const [slow, setSlow] = useState(false);
-  const [fast, setFast] = useState(false);
-  const [onlyMan, setOnlyMan] = useState(false);
-  const [onlyWoman, setOnlyWoman] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [flex, setFlex] = useState(false);
-  const [restaurant, setRestaurant] = useState(false);
-  const [active, setActive] = useState(false);
-  const [photo, setPhoto] = useState(false);
-  const [healing, setHealing] = useState(false);
+  const location = useLocation();
+  const first_day = location.state.first_day;
+  const last_day = location.state.last_day;
+  const [checkBoxValue, setCheckBoxValue] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -116,7 +135,26 @@ const CreatePlan = () => {
 
   const onSubmitValid = () => {
     const { title } = getValues();
-    console.log(title);
+    const id = 1;
+    navigate(`/plan/${id}`, {
+      state: { first_day, last_day, title, checkBoxValue },
+    });
+  };
+
+  const onClicked = (index: number) => {
+    if (checkBoxValue[index] === false) {
+      setCheckBoxValue([
+        ...checkBoxValue.slice(0, index),
+        true,
+        ...checkBoxValue.slice(index + 1),
+      ]);
+    } else {
+      setCheckBoxValue([
+        ...checkBoxValue.slice(0, index),
+        false,
+        ...checkBoxValue.slice(index + 1),
+      ]);
+    }
   };
 
   return (
@@ -133,66 +171,15 @@ const CreatePlan = () => {
               $isvalid={!errors?.title ? "true" : "false"}
             />
             <CheckBoxs>
-              <CheckBox checked={solo} onClick={() => setSolo((prev) => !prev)}>
-                혼자만
-              </CheckBox>
-              <CheckBox
-                checked={multi}
-                onClick={() => setMulti((prev) => !prev)}
-              >
-                여럿이서
-              </CheckBox>
-              <CheckBox checked={slow} onClick={() => setSlow((prev) => !prev)}>
-                느긋하게
-              </CheckBox>
-              <CheckBox checked={fast} onClick={() => setFast((prev) => !prev)}>
-                바쁘게
-              </CheckBox>
-              <CheckBox
-                checked={onlyMan}
-                onClick={() => setOnlyMan((prev) => !prev)}
-              >
-                남자만
-              </CheckBox>
-              <CheckBox
-                checked={onlyWoman}
-                onClick={() => setOnlyWoman((prev) => !prev)}
-              >
-                여자만
-              </CheckBox>
-              <CheckBox
-                checked={saving}
-                onClick={() => setSaving((prev) => !prev)}
-              >
-                비용절약
-              </CheckBox>
-              <CheckBox checked={flex} onClick={() => setFlex((prev) => !prev)}>
-                플렉스
-              </CheckBox>
-              <CheckBox
-                checked={restaurant}
-                onClick={() => setRestaurant((prev) => !prev)}
-              >
-                맛집위주
-              </CheckBox>
-              <CheckBox
-                checked={active}
-                onClick={() => setActive((prev) => !prev)}
-              >
-                활동적인
-              </CheckBox>
-              <CheckBox
-                checked={photo}
-                onClick={() => setPhoto((prev) => !prev)}
-              >
-                인생샷
-              </CheckBox>
-              <CheckBox
-                checked={healing}
-                onClick={() => setHealing((prev) => !prev)}
-              >
-                힐링여행
-              </CheckBox>
+              {checkBoxList.map((value, index) => (
+                <CheckBox
+                  key={index}
+                  checked={checkBoxValue[index]}
+                  onClick={() => onClicked(index)}
+                >
+                  {value}
+                </CheckBox>
+              ))}
             </CheckBoxs>
             <Button>여행 만들기</Button>
           </Form>
