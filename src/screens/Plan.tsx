@@ -104,7 +104,7 @@ const LocationListBox = styled.div`
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
       span {
         margin-top: 20px;
         margin-left: 20px;
@@ -185,12 +185,24 @@ const MemoBox = styled.div`
   border: 1px solid ${mainColor};
   border-radius: 10px;
   margin-bottom: 40px;
+  span {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 10px;
+    display: block;
+  }
 `;
 
 const CommentBox = styled.div`
   height: 250px;
   border: 1px solid ${mainColor};
   border-radius: 10px;
+  span {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 10px;
+    display: block;
+  }
 `;
 
 const checkBoxList = [
@@ -402,8 +414,12 @@ const Plan = () => {
                 ))}
               </LocationListBox>
               <MemoCommentBox>
-                <MemoBox></MemoBox>
-                <CommentBox></CommentBox>
+                <MemoBox>
+                  <span>메모</span>
+                </MemoBox>
+                <CommentBox>
+                  <span>댓글</span>
+                </CommentBox>
               </MemoCommentBox>
             </BottomBox>
           </Container>
