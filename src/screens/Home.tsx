@@ -14,7 +14,7 @@ const Container = styled.div`
 `;
 
 const MakePlanDiv = styled.div`
-  margin-top: 200px;
+  margin-top: 170px;
   margin-bottom: 20px;
   width: 80%;
   max-width: 700px;
