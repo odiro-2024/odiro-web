@@ -61,8 +61,8 @@ const SelectDateForm = () => {
     if (value) {
       navigate("/create", {
         state: {
-          first_day: value[0],
-          last_day: value[1],
+          firstDay: value[0],
+          lastDay: value[1],
         },
       });
     }

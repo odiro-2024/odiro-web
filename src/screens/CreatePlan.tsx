@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { mainColor } from "./../color";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Container = styled.div`
   width: 100%;
@@ -108,8 +109,9 @@ const checkBoxList = [
 
 const CreatePlan = () => {
   const location = useLocation();
-  const first_day = location.state.first_day;
-  const last_day = location.state.last_day;
+  const {
+    state: { firstDay, lastDay },
+  } = location;
   const [checkBoxValue, setCheckBoxValue] = useState([
     false,
     false,
@@ -136,9 +138,18 @@ const CreatePlan = () => {
   const onSubmitValid = () => {
     const { title } = getValues();
     const id = 1;
-    navigate(`/plan/${id}`, {
-      state: { first_day, last_day, title, checkBoxValue },
-    });
+
+    axios
+      .post("/plan/create", {
+        memberId: id,
+        title,
+        firstDay,
+        lastDay,
+      })
+      .then((res) => {
+        const { planId } = res.data;
+        navigate(`/plan/${planId}`);
+      });
   };
 
   const onClicked = (index: number) => {
