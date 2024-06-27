@@ -6,8 +6,14 @@ import { useEffect, useState } from "react";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { Imarkers } from "./Test";
 import { Link, useNavigate } from "react-router-dom";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faPenToSquare,
+  faSave,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useForm } from "react-hook-form";
+import { format } from "date-fns";
 
 const Container = styled.div`
   width: 100%;
@@ -99,6 +105,7 @@ const LocationListBox = styled.div`
   margin-right: 2%;
   border-radius: 10px;
   border: 1px solid ${mainColor};
+  color: #252525;
   > div {
     &:first-child {
       display: flex;
@@ -152,6 +159,7 @@ const LocationList = styled.div`
       font-size: 16px;
     }
     span {
+      color: black;
       margin: 8px 0 0 0;
       &:first-child {
         font-size: 17px;
@@ -180,28 +188,81 @@ const MemoCommentBox = styled.div`
   max-width: 400px;
 `;
 
-const MemoBox = styled.div`
+const MemoBox = styled.form`
   height: 250px;
   border: 1px solid ${mainColor};
   border-radius: 10px;
   margin-bottom: 40px;
-  span {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 10px;
-    display: block;
+  color: #252525;
+  > div {
+    display: flex;
+    justify-content: space-between;
+    span {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 10px;
+      display: block;
+    }
+    div {
+      background-color: ${mainColor};
+      width: 40px;
+      height: 40px;
+      margin: 5px 5px 0 0;
+      border-radius: 20px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 17px;
+      cursor: pointer;
+    }
+  }
+  textarea {
+    width: 90%;
+    height: 190px;
+    border: none;
+    outline: none;
+    resize: none;
+    margin-left: 10px;
   }
 `;
 
-const CommentBox = styled.div`
+const CommentBox = styled.form`
   height: 250px;
   border: 1px solid ${mainColor};
   border-radius: 10px;
-  span {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 10px;
-    display: block;
+  margin-bottom: 40px;
+  color: #252525;
+  > div {
+    display: flex;
+    justify-content: space-between;
+    span {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 10px;
+      display: block;
+    }
+    div {
+      background-color: ${mainColor};
+      width: 40px;
+      height: 40px;
+      margin: 5px 5px 0 0;
+      border-radius: 20px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 17px;
+      cursor: pointer;
+    }
+  }
+  textarea {
+    width: 90%;
+    height: 190px;
+    border: none;
+    outline: none;
+    resize: none;
+    margin-left: 10px;
   }
 `;
 
@@ -222,8 +283,8 @@ const checkBoxList = [
 
 const data = {
   title: "여행 타이틀 입니다",
-  first_day: "2024-07-08",
-  last_day: "2024-07-13",
+  firstDay: new Date("2024-07-08"),
+  lastDay: new Date("2024-07-13"),
   checkBoxValue: [
     false,
     false,
@@ -254,6 +315,7 @@ const data = {
   ],
   day: [
     {
+      date: new Date("2024-07-08"),
       location: [
         {
           address_name: "서울 중구 명동2가 25-36",
@@ -267,6 +329,13 @@ const data = {
           img_url:
             "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2FF3BDF45B8EC247F896E4FB7B7C2B5121",
         },
+      ],
+      memo: "this is memo1",
+      comment: "this is comment1",
+    },
+    {
+      date: new Date("2024-07-09"),
+      location: [
         {
           address_name: "서울 중구 신당동 370-69",
           id: "1065693087",
@@ -279,6 +348,13 @@ const data = {
           img_url:
             "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F200912A4F807401FB463DA75478F7E65",
         },
+      ],
+      memo: "this is memo2",
+      comment: "this is comment2",
+    },
+    {
+      date: new Date("2024-07-10"),
+      location: [
         {
           address_name: "서울 용산구 한강로1가 251-1",
           id: "220597413",
@@ -292,54 +368,81 @@ const data = {
             "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2F9D96CE0AF47646C48E7B41BF852F0E5E",
         },
       ],
-      todo: { memo: "this is memo" },
-      comment: {
-        content: "this is comment",
-      },
+      memo: "this is memo3",
+      comment: "this is comment3",
     },
   ],
 };
 
+interface FormData {
+  memo: string;
+  comment: string;
+}
+
 const Plan = () => {
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState<Date>();
+  const [day, setDay] = useState(2);
   const [map, setMap] = useState<any>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
   const navigate = useNavigate();
+  const [isMemoEditing, setIsMemoEditing] = useState(false);
+  const [isCommentEditing, setIsCommentEditing] = useState(false);
 
-  const handleDataChange = (value: any) => {
+  const { register, getValues } = useForm<FormData>();
+
+  const handleDataChange = (value: Date) => {
+    data.day.forEach((item, index) => {
+      if (format(value, "yyyy-MM-dd") === format(item.date, "yyyy-MM-dd"))
+        setDay(index + 1);
+    });
     setDate(value);
-    console.log(date);
+    setIsMemoEditing(false);
+    setIsCommentEditing(false);
   };
 
   useEffect(() => {
     const bounds = new kakao.maps.LatLngBounds();
     let markers: Imarkers[] = [];
 
-    for (var i = 0; i < data.day[0].location.length; i++) {
+    for (var i = 0; i < data.day[day - 1].location.length; i++) {
       // @ts-ignore
       markers.push({
-        address_name: data.day[0].location[i].address_name,
-        id: data.day[0].location[i].id,
-        phone: data.day[0].location[i].phone,
-        place_name: data.day[0].location[i].place_name,
-        place_url: data.day[0].location[i].place_url,
-        road_address_name: data.day[0].location[i].road_address_name,
+        address_name: data.day[day - 1].location[i].address_name,
+        id: data.day[day - 1].location[i].id,
+        phone: data.day[day - 1].location[i].phone,
+        place_name: data.day[day - 1].location[i].place_name,
+        place_url: data.day[day - 1].location[i].place_url,
+        road_address_name: data.day[day - 1].location[i].road_address_name,
         position: {
-          lat: +data.day[0].location[i].position.lat,
-          lng: +data.day[0].location[i].position.lng,
+          lat: +data.day[day - 1].location[i].position.lat,
+          lng: +data.day[day - 1].location[i].position.lng,
         },
       });
       // @ts-ignore
       bounds.extend(
         new kakao.maps.LatLng(
-          data.day[0].location[i].position.lat,
-          data.day[0].location[i].position.lng
+          data.day[day - 1].location[i].position.lat,
+          data.day[day - 1].location[i].position.lng
         )
       );
     }
     setMarkers(markers);
     map?.setBounds(bounds);
-  }, [map, date]);
+  }, [map, day]);
+
+  const onMemoEdited = () => {
+    const { memo } = getValues();
+    setIsMemoEditing(false);
+    data.day[day - 1].memo = memo;
+    //axios
+  };
+
+  const onCommentEdited = () => {
+    const { comment } = getValues();
+    setIsCommentEditing(false);
+    data.day[day - 1].comment = comment;
+    //axios
+  };
 
   return (
     <>
@@ -386,20 +489,20 @@ const Plan = () => {
                 </Map>
               </MapBox>
               <PlanCalendar
-                first_day={data.first_day}
-                last_day={data.last_day}
+                firstDay={data.firstDay}
+                lastDay={data.lastDay}
                 onDataChange={handleDataChange}
               ></PlanCalendar>
             </MiddleBox>
             <BottomBox>
               <LocationListBox>
                 <div>
-                  <span>Day 1</span>
+                  <span>Day {day}</span>
                   <div onClick={() => navigate("/test")}>
                     <FontAwesomeIcon icon={faPlus} />
                   </div>
                 </div>
-                {data.day[0].location.map((value, index) => (
+                {data.day[day - 1].location.map((value, index) => (
                   <LocationList key={index}>
                     <span>{index}.</span>
                     <Link target="_blank" to={value.place_url}>
@@ -415,10 +518,56 @@ const Plan = () => {
               </LocationListBox>
               <MemoCommentBox>
                 <MemoBox>
-                  <span>메모</span>
+                  <div>
+                    <span>메모</span>
+                    {isMemoEditing ? (
+                      <div onClick={onMemoEdited}>
+                        <FontAwesomeIcon icon={faSave} />
+                      </div>
+                    ) : (
+                      <div onClick={() => setIsMemoEditing(true)}>
+                        <FontAwesomeIcon icon={faPenToSquare} />
+                      </div>
+                    )}
+                  </div>
+                  {isMemoEditing ? (
+                    <textarea
+                      spellCheck="false"
+                      {...register("memo")}
+                      placeholder={data.day[day - 1].memo}
+                    />
+                  ) : (
+                    <textarea
+                      readOnly
+                      value={data.day[day - 1].memo}
+                    ></textarea>
+                  )}
                 </MemoBox>
                 <CommentBox>
-                  <span>댓글</span>
+                  <div>
+                    <span>댓글</span>
+                    {isCommentEditing ? (
+                      <div onClick={onCommentEdited}>
+                        <FontAwesomeIcon icon={faSave} />
+                      </div>
+                    ) : (
+                      <div onClick={() => setIsCommentEditing(true)}>
+                        <FontAwesomeIcon icon={faPenToSquare} />
+                      </div>
+                    )}
+                  </div>
+                  {isCommentEditing ? (
+                    <textarea
+                      spellCheck="false"
+                      {...register("comment")}
+                      placeholder={data.day[day - 1].comment}
+                    />
+                  ) : (
+                    <textarea
+                      readOnly
+                      value={data.day[day - 1].comment}
+                    ></textarea>
+                  )}
                 </CommentBox>
               </MemoCommentBox>
             </BottomBox>
