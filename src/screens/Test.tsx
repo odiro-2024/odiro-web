@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
 import { motion } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Overlay = styled(motion.div)`
   width: 100%;
@@ -170,6 +170,9 @@ const Test = () => {
   const [infoBox, setInfoBox] = useState<Imarkers | null>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
   var temporaryMarkers: Imarkers[] = [];
+  const {
+    state: { id },
+  } = useLocation();
   const navigate = useNavigate();
 
   const { register, getValues, handleSubmit } = useForm<FormData>();
@@ -182,7 +185,6 @@ const Test = () => {
       if (status === kakao.maps.services.Status.OK) {
         const bounds = new kakao.maps.LatLngBounds();
         let markers: Imarkers[] = [];
-        console.log(data);
 
         for (var i = 0; i < data.length; i++) {
           // @ts-ignore
@@ -226,7 +228,20 @@ const Test = () => {
 
   const onEnrollClick = () => {
     if (window.confirm("이 장소를 등록하시겠습니까?")) {
-      navigate("/plan/1");
+      navigate(`/plan/${id}`, {
+        state: {
+          address_name: infoBox?.address_name,
+          kakaoMapId: infoBox?.id,
+          phone: infoBox?.phone,
+          place_name: infoBox?.place_name,
+          place_url: infoBox?.place_url,
+          lat: infoBox?.position.lat,
+          lng: infoBox?.position.lng,
+          road_address_name: infoBox?.road_address_name,
+          category_group_name: infoBox?.category_group_name,
+          img_url: "",
+        },
+      });
     }
   };
 
