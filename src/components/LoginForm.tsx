@@ -22,9 +22,9 @@ const Overlay = styled(motion.div)`
 `;
 
 const LoginBox = styled.div`
-  max-width: 550px;
+  max-width: 500px;
   width: 60%;
-  max-height: 600px;
+  max-height: 550px;
   height: 80%;
   border-radius: 5px;
   background-color: white;
@@ -85,7 +85,7 @@ const Input = styled.input<{ $isvalid: string }>`
   font-size: 15px;
   margin-top: 20px;
   &:first-child {
-    margin-top: 90px;
+    margin-top: 70px;
   }
   &:focus {
     border-width: 2px;
@@ -103,13 +103,14 @@ const Button = styled.button`
   font-weight: 600;
   cursor: pointer;
   border: none;
-  margin-top: 60px;
+  margin-top: 50px;
   background-color: ${mainColor};
   color: white;
   &:last-child {
     margin-top: 15px;
     background-color: yellow;
     color: black;
+    font-size: 18px;
   }
 `;
 
@@ -125,7 +126,7 @@ const SearchDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 30px 0;
+  margin: 40px 0 25px 0;
   font-size: 15px;
   span {
     margin: 0 5px;
