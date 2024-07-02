@@ -3,9 +3,9 @@ import Header from "../components/Header";
 import { mainColor } from "../color";
 import PlanCalendar from "../components/PlanCalendar";
 import { useEffect, useState } from "react";
-import { Map, MapMarker } from "react-kakao-maps-sdk";
-import { Imarkers } from "./Test";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { CustomOverlayMap, Map } from "react-kakao-maps-sdk";
+import SearchLocation, { Imarkers } from "./SearchLocation";
+import { Link } from "react-router-dom";
 import {
   faPlus,
   faPenToSquare,
@@ -16,6 +16,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { toggleLocation } from "../counterSlice";
 
 const Container = styled.div`
   width: 100%;
@@ -138,7 +141,7 @@ const LocationListBox = styled.div`
   }
 `;
 
-const LocationList = styled.div`
+const LocationList = styled.div<{ $category_len: number }>`
   margin: 30px 20px;
   display: flex;
   align-items: center;
@@ -158,7 +161,8 @@ const LocationList = styled.div`
       width: 60px;
       height: 25px;
       border-radius: 3px;
-      font-size: 16px;
+      font-size: ${({ $category_len }) =>
+        $category_len > 3 ? "14px" : "16px"};
     }
     span {
       color: black;
@@ -229,12 +233,10 @@ const MemoList = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 35px;
+  height: 30px;
   margin: 0 8px 15px 10px;
-
   span {
-    font-size: 20px;
-    display: block;
+    font-size: 19px;
   }
   div {
     background-color: #e67878;
@@ -284,7 +286,7 @@ const Input = styled.input`
 `;
 
 const CommentBox = styled.div`
-  height: 250px;
+  min-height: 220px;
   border: 1px solid ${mainColor};
   border-radius: 10px;
   color: #252525;
@@ -390,11 +392,11 @@ const dataEx = {
       memo: [
         {
           id: 1,
-          content: "memo1",
+          content: "신분증 챙기기",
         },
         {
           id: 2,
-          content: "memo2",
+          content: "겉옷 챙기기",
         },
         {
           id: 3,
@@ -578,22 +580,15 @@ const Plan = () => {
   const [location, setLocation] = useState<ILocation[]>([]);
   const [memo, setMemo] = useState<IMemo[]>([]);
   const [comment, setComment] = useState<IComment[]>([]);
-  const navigate = useNavigate();
-  const {
-    state: {
-      address_name,
-      kakaoMapId,
-      phone,
-      place_name,
-      place_url,
-      lat,
-      lng,
-      road_address_name,
-      category_group_name,
-      img_url,
-    },
-  } = useLocation();
   var data = dataEx;
+
+  const dispatch = useDispatch();
+
+  const locationClicked = useSelector(
+    (state: RootState) => state.counter.locationClicked
+  );
+
+  const onLocationClicked = () => dispatch(toggleLocation());
 
   const { register, getValues, handleSubmit, setValue } = useForm<FormData>();
 
@@ -619,6 +614,24 @@ const Plan = () => {
     setIsCommentEditing(false);
   };
 
+  const handleLocationChange = (infoBox: Imarkers) => {
+    setLocation((prev) => [
+      ...prev,
+      {
+        address_name: infoBox.address_name,
+        kakaoMapId: infoBox.id,
+        phone: infoBox.phone,
+        place_name: infoBox.place_name,
+        place_url: infoBox.place_url,
+        lat: infoBox.position.lat,
+        lng: infoBox.position.lng,
+        road_address_name: infoBox.road_address_name,
+        category_group_name: infoBox.category_group_name || "미정",
+        img_url: infoBox.img_url,
+      },
+    ]);
+  };
+
   useEffect(() => {
     if (location.length !== 0) {
       const bounds = new kakao.maps.LatLngBounds();
@@ -637,6 +650,7 @@ const Plan = () => {
             lat: +location[i].lat,
             lng: +location[i].lng,
           },
+          img_url: location[i].img_url,
         });
         // @ts-ignore
         bounds.extend(new kakao.maps.LatLng(location[i].lat, location[i].lng));
@@ -656,26 +670,9 @@ const Plan = () => {
     setComment(dataEx.dayPlan[index].comment);
   }, []);
 
-  useEffect(() => {
-    setLocation((prev) => [
-      ...prev,
-      {
-        address_name,
-        kakaoMapId,
-        phone,
-        place_name,
-        place_url,
-        lat,
-        lng,
-        road_address_name,
-        category_group_name,
-        img_url,
-      },
-    ]);
-  }, [address_name]);
-
   const onMemoDeleteClicked = (index: number, id: number) => {
     setMemo((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    //axios
   };
 
   const onSubmitValid = () => {
@@ -722,10 +719,17 @@ const Plan = () => {
                   onCreate={setMap}
                 >
                   {markers.map((marker, index) => (
-                    <MapMarker
+                    <CustomOverlayMap
                       key={index}
                       position={marker.position}
-                    ></MapMarker>
+                      xAnchor={0.4}
+                      yAnchor={1.2}
+                    >
+                      <PlacePhoto
+                        style={{ width: "70px", height: "70px" }}
+                        $url={marker.img_url}
+                      ></PlacePhoto>
+                    </CustomOverlayMap>
                   ))}
                 </Map>
               </MapBox>
@@ -739,20 +743,15 @@ const Plan = () => {
               <LocationListBox>
                 <div>
                   <span>Day {index + 1}</span>
-                  <div
-                    onClick={() =>
-                      navigate("/test", {
-                        state: {
-                          id: 1,
-                        },
-                      })
-                    }
-                  >
+                  <div onClick={onLocationClicked}>
                     <FontAwesomeIcon icon={faPlus} />
                   </div>
                 </div>
-                {data.dayPlan[index].location.map((value, index) => (
-                  <LocationList key={index}>
+                {location.map((value, index) => (
+                  <LocationList
+                    key={index}
+                    $category_len={value.category_group_name.length}
+                  >
                     <Link target="_blank" to={value.place_url}>
                       <PlacePhoto $url={value.img_url} />
                     </Link>
@@ -814,6 +813,9 @@ const Plan = () => {
               </MemoCommentBox>
             </BottomBox>
           </Container>
+          {locationClicked ? (
+            <SearchLocation onDataChange={handleLocationChange} />
+          ) : null}
         </>
       )}
     </>

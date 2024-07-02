@@ -1,18 +1,23 @@
 import { styled } from "styled-components";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
 import { motion } from "framer-motion";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { toggleLocation } from "../counterSlice";
+import { useDispatch } from "react-redux";
 
 const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 3;
+  z-index: 100;
 `;
 
 const LoginBox = styled.div`
@@ -33,8 +38,8 @@ const overlayVariants = {
 };
 
 const LocationBox = styled(LoginBox)`
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 70%;
   position: relative;
   display: flex;
   justify-content: center;
@@ -69,7 +74,7 @@ const Divs = styled.div`
   top: 70px;
   left: 15px;
   z-index: 2;
-  max-height: 80%;
+  max-height: 70%;
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   overflow: scroll;
@@ -80,7 +85,7 @@ const Divs = styled.div`
 `;
 
 const Div = styled.div`
-  width: 250px;
+  width: 240px;
   background-color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   display: flex;
@@ -163,17 +168,19 @@ export interface Imarkers {
     lat: number;
   };
   category_group_name: string;
+  img_url: string;
 }
 
-const Test = () => {
+const SearchLocation = ({ onDataChange }: any) => {
   const [map, setMap] = useState<any>();
   const [infoBox, setInfoBox] = useState<Imarkers | null>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
   var temporaryMarkers: Imarkers[] = [];
-  const {
-    state: { id },
-  } = useLocation();
-  const navigate = useNavigate();
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const dispatch = useDispatch();
+
+  const onLocationClicked = () => dispatch(toggleLocation());
 
   const { register, getValues, handleSubmit } = useForm<FormData>();
 
@@ -200,6 +207,7 @@ const Test = () => {
               lng: +data[i].x,
             },
             category_group_name: data[i].category_group_name,
+            img_url: "",
           });
           // @ts-ignore
           bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
@@ -228,20 +236,14 @@ const Test = () => {
 
   const onEnrollClick = () => {
     if (window.confirm("이 장소를 등록하시겠습니까?")) {
-      navigate(`/plan/${id}`, {
-        state: {
-          address_name: infoBox?.address_name,
-          kakaoMapId: infoBox?.id,
-          phone: infoBox?.phone,
-          place_name: infoBox?.place_name,
-          place_url: infoBox?.place_url,
-          lat: infoBox?.position.lat,
-          lng: infoBox?.position.lng,
-          road_address_name: infoBox?.road_address_name,
-          category_group_name: infoBox?.category_group_name,
-          img_url: "",
-        },
-      });
+      onDataChange(infoBox);
+      onLocationClicked();
+    }
+  };
+
+  const modalOutSideClick = (e: any) => {
+    if (modalRef.current === e.target) {
+      onLocationClicked();
     }
   };
 
@@ -251,6 +253,8 @@ const Test = () => {
       initial="initial"
       animate="animate"
       exit="exit"
+      ref={modalRef}
+      onClick={(e: any) => modalOutSideClick(e)}
     >
       <LocationBox>
         <LocationMap>
@@ -262,6 +266,7 @@ const Test = () => {
             style={{
               width: "100%",
               height: "100%",
+              borderRadius: "15px",
             }}
             level={3}
             onCreate={setMap}
@@ -315,4 +320,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default SearchLocation;
