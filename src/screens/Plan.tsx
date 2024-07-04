@@ -5,7 +5,6 @@ import PlanCalendar from "../components/PlanCalendar";
 import { useEffect, useState } from "react";
 import { CustomOverlayMap, Map } from "react-kakao-maps-sdk";
 import SearchLocation, { Imarkers } from "./SearchLocation";
-import { Link } from "react-router-dom";
 import {
   faPlus,
   faPenToSquare,
@@ -19,6 +18,8 @@ import { format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { toggleLocation } from "../counterSlice";
+import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
+import LocationList from "../components/LocationList";
 
 const Container = styled.div`
   width: 100%;
@@ -125,7 +126,7 @@ const LocationListBox = styled.div`
         font-weight: 600;
       }
       div {
-        margin: 10px 15px;
+        margin: 10px 15px 0 0;
         width: 40px;
         height: 40px;
         display: flex;
@@ -141,43 +142,77 @@ const LocationListBox = styled.div`
   }
 `;
 
-const LocationList = styled.div<{ $category_len: number }>`
-  margin: 30px 20px;
-  display: flex;
-  align-items: center;
-  > span {
-    font-size: 22px;
-  }
-  > div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    div {
-      background-color: ${mainColor};
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 60px;
-      height: 25px;
-      border-radius: 3px;
-      font-size: ${({ $category_len }) =>
-        $category_len > 3 ? "14px" : "16px"};
-    }
-    span {
-      color: black;
-      margin: 8px 0 0 0;
-      &:first-child {
-        font-size: 16px;
-        font-weight: 600;
-      }
-      &:last-child {
-        font-size: 15px;
-        color: gray;
-      }
-    }
-  }
-`;
+// const LocationList = styled.div<{ $category_len: number }>`
+//   margin: 5px 5px 0 15px;
+//   display: flex;
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   height: 100px;
+//   cursor: pointer;
+//   &:hover {
+//     border-radius: 15px;
+//     box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
+//     > div {
+//       &:nth-child(2) {
+//         transition-duration: 2s;
+//         opacity: 1;
+//       }
+//     }
+//   }
+
+//   > div {
+//     &:nth-child(1) {
+//       margin-left: 5px;
+//       display: flex;
+//       > span {
+//         font-size: 22px;
+//       }
+//       > div {
+//         display: flex;
+//         flex-direction: column;
+//         justify-content: center;
+//         div {
+//           background-color: ${mainColor};
+//           color: white;
+//           display: flex;
+//           justify-content: center;
+//           align-items: center;
+//           width: 60px;
+//           height: 25px;
+//           border-radius: 3px;
+//           font-size: ${({ $category_len }) =>
+//             $category_len > 3 ? "14px" : "16px"};
+//         }
+//         span {
+//           color: black;
+//           margin: 8px 0 0 0;
+//           &:first-child {
+//             font-size: 16px;
+//             font-weight: 600;
+//           }
+//           &:last-child {
+//             font-size: 15px;
+//             color: gray;
+//           }
+//         }
+//       }
+//     }
+//     &:nth-child(2) {
+//       opacity: 0;
+//       margin-right: 10px;
+//       background-color: #e67878;
+//       width: 40px;
+//       height: 40px;
+//       border-radius: 50%;
+//       color: white;
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       font-size: 17px;
+//     }
+//   }
+// `;
 
 const PlacePhoto = styled.div<{ $url: string }>`
   width: 80px;
@@ -376,6 +411,7 @@ const dataEx = {
       date: new Date("2024-07-08"),
       location: [
         {
+          id: 1,
           address_name: "서울 중구 명동2가 25-36",
           kakaoMapId: "10332413",
           phone: "02-776-5348",
@@ -387,6 +423,34 @@ const dataEx = {
           category_group_name: "음식점",
           img_url:
             "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2FF3BDF45B8EC247F896E4FB7B7C2B5121",
+        },
+        {
+          id: 2,
+          address_name: "서울 중구 신당동 370-69",
+          kakaoMapId: "1065693087",
+          phone: "0507-1307-8750",
+          place_name: "금돼지식당",
+          place_url: "http://place.map.kakao.com/1065693087",
+          lat: 37.55705875134064,
+          lng: 127.01167974212188,
+          road_address_name: "서울 중구 다산로 149",
+          category_group_name: "음식점",
+          img_url:
+            "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F200912A4F807401FB463DA75478F7E65",
+        },
+        {
+          id: 3,
+          address_name: "서울 용산구 한강로1가 251-1",
+          kakaoMapId: "220597413",
+          phone: "02-794-8592",
+          place_name: "몽탄",
+          place_url: "http://place.map.kakao.com/220597413",
+          lat: 37.53599611679934,
+          lng: 126.97224578759753,
+          road_address_name: "서울 용산구 백범로99길 50",
+          category_group_name: "음식점",
+          img_url:
+            "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2F9D96CE0AF47646C48E7B41BF852F0E5E",
         },
       ],
       memo: [
@@ -429,6 +493,7 @@ const dataEx = {
       date: new Date("2024-07-09"),
       location: [
         {
+          id: 2,
           address_name: "서울 중구 신당동 370-69",
           kakaoMapId: "1065693087",
           phone: "0507-1307-8750",
@@ -482,6 +547,7 @@ const dataEx = {
       date: new Date("2024-07-10"),
       location: [
         {
+          id: 3,
           address_name: "서울 용산구 한강로1가 251-1",
           kakaoMapId: "220597413",
           phone: "02-794-8592",
@@ -546,6 +612,7 @@ interface FormData {
 }
 
 interface ILocation {
+  id: number;
   address_name: string;
   kakaoMapId: string;
   phone: string;
@@ -615,9 +682,13 @@ const Plan = () => {
   };
 
   const handleLocationChange = (infoBox: Imarkers) => {
+    //axios
+    const id = 0;
+
     setLocation((prev) => [
       ...prev,
       {
+        id,
         address_name: infoBox.address_name,
         kakaoMapId: infoBox.id,
         phone: infoBox.phone,
@@ -670,6 +741,11 @@ const Plan = () => {
     setComment(dataEx.dayPlan[index].comment);
   }, []);
 
+  const onLocationDeleteClicked = (index: number, id: number) => {
+    setLocation((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+    //axios
+  };
+
   const onMemoDeleteClicked = (index: number, id: number) => {
     setMemo((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
     //axios
@@ -680,6 +756,16 @@ const Plan = () => {
     // axios에서 id 받아옴
     setMemo((prev) => [...prev, { id: 1, content: memo }]);
     setValue("memo", "");
+  };
+
+  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+    if (!destination) return;
+    setLocation((prev) => {
+      const copy = [...prev];
+      const aa = copy.splice(source.index, 1);
+      copy.splice(destination?.index, 0, aa[0]);
+      return copy;
+    });
   };
 
   return (
@@ -747,21 +833,23 @@ const Plan = () => {
                     <FontAwesomeIcon icon={faPlus} />
                   </div>
                 </div>
-                {location.map((value, index) => (
-                  <LocationList
-                    key={index}
-                    $category_len={value.category_group_name.length}
-                  >
-                    <Link target="_blank" to={value.place_url}>
-                      <PlacePhoto $url={value.img_url} />
-                    </Link>
-                    <div>
-                      <div>{value.category_group_name}</div>
-                      <span>{value.place_name}</span>
-                      <span>{value.address_name}</span>
-                    </div>
-                  </LocationList>
-                ))}
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <Droppable droppableId="one">
+                    {(magic) => (
+                      <div ref={magic.innerRef} {...magic.droppableProps}>
+                        {location.map((value, index) => (
+                          <LocationList
+                            key={index}
+                            location={value}
+                            index={index}
+                            onDeleteClick={onLocationDeleteClicked}
+                          />
+                        ))}
+                        {magic.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
               </LocationListBox>
               <MemoCommentBox>
                 <MemoBox>

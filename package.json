@@ -19,6 +19,7 @@
     "dotenv": "^16.4.5",
     "framer-motion": "^11.1.9",
     "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
     "react-calendar": "^5.0.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.51.4",
@@ -56,5 +57,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://localhost:8080",
+  "devDependencies": {
+    "@types/react-beautiful-dnd": "^13.1.8"
+  }
 }
