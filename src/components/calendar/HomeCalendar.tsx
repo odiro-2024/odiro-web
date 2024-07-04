@@ -3,7 +3,7 @@ import { StyledCalendarContainer } from "./HomeCalendarStyles";
 import { format } from "date-fns";
 import Calendar from "react-calendar";
 import styled from "styled-components";
-import { color, mainColor } from "../color";
+import { color, mainColor } from "../../color";
 
 const TopLine = styled.div<{ $i: number }>`
   position: absolute;

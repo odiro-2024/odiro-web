@@ -1,5 +1,5 @@
 import React from "react";
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable } from "@hello-pangea/dnd";
 import styled from "styled-components";
 import { mainColor } from "../color";
 import { Link } from "react-router-dom";
@@ -110,7 +110,7 @@ interface IProps {
   onDeleteClick: any;
 }
 
-const LocationList = ({ location, index, onDeleteClick }: IProps) => {
+const DraggableLocation = ({ location, index, onDeleteClick }: IProps) => {
   const onClicked = (index: number, id: number) => {
     onDeleteClick(index, id);
   };
@@ -147,4 +147,4 @@ const LocationList = ({ location, index, onDeleteClick }: IProps) => {
   );
 };
 
-export default React.memo(LocationList);
+export default React.memo(DraggableLocation);

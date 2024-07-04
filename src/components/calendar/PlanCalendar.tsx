@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { StyledCalendarContainer } from "./PlanCalendarSyles";
+import { StyledCalendarContainer } from "./PlanCalendarStyles";
 import { format } from "date-fns";
 import Calendar from "react-calendar";
 import styled from "styled-components";
-import { mainColor } from "../color";
+import { mainColor } from "../../color";
 
 const Line = styled.div`
   position: absolute;

@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { mainColor } from "../color";
 import { useNavigate } from "react-router-dom";
-import { toggleEnroll, toggleLogin } from "../counterSlice";
+import { toggleSignup, toggleLogin } from "../counterSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import LoginForm from "./LoginForm";
-import EnrollForm from "./EnrollForm";
+import LoginForm from "./Login";
+import EnrollForm from "./Signup";
 
 const Container = styled.div`
   height: 80px;
@@ -76,11 +76,11 @@ const Header = () => {
     (state: RootState) => state.counter.loginClicked
   );
   const enrollClicked = useSelector(
-    (state: RootState) => state.counter.enrollClicked
+    (state: RootState) => state.counter.signupClicked
   );
 
   const onLoginClicked = () => dispatch(toggleLogin());
-  const onCreateClicked = () => dispatch(toggleEnroll());
+  const onCreateClicked = () => dispatch(toggleSignup());
 
   return (
     <Container>

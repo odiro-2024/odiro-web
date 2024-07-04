@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import HomeCalendar from "../components/HomeCalendar";
+import HomeCalendar from "../components/calendar/HomeCalendar";
 import Header from "../components/Header";
 import { mainColor } from "../color";
-import SelectDateForm from "../components/SelectDateForm";
+import SelectDateForm from "../components/calendar/SelectDate";
 import { useRef, useState } from "react";
 
 const Container = styled.div`

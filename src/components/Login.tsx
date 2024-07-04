@@ -4,7 +4,7 @@ import { faComment, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { toggleEnroll } from "../counterSlice";
+import { toggleLogin } from "../counterSlice";
 import { useRef, useState } from "react";
 import { mainColor } from "../color";
 
@@ -21,10 +21,10 @@ const Overlay = styled(motion.div)`
   z-index: 3;
 `;
 
-const EnrollBox = styled.div`
+const LoginBox = styled.div`
   max-width: 500px;
   width: 60%;
-  max-height: 680px;
+  max-height: 540px;
   height: 80%;
   border-radius: 5px;
   background-color: white;
@@ -34,7 +34,7 @@ const EnrollBox = styled.div`
   }
 `;
 
-const EnrollBoxHeader = styled.div`
+const LoginBoxHeader = styled.div`
   width: 100%;
   height: 65px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -46,7 +46,7 @@ const EnrollBoxHeader = styled.div`
     margin: 0 23px;
     &:first-child {
       font-family: "Times New Roman", Times, serif;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       font-size: 21px;
     }
     &:last-child {
@@ -57,7 +57,7 @@ const EnrollBoxHeader = styled.div`
   }
 `;
 
-const EnrollBoxContent = styled.div`
+const LoginBoxContent = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -75,7 +75,7 @@ const Form = styled.form`
 
 const Input = styled.input<{ $isvalid: string }>`
   width: 75%;
-  height: 45px;
+  height: 50px;
   border-radius: 20px;
   border: 1px solid
     ${({ $isvalid }) =>
@@ -83,9 +83,9 @@ const Input = styled.input<{ $isvalid: string }>`
   outline: none;
   text-indent: 15px;
   font-size: 15px;
-  margin-top: 15px;
+  margin-top: 20px;
   &:first-child {
-    margin-top: 45px;
+    margin-top: 70px;
   }
   &:focus {
     border-width: 2px;
@@ -103,7 +103,7 @@ const Button = styled.button`
   font-weight: 600;
   cursor: pointer;
   border: none;
-  margin-top: 40px;
+  margin-top: 50px;
   background-color: ${mainColor};
   color: white;
   &:last-child {
@@ -149,19 +149,16 @@ const overlayVariants = {
 interface FormData {
   id: string;
   password: string;
-  password2: string;
-  name: string;
-  email: string;
 }
 
-const EnrollForm = () => {
+const Login = () => {
   const modalRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [errorMsg] = useState("");
 
   const modalOutSideClick = (e: any) => {
     if (modalRef.current === e.target) {
-      dispatch(toggleEnroll());
+      dispatch(toggleLogin());
     }
   };
 
@@ -173,8 +170,8 @@ const EnrollForm = () => {
   } = useForm<FormData>();
 
   const onSubmitValid = () => {
-    const { id, password, password2, name, email } = getValues();
-    console.log(id, password, password2, name, email);
+    const { id, password } = getValues();
+    console.log(id, password);
   };
 
   return (
@@ -186,14 +183,14 @@ const EnrollForm = () => {
       ref={modalRef}
       onClick={(e: any) => modalOutSideClick(e)}
     >
-      <EnrollBox>
-        <EnrollBoxHeader>
-          <span>ENROLL</span>
-          <span onClick={() => dispatch(toggleEnroll())}>
+      <LoginBox>
+        <LoginBoxHeader>
+          <span>LOGIN</span>
+          <span onClick={() => dispatch(toggleLogin())}>
             <FontAwesomeIcon icon={faX} />
           </span>
-        </EnrollBoxHeader>
-        <EnrollBoxContent>
+        </LoginBoxHeader>
+        <LoginBoxContent>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <Input
               {...register("id", { required: true })}
@@ -212,32 +209,8 @@ const EnrollForm = () => {
               placeholder="비밀번호를 입력해주세요"
               $isvalid={!errors?.password ? "true" : "false"}
             />
-            <Input
-              {...register("password2", {
-                required: true,
-              })}
-              autoComplete="off"
-              type="password"
-              name="password2"
-              placeholder="비밀번호를 다시 입력해주세요"
-              $isvalid={!errors?.password2 ? "true" : "false"}
-            />{" "}
-            <Input
-              {...register("name", { required: true })}
-              type="text"
-              name="name"
-              placeholder="이름을 입력해주세요"
-              $isvalid={!errors?.name ? "true" : "false"}
-            />
-            <Input
-              {...register("email", { required: true })}
-              type="email"
-              name="email"
-              placeholder="이메일을 입력해주세요"
-              $isvalid={!errors?.email ? "true" : "false"}
-            />
             <ErrorMsg>{errorMsg}</ErrorMsg>
-            <Button>회원가입</Button>
+            <Button>로그인</Button>
             <Button>
               <FontAwesomeIcon
                 icon={faComment}
@@ -251,12 +224,12 @@ const EnrollForm = () => {
             <span>|</span>
             <span>비밀번호 찾기</span>
             <span>|</span>
-            <span>로그인</span>
+            <span>회원가입</span>
           </SearchDiv>
-        </EnrollBoxContent>
-      </EnrollBox>
+        </LoginBoxContent>
+      </LoginBox>
     </Overlay>
   );
 };
 
-export default EnrollForm;
+export default Login;

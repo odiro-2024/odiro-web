@@ -1,24 +1,27 @@
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import { mainColor } from "../color";
+import { mainColor } from "../../color";
 
 export const StyledCalendarContainer = styled.div`
   width: 80%;
-  max-width: 700px;
+  max-width: 350px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
-  margin-bottom: 100px;
+  position: absolute;
+  top: 50px;
+  right: -10px;
+  z-index: 3;
   .react-calendar {
-    width: 70%;
-    height: 600px;
     background-color: #fff;
     font-family: Arial, Helvetica, sans-serif;
-    line-height: 3em;
-    border-radius: 0.5rem;
+    line-height: 1.7em;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
     border: none;
-    padding: 5px;
+    padding: 10px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -27,7 +30,7 @@ export const StyledCalendarContainer = styled.div`
   //nav
   .react-calendar__navigation button {
     color: ${mainColor};
-    height: 50px;
+    height: 30px;
     margin: 25px 0;
     font-size: 20px;
     font-weight: bold;
@@ -49,20 +52,39 @@ export const StyledCalendarContainer = styled.div`
   abbr[title] {
     text-decoration: none;
     color: ${mainColor};
-    margin-top: 55px;
+    margin-top: 20px;
     display: block;
     font-size: 14px;
   }
   //타일 기본 설정
   .react-calendar__tile {
-    background-color: white;
+    border-radius: 50%;
     color: black;
-    position: relative;
-    padding: 10px 0;
+  }
+  //오늘 타일
+  .react-calendar__tile--now {
+    background-color: white;
+    &:hover {
+      background-color: #e6e6e6;
+    }
+  }
+  //선택중인 타일
+  .react-calendar__tile--hover {
+    background-color: #e6e6e6;
+  }
+  //선택된 타일
+  .react-calendar__tile--range {
+    background-color: #e6e6e6;
     &:hover,
     &:focus {
-      background-color: white;
-      color: black;
+      background-color: ${mainColor};
+      color: white;
     }
+  }
+  //선택된 타일 시작, 끝
+  .react-calendar__tile--rangeStart,
+  .react-calendar__tile--rangeEnd {
+    background-color: ${mainColor};
+    color: white;
   }
 `;

@@ -171,7 +171,7 @@ export interface Imarkers {
   img_url: string;
 }
 
-const SearchLocation = ({ onDataChange }: any) => {
+const Location = ({ onDataChange }: any) => {
   const [map, setMap] = useState<any>();
   const [infoBox, setInfoBox] = useState<Imarkers | null>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
@@ -320,4 +320,4 @@ const SearchLocation = ({ onDataChange }: any) => {
   );
 };
 
-export default SearchLocation;
+export default Location;

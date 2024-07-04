@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import Header from "../components/Header";
 import { mainColor } from "../color";
-import PlanCalendar from "../components/PlanCalendar";
+import PlanCalendar from "../components/calendar/PlanCalendar";
 import { useEffect, useState } from "react";
 import { CustomOverlayMap, Map } from "react-kakao-maps-sdk";
-import SearchLocation, { Imarkers } from "./SearchLocation";
+import Location, { Imarkers } from "../components/Location";
 import {
   faPlus,
   faPenToSquare,
@@ -18,8 +18,8 @@ import { format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { toggleLocation } from "../counterSlice";
-import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
-import LocationList from "../components/LocationList";
+import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
+import DraggableLocation from "../components/DraggableLocation";
 
 const Container = styled.div`
   width: 100%;
@@ -106,7 +106,7 @@ const BottomBox = styled.div`
   display: flex;
 `;
 
-const LocationListBox = styled.div`
+const LocationBox = styled.div`
   width: 55%;
   margin-right: 2%;
   border-radius: 10px;
@@ -141,78 +141,6 @@ const LocationListBox = styled.div`
     }
   }
 `;
-
-// const LocationList = styled.div<{ $category_len: number }>`
-//   margin: 5px 5px 0 15px;
-//   display: flex;
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   height: 100px;
-//   cursor: pointer;
-//   &:hover {
-//     border-radius: 15px;
-//     box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
-//     > div {
-//       &:nth-child(2) {
-//         transition-duration: 2s;
-//         opacity: 1;
-//       }
-//     }
-//   }
-
-//   > div {
-//     &:nth-child(1) {
-//       margin-left: 5px;
-//       display: flex;
-//       > span {
-//         font-size: 22px;
-//       }
-//       > div {
-//         display: flex;
-//         flex-direction: column;
-//         justify-content: center;
-//         div {
-//           background-color: ${mainColor};
-//           color: white;
-//           display: flex;
-//           justify-content: center;
-//           align-items: center;
-//           width: 60px;
-//           height: 25px;
-//           border-radius: 3px;
-//           font-size: ${({ $category_len }) =>
-//             $category_len > 3 ? "14px" : "16px"};
-//         }
-//         span {
-//           color: black;
-//           margin: 8px 0 0 0;
-//           &:first-child {
-//             font-size: 16px;
-//             font-weight: 600;
-//           }
-//           &:last-child {
-//             font-size: 15px;
-//             color: gray;
-//           }
-//         }
-//       }
-//     }
-//     &:nth-child(2) {
-//       opacity: 0;
-//       margin-right: 10px;
-//       background-color: #e67878;
-//       width: 40px;
-//       height: 40px;
-//       border-radius: 50%;
-//       color: white;
-//       display: flex;
-//       justify-content: center;
-//       align-items: center;
-//       font-size: 17px;
-//     }
-//   }
-// `;
 
 const PlacePhoto = styled.div<{ $url: string }>`
   width: 80px;
@@ -638,8 +566,8 @@ interface IComment {
 }
 
 const Plan = () => {
-  const [date, setDate] = useState<Date>(); // 2024-07-02, 2024-07-03
-  const [index, setIndex] = useState(0); // 0, 1, 2
+  const [date, setDate] = useState<Date>();
+  const [index, setIndex] = useState(0);
   const [map, setMap] = useState<any>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
   const [isMemoEditing, setIsMemoEditing] = useState(false);
@@ -650,12 +578,10 @@ const Plan = () => {
   var data = dataEx;
 
   const dispatch = useDispatch();
-
+  const onLocationClicked = () => dispatch(toggleLocation());
   const locationClicked = useSelector(
     (state: RootState) => state.counter.locationClicked
   );
-
-  const onLocationClicked = () => dispatch(toggleLocation());
 
   const { register, getValues, handleSubmit, setValue } = useForm<FormData>();
 
@@ -682,6 +608,18 @@ const Plan = () => {
   };
 
   const handleLocationChange = (infoBox: Imarkers) => {
+    const {
+      address_name,
+      id: kakaoMapId,
+      phone,
+      place_name,
+      place_url,
+      position: { lat, lng },
+      road_address_name,
+      category_group_name,
+      img_url,
+    } = infoBox;
+
     //axios
     const id = 0;
 
@@ -689,16 +627,16 @@ const Plan = () => {
       ...prev,
       {
         id,
-        address_name: infoBox.address_name,
-        kakaoMapId: infoBox.id,
-        phone: infoBox.phone,
-        place_name: infoBox.place_name,
-        place_url: infoBox.place_url,
-        lat: infoBox.position.lat,
-        lng: infoBox.position.lng,
-        road_address_name: infoBox.road_address_name,
-        category_group_name: infoBox.category_group_name || "미정",
-        img_url: infoBox.img_url,
+        address_name,
+        kakaoMapId,
+        phone,
+        place_name,
+        place_url,
+        lat,
+        lng,
+        road_address_name,
+        category_group_name: category_group_name || "미정",
+        img_url,
       },
     ]);
   };
@@ -741,24 +679,24 @@ const Plan = () => {
     setComment(dataEx.dayPlan[index].comment);
   }, []);
 
-  const onLocationDeleteClicked = (index: number, id: number) => {
+  const locationDeleteClicked = (index: number, id: number) => {
     setLocation((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
     //axios
   };
 
-  const onMemoDeleteClicked = (index: number, id: number) => {
+  const memoDeleteClicked = (index: number, id: number) => {
     setMemo((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
     //axios
   };
 
-  const onSubmitValid = () => {
+  const onMemoSubmit = () => {
     const { memo } = getValues();
     // axios에서 id 받아옴
     setMemo((prev) => [...prev, { id: 1, content: memo }]);
     setValue("memo", "");
   };
 
-  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+  const onDragEnd = ({ destination, source }: DropResult) => {
     if (!destination) return;
     setLocation((prev) => {
       const copy = [...prev];
@@ -826,7 +764,7 @@ const Plan = () => {
               ></PlanCalendar>
             </MiddleBox>
             <BottomBox>
-              <LocationListBox>
+              <LocationBox>
                 <div>
                   <span>Day {index + 1}</span>
                   <div onClick={onLocationClicked}>
@@ -834,15 +772,15 @@ const Plan = () => {
                   </div>
                 </div>
                 <DragDropContext onDragEnd={onDragEnd}>
-                  <Droppable droppableId="one">
+                  <Droppable droppableId="index">
                     {(magic) => (
                       <div ref={magic.innerRef} {...magic.droppableProps}>
                         {location.map((value, index) => (
-                          <LocationList
+                          <DraggableLocation
                             key={index}
                             location={value}
                             index={index}
-                            onDeleteClick={onLocationDeleteClicked}
+                            onDeleteClick={locationDeleteClicked}
                           />
                         ))}
                         {magic.placeholder}
@@ -850,7 +788,7 @@ const Plan = () => {
                     )}
                   </Droppable>
                 </DragDropContext>
-              </LocationListBox>
+              </LocationBox>
               <MemoCommentBox>
                 <MemoBox>
                   <div>
@@ -871,7 +809,7 @@ const Plan = () => {
                         <span>{value.content}</span>
                         {isMemoEditing ? (
                           <div
-                            onClick={() => onMemoDeleteClicked(index, value.id)}
+                            onClick={() => memoDeleteClicked(index, value.id)}
                           >
                             <FontAwesomeIcon icon={faX} />
                           </div>
@@ -880,7 +818,7 @@ const Plan = () => {
                     ))}
                   </div>
                   {isMemoEditing ? (
-                    <Form onSubmit={handleSubmit(onSubmitValid)}>
+                    <Form onSubmit={handleSubmit(onMemoSubmit)}>
                       <Input
                         {...register("memo", { required: true })}
                         type="text"
@@ -902,7 +840,7 @@ const Plan = () => {
             </BottomBox>
           </Container>
           {locationClicked ? (
-            <SearchLocation onDataChange={handleLocationChange} />
+            <Location onDataChange={handleLocationChange} />
           ) : null}
         </>
       )}

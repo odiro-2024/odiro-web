@@ -3,7 +3,7 @@ import { StyledCalendarContainer } from "./SelectDateStyles";
 import Calendar from "react-calendar";
 import { useState } from "react";
 import { format } from "date-fns";
-import { mainColor } from "../color";
+import { mainColor } from "../../color";
 import { useNavigate } from "react-router-dom";
 
 const Div = styled.div`

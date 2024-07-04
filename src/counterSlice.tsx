@@ -2,13 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface CounterState {
   loginClicked: boolean;
-  enrollClicked: boolean;
+  signupClicked: boolean;
   locationClicked: boolean;
 }
 
 const initialState: CounterState = {
   loginClicked: false,
-  enrollClicked: false,
+  signupClicked: false,
   locationClicked: false,
 };
 
@@ -19,8 +19,8 @@ export const counterSlice = createSlice({
     toggleLogin: (state) => {
       state.loginClicked = !state.loginClicked;
     },
-    toggleEnroll: (state) => {
-      state.enrollClicked = !state.enrollClicked;
+    toggleSignup: (state) => {
+      state.signupClicked = !state.signupClicked;
     },
     toggleLocation: (state) => {
       state.locationClicked = !state.locationClicked;
@@ -29,7 +29,7 @@ export const counterSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { toggleLogin, toggleEnroll, toggleLocation } =
+export const { toggleLogin, toggleSignup, toggleLocation } =
   counterSlice.actions;
 
 export default counterSlice.reducer;

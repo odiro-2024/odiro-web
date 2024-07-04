@@ -1,6 +1,6 @@
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import { mainColor } from "../color";
+import { mainColor } from "../../color";
 
 export const StyledCalendarContainer = styled.div`
   width: 40%;

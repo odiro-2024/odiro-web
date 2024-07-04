@@ -92,7 +92,7 @@ interface FormData {
   title: string;
 }
 
-const checkBoxList = [
+const checkBox = [
   "혼자만",
   "여럿이서",
   "느긋하게",
@@ -108,10 +108,10 @@ const checkBoxList = [
 ];
 
 const CreatePlan = () => {
-  const location = useLocation();
+  const navigate = useNavigate();
   const {
     state: { firstDay, lastDay },
-  } = location;
+  } = useLocation();
   const [checkBoxValue, setCheckBoxValue] = useState([
     false,
     false,
@@ -126,7 +126,6 @@ const CreatePlan = () => {
     false,
     false,
   ]);
-  const navigate = useNavigate();
 
   const {
     register,
@@ -138,7 +137,6 @@ const CreatePlan = () => {
   const onSubmitValid = () => {
     const { title } = getValues();
     const id = 1;
-
     axios
       .post("/plan/create", {
         memberId: id,
@@ -182,7 +180,7 @@ const CreatePlan = () => {
               $isvalid={!errors?.title ? "true" : "false"}
             />
             <CheckBoxs>
-              {checkBoxList.map((value, index) => (
+              {checkBox.map((value, index) => (
                 <CheckBox
                   key={index}
                   checked={checkBoxValue[index]}
