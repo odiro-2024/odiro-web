@@ -4,9 +4,10 @@ import { faComment, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { toggleSignup } from "../counterSlice";
+import { toggleLogin, toggleSignup } from "../counterSlice";
 import { useRef, useState } from "react";
 import { mainColor } from "../color";
+import axios from "axios";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -24,7 +25,7 @@ const Overlay = styled(motion.div)`
 const EnrollBox = styled.div`
   max-width: 500px;
   width: 60%;
-  max-height: 680px;
+  max-height: 610px;
   height: 80%;
   border-radius: 5px;
   background-color: white;
@@ -147,17 +148,16 @@ const overlayVariants = {
 };
 
 interface FormData {
-  id: string;
+  nickname: string;
   password: string;
   password2: string;
-  name: string;
   email: string;
 }
 
 const Signup = () => {
   const modalRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const [errorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const modalOutSideClick = (e: any) => {
     if (modalRef.current === e.target) {
@@ -173,8 +173,19 @@ const Signup = () => {
   } = useForm<FormData>();
 
   const onSubmitValid = () => {
-    const { id, password, password2, name, email } = getValues();
-    console.log(id, password, password2, name, email);
+    const { password, password2, nickname, email } = getValues();
+    axios
+      .post("/api/signup", {
+        nickname,
+        password,
+        email,
+      })
+      .then((res) => {
+        console.log(res.data);
+        dispatch(toggleSignup());
+        dispatch(toggleLogin());
+      })
+      .catch((error) => setErrorMsg(error.message));
   };
 
   return (
@@ -196,11 +207,11 @@ const Signup = () => {
         <EnrollBoxContent>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <Input
-              {...register("id", { required: true })}
+              {...register("nickname", { required: true })}
               type="text"
-              name="id"
-              placeholder="아이디를 입력해주세요"
-              $isvalid={!errors?.id ? "true" : "false"}
+              name="nickname"
+              placeholder="이름을 입력해주세요"
+              $isvalid={!errors?.nickname ? "true" : "false"}
             />
             <Input
               {...register("password", {
@@ -222,13 +233,7 @@ const Signup = () => {
               placeholder="비밀번호를 다시 입력해주세요"
               $isvalid={!errors?.password2 ? "true" : "false"}
             />
-            <Input
-              {...register("name", { required: true })}
-              type="text"
-              name="name"
-              placeholder="이름을 입력해주세요"
-              $isvalid={!errors?.name ? "true" : "false"}
-            />
+
             <Input
               {...register("email", { required: true })}
               type="email"

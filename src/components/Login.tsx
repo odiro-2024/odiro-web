@@ -7,6 +7,9 @@ import { useDispatch } from "react-redux";
 import { toggleLogin } from "../counterSlice";
 import { useRef, useState } from "react";
 import { mainColor } from "../color";
+import axios from "axios";
+import { logUserIn } from "../useUser";
+import { useNavigate } from "react-router-dom";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -147,14 +150,15 @@ const overlayVariants = {
 };
 
 interface FormData {
-  id: string;
+  nickname: string;
   password: string;
 }
 
 const Login = () => {
   const modalRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const [errorMsg] = useState("");
+  const navigate = useNavigate();
+  const [errorMsg, setErrorMsg] = useState("");
 
   const modalOutSideClick = (e: any) => {
     if (modalRef.current === e.target) {
@@ -170,8 +174,20 @@ const Login = () => {
   } = useForm<FormData>();
 
   const onSubmitValid = () => {
-    const { id, password } = getValues();
-    console.log(id, password);
+    const { nickname, password } = getValues();
+    axios
+      .post("/api/signin", {
+        nickname,
+        password,
+      })
+      .then((res) => {
+        const { data } = res;
+        logUserIn(data);
+        dispatch(toggleLogin());
+        navigate("/");
+        window.location.reload();
+      })
+      .catch((error) => setErrorMsg(error.message));
   };
 
   return (
@@ -193,11 +209,11 @@ const Login = () => {
         <LoginBoxContent>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <Input
-              {...register("id", { required: true })}
+              {...register("nickname", { required: true })}
               type="text"
-              name="id"
+              name="nickname"
               placeholder="아이디를 입력해주세요"
-              $isvalid={!errors?.id ? "true" : "false"}
+              $isvalid={!errors?.nickname ? "true" : "false"}
             />
             <Input
               {...register("password", {

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import LoginForm from "./Login";
 import EnrollForm from "./Signup";
+import { isLoggedInVar, logUserOut } from "../useUser";
 
 const Container = styled.div`
   height: 80px;
@@ -81,6 +82,11 @@ const Header = () => {
 
   const onLoginClicked = () => dispatch(toggleLogin());
   const onCreateClicked = () => dispatch(toggleSignup());
+  const onLogoutClicked = () => {
+    logUserOut();
+    navigate("/");
+    window.location.reload();
+  };
 
   return (
     <Container>
@@ -88,8 +94,14 @@ const Header = () => {
         <Logo onClick={() => navigate("/")}>ODIRO</Logo>
         <Column>
           <Span onClick={() => navigate("/")}>홈</Span>
-          <Span onClick={onCreateClicked}>회원가입</Span>
-          <Span onClick={onLoginClicked}>로그인</Span>
+          {isLoggedInVar ? (
+            <Span onClick={onLogoutClicked}>로그아웃</Span>
+          ) : (
+            <>
+              <Span onClick={onCreateClicked}>회원가입</Span>
+              <Span onClick={onLoginClicked}>로그인</Span>
+            </>
+          )}
         </Column>
       </Box>
       {loginClicked && <LoginForm />}
