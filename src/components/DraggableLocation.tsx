@@ -96,7 +96,7 @@ interface IProps {
   location: {
     id: number;
     address_name: string;
-    kakaoMapId: string;
+    kakao_map_id: string;
     phone: string;
     place_name: string;
     place_url: string;
@@ -117,8 +117,8 @@ const DraggableLocation = ({ location, index, onDeleteClick }: IProps) => {
 
   return (
     <Draggable
-      key={location.kakaoMapId}
-      draggableId={location.kakaoMapId}
+      key={location.kakao_map_id}
+      draggableId={location.kakao_map_id}
       index={index}
     >
       {(magic) => (

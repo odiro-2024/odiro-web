@@ -136,17 +136,18 @@ const CreatePlan = () => {
 
   const onSubmitValid = () => {
     const { title } = getValues();
-    const id = 1;
+
+    const first_day = firstDay.toISOString();
+    const last_day = lastDay.toISOString();
     axios
-      .post("/plan/create", {
-        memberId: id,
+      .post("/api/plan/create", {
         title,
-        firstDay,
-        lastDay,
+        first_day,
+        last_day,
       })
       .then((res) => {
-        const { planId } = res.data;
-        navigate(`/plan/${planId}`);
+        const { id } = res.data;
+        navigate(`/plan/${id}`);
       });
   };
 

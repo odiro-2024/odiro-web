@@ -9,18 +9,17 @@ import EnrollForm from "./Signup";
 import { isLoggedInVar, logUserOut } from "../useUser";
 
 const Container = styled.div`
-  height: 80px;
   width: 100%;
   position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 99;
+  z-index: 999;
   background-color: white;
   box-shadow: 0px 1px 15px 2px rgba(0, 0, 0, 0.05);
 `;
 
-const Box = styled.div`
+const Nav = styled.nav`
   @media (min-width: 750px) {
     width: 750px;
   }
@@ -38,29 +37,28 @@ const Box = styled.div`
   align-items: center;
 `;
 
-const Logo = styled.div`
+const Logo = styled.h1`
   color: ${mainColor};
   font-size: 30px;
   margin-left: 25px;
   cursor: pointer;
+  height: 80px;
+  align-content: center;
 `;
 
-const Column = styled.div`
+const Ul = styled.ul`
   margin-right: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const Span = styled.div`
-  font-weight: 600;
-  margin-left: 30px;
-  font-size: 15px;
-  padding: 20px 25px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 26px;
+const Li = styled.li`
+  font-weight: bold;
+  margin-left: 2rem;
+  font-size: 1rem;
+  padding: 1.2rem 1.5rem;
+  border-radius: 2rem;
   color: rgba(0, 0, 0, 0.8);
   cursor: pointer;
   &:hover {
@@ -90,20 +88,20 @@ const Header = () => {
 
   return (
     <Container>
-      <Box>
+      <Nav>
         <Logo onClick={() => navigate("/")}>ODIRO</Logo>
-        <Column>
-          <Span onClick={() => navigate("/")}>홈</Span>
+        <Ul>
+          <Li onClick={() => navigate("/")}>홈</Li>
           {isLoggedInVar ? (
-            <Span onClick={onLogoutClicked}>로그아웃</Span>
+            <Li onClick={onLogoutClicked}>로그아웃</Li>
           ) : (
             <>
-              <Span onClick={onCreateClicked}>회원가입</Span>
-              <Span onClick={onLoginClicked}>로그인</Span>
+              <Li onClick={onCreateClicked}>회원가입</Li>
+              <Li onClick={onLoginClicked}>로그인</Li>
             </>
           )}
-        </Column>
-      </Box>
+        </Ul>
+      </Nav>
       {loginClicked && <LoginForm />}
       {enrollClicked && <EnrollForm />}
     </Container>

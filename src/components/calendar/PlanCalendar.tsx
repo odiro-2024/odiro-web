@@ -18,20 +18,20 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece] | any;
 
 interface Props {
-  firstDay: Date;
-  lastDay: Date;
+  first_day: string;
+  last_day: string;
   onDataChange: any;
 }
 
-function PlanCalendar({ firstDay, lastDay, onDataChange }: Props) {
-  const [value] = useState<Value>(firstDay);
+function PlanCalendar({ first_day, last_day, onDataChange }: Props) {
+  const [value] = useState<Value>(first_day);
 
   const onClicked = (value: Date) => {
     onDataChange(value);
   };
 
   const isPlanHit = (date: Date) => {
-    return date >= firstDay && date <= lastDay;
+    return date.toISOString() >= first_day && date.toISOString() <= last_day;
   };
 
   return (

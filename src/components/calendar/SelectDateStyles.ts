@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { mainColor } from "../../color";
 
 export const StyledCalendarContainer = styled.div`
-  width: 80%;
+  width: 60%;
   max-width: 350px;
   display: flex;
   flex-direction: column;
@@ -11,15 +11,16 @@ export const StyledCalendarContainer = styled.div`
   justify-content: center;
   box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
   position: absolute;
-  top: 50px;
-  right: -10px;
-  z-index: 3;
+  top: -1rem;
+  right: -1rem;
+  z-index: 99;
+  border-radius: 0.5rem;
   .react-calendar {
+    width: 100%;
+    height: 100%;
     background-color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.7em;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
     border: none;
     padding: 10px;
     -webkit-user-select: none;

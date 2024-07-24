@@ -10,8 +10,6 @@ const Div = styled.div`
   width: 100%;
   height: 75px;
   background-color: white;
-  border-bottom-left-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -19,27 +17,24 @@ const Div = styled.div`
 
 const Button = styled.button`
   color: white;
-  font-size: 16px;
+  font-size: 1rem;
   width: 55px;
   height: 40px;
-  display: flex;
-  justify-content: center;
+  text-align: center;
   align-items: center;
   margin: 15px 10px;
   border-radius: 10px;
   background-color: ${mainColor};
   border: none;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: bold;
+  transition: 0.3s;
   &:hover {
     scale: 1.05;
   }
   &:disabled {
     opacity: 0.3;
     cursor: default;
-    &:hover {
-      scale: 1;
-    }
   }
 `;
 

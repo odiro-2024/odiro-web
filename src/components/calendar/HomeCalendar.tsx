@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StyledCalendarContainer } from "./HomeCalendarStyles";
 import { format } from "date-fns";
 import Calendar from "react-calendar";
 import styled from "styled-components";
 import { color, mainColor } from "../../color";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import SelectDateForm from "./SelectDate";
 
 const TopLine = styled.div<{ $i: number }>`
   position: absolute;
@@ -50,59 +53,106 @@ const ScheduleBox = styled.div`
   }
 `;
 
-const Plan = [
-  { id: 1, title: "Plan1", first_day: "2024-05-18", last_day: "2024-05-23" },
-  { id: 2, title: "Plan2", first_day: "2024-05-23", last_day: "2024-05-28" },
-  { id: 3, title: "Plan3", first_day: "2024-06-08", last_day: "2024-06-13" },
-  { id: 4, title: "Plan4", first_day: "2024-06-12", last_day: "2024-06-18" },
-];
-
-const chooseLine: number[] = [];
-for (var i = 0; i < Plan.length; i++) {
-  if (i === 0) {
-    chooseLine.push(1);
-    continue;
-  } else if (Plan[i].first_day <= Plan[i - 1].last_day) {
-    if (chooseLine[i - 1] === 1) {
-      chooseLine.push(2);
-      continue;
-    }
-    if (chooseLine[i - 1] === 2) {
-      chooseLine.push(1);
-      continue;
-    }
-  } else {
-    chooseLine.push(1);
+const MakePlanBtn = styled.div`
+  position: absolute;
+  top: -3.5rem;
+  right: 0;
+  background-color: ${mainColor};
+  width: 85px;
+  height: 40px;
+  border-radius: 20px;
+  text-align: center;
+  align-content: center;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
+  transform-origin: center;
+  &:hover {
+    scale: 1.08;
   }
-}
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+`;
 
 type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece] | any;
 
-interface schedule {
+interface Ischedule {
   id: number;
   title: string;
 }
 
+interface Iplan {
+  id: number;
+  title: string;
+  first_day: string;
+  last_day: string;
+}
+
 function HomeCalendar() {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [modalShow, setModalShow] = useState(false);
+
+  const modalOutSideClick = (e: any) => {
+    if (modalRef.current === e.target) {
+      setModalShow(false);
+    }
+  };
   const [value, setValue] = useState<Value>(new Date());
-  const [schedule, setSchedule] = useState<schedule[]>([]);
+  const [schedule, setSchedule] = useState<Ischedule[]>([]);
+  const navigate = useNavigate();
+  const [plan, setPlan] = useState<Iplan[]>([]);
+  const chooseLine: number[] = [];
+  for (var i = 0; i < plan.length; i++) {
+    if (i === 0) {
+      chooseLine.push(1);
+      continue;
+    } else if (plan[i].first_day <= plan[i - 1].last_day) {
+      if (chooseLine[i - 1] === 1) {
+        chooseLine.push(2);
+        continue;
+      }
+      if (chooseLine[i - 1] === 2) {
+        chooseLine.push(1);
+        continue;
+      }
+    } else {
+      chooseLine.push(1);
+    }
+  }
+
+  useEffect(() => {
+    axios.get("/api/home").then((res) => {
+      const { data } = res;
+      setPlan(data);
+      console.log(data);
+    });
+  }, []);
 
   useEffect(() => {
     setSchedule([]);
-    for (let i = 0; i < Plan.length; i++) {
+    for (let i = 0; i < plan.length; i++) {
       const isPlanHit =
-        format(value, "yyyy-MM-dd") >= Plan[i].first_day &&
-        format(value, "yyyy-MM-dd") <= Plan[i].last_day;
+        format(value, "yyyy-MM-dd") >= plan[i].first_day &&
+        format(value, "yyyy-MM-dd") <= plan[i].last_day;
       if (isPlanHit) {
         setSchedule((prev) => [
           ...prev,
-          { id: Plan[i].id, title: Plan[i].title },
+          { id: plan[i].id, title: plan[i].title },
         ]);
       }
     }
-  }, [value]);
+  }, [plan, value]);
 
   const onClicked = (value: any) => {
     setValue(value);
@@ -110,6 +160,17 @@ function HomeCalendar() {
 
   return (
     <StyledCalendarContainer>
+      {" "}
+      <MakePlanBtn onClick={() => setModalShow(true)}>새 여행</MakePlanBtn>
+      {modalShow && (
+        <>
+          <Overlay
+            ref={modalRef}
+            onClick={(e: any) => modalOutSideClick(e)}
+          ></Overlay>
+          <SelectDateForm></SelectDateForm>
+        </>
+      )}
       <Calendar
         value={value}
         onClickDay={(value) => onClicked(value)}
@@ -119,14 +180,13 @@ function HomeCalendar() {
         showNeighboringMonth={false}
         showFixedNumberOfWeeks={false}
         tileContent={({ date }) =>
-          Plan.map((value, index) => {
+          plan.map((value, index) => {
             const isPlanHit =
               format(date, "yyyy-MM-dd") >= value.first_day &&
               format(date, "yyyy-MM-dd") <= value.last_day;
             if (!isPlanHit) {
               return null;
             }
-
             if (chooseLine[index] === 1) {
               return (
                 <TopLine
@@ -152,7 +212,11 @@ function HomeCalendar() {
         <span>Schedule</span>
         <div>{format(value, "yyyy년 MM월 dd일")}</div>
         {schedule.map((value, index) => (
-          <span key={index} style={{ cursor: "pointer" }}>
+          <span
+            key={index}
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate(`/plan/${value.id}`)}
+          >
             {value.title}
           </span>
         ))}

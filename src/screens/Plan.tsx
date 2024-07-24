@@ -14,12 +14,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import { format } from "date-fns";
+import { isSameDay } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { toggleLocation } from "../counterSlice";
 import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
 import DraggableLocation from "../components/DraggableLocation";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -199,7 +201,7 @@ const MemoList = styled.div`
   height: 30px;
   margin: 0 8px 15px 10px;
   span {
-    font-size: 19px;
+    font-size: 17px;
   }
   div {
     background-color: #e67878;
@@ -216,7 +218,7 @@ const MemoList = styled.div`
 `;
 
 const Form = styled.form`
-  margin: 50px 0 10px 10px;
+  margin: 10px 0 10px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -253,27 +255,75 @@ const CommentBox = styled.div`
   border: 1px solid ${mainColor};
   border-radius: 10px;
   color: #252525;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   > div {
-    display: flex;
-    justify-content: space-between;
-    span {
-      font-size: 20px;
-      font-weight: 600;
-      margin: 10px;
-      display: block;
-    }
     div {
+      &:nth-child(2) {
+        display: flex;
+        flex-direction: column-reverse;
+        max-height: 250px;
+        overflow-y: auto;
+      }
+    }
+  }
+`;
+
+const CommentHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 5px 30px 10px;
+  span {
+    font-size: 20px;
+    font-weight: 600;
+    display: block;
+  }
+`;
+
+const CommentListNotMe = styled.div`
+  margin: 15px 10px 10px 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: end;
+  span {
+    &:first-child {
+      padding: 9px 13px;
+      border-radius: 17px;
       background-color: ${mainColor};
-      width: 40px;
-      height: 40px;
-      margin: 5px 5px 0 0;
-      border-radius: 20px;
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       font-size: 17px;
-      cursor: pointer;
+      margin-right: 5px;
+      max-width: 60%;
+      word-break: break-all;
+      line-height: 20px;
+    }
+    &:last-child {
+      font-size: 12px;
+    }
+  }
+`;
+
+const CommentListMe = styled.div`
+  margin: 15px 10px 10px 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: end;
+  span {
+    &:first-child {
+      font-size: 12px;
+    }
+    &:last-child {
+      padding: 10px 13px;
+      border-radius: 17px;
+      background-color: ${mainColor};
+      color: white;
+      font-size: 17px;
+      margin-left: 5px;
+      max-width: 60%;
+      word-break: break-all;
+      line-height: 20px;
     }
   }
 `;
@@ -294,9 +344,10 @@ const checkBoxList = [
 ];
 
 const dataEx = {
+  id: 1,
   title: "여행 타이틀 입니다",
-  firstDay: new Date("2024-07-07"),
-  lastDay: new Date("2024-07-11"),
+  first_day: "2024-07-01T15:00:00",
+  last_day: "2024-07-01T15:00:00",
   checkBoxValue: [
     false,
     false,
@@ -311,37 +362,37 @@ const dataEx = {
     true,
     true,
   ],
-  initializer: {
+  owner: {
     id: 1,
     name: "name1",
     email: "1@1",
-    profileImage: "@",
+    profile_img: "@",
   },
-  participants: [
+  participant: [
     {
-      id: 1,
+      id: 2,
       name: "name1",
       email: "1@1",
-      profileImage:
+      profile_img:
         "https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=11288960&filePath=L2Rpc2sxL25ld2RhdGEvMjAxNS8wMi9DTFM2OS9OVVJJXzAwMV8wNDQ2X251cmltZWRpYV8yMDE1MTIwMw==&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10006",
     },
     {
       id: 2,
       name: "name2",
       email: "2@2",
-      profileImage:
+      profile_img:
         "https://png.pngtree.com/thumb_back/fw800/background/20231219/pngtree-pink-pastel-background-with-pink-aesthetic-sky-image_15522922.png",
     },
   ],
-  dayPlan: [
+  day_plan: [
     {
       id: 1,
-      date: new Date("2024-07-08"),
+      date: "2024-07-01T15:00:00",
       location: [
         {
           id: 1,
           address_name: "서울 중구 명동2가 25-36",
-          kakaoMapId: "10332413",
+          kakao_map_id: "10332413",
           phone: "02-776-5348",
           place_name: "명동교자 본점",
           place_url: "http://place.map.kakao.com/10332413",
@@ -355,7 +406,7 @@ const dataEx = {
         {
           id: 2,
           address_name: "서울 중구 신당동 370-69",
-          kakaoMapId: "1065693087",
+          kakao_map_id: "1065693087",
           phone: "0507-1307-8750",
           place_name: "금돼지식당",
           place_url: "http://place.map.kakao.com/1065693087",
@@ -369,7 +420,7 @@ const dataEx = {
         {
           id: 3,
           address_name: "서울 용산구 한강로1가 251-1",
-          kakaoMapId: "220597413",
+          kakao_map_id: "220597413",
           phone: "02-794-8592",
           place_name: "몽탄",
           place_url: "http://place.map.kakao.com/220597413",
@@ -398,32 +449,32 @@ const dataEx = {
       comment: [
         {
           id: 1,
-          userId: 1,
-          content: "comment1",
-          createAt: new Date("2024-07-13"),
+          member_id: 2,
+          content: "comment 1",
+          created_at: "2024-07-01T15:00:00",
         },
         {
           id: 2,
-          userId: 1,
-          content: "comment2",
-          createAt: new Date("2024-07-14"),
+          member_id: 2,
+          content: "comment 2",
+          created_at: "2024-07-01T15:00:00",
         },
         {
           id: 3,
-          userId: 1,
-          content: "comment3",
-          createAt: new Date("2024-07-15"),
+          member_id: 1,
+          content: "comment 3 comment3comment3comment3",
+          created_at: "2024-07-01T15:00:00",
         },
       ],
     },
     {
       id: 2,
-      date: new Date("2024-07-09"),
+      date: "2024-07-01T15:00:00",
       location: [
         {
           id: 2,
           address_name: "서울 중구 신당동 370-69",
-          kakaoMapId: "1065693087",
+          kakao_map_id: "1065693087",
           phone: "0507-1307-8750",
           place_name: "금돼지식당",
           place_url: "http://place.map.kakao.com/1065693087",
@@ -452,32 +503,20 @@ const dataEx = {
       comment: [
         {
           id: 4,
-          userId: 1,
+          member_id: 1,
           content: "comment4",
-          createAt: new Date("2024-07-13"),
-        },
-        {
-          id: 5,
-          userId: 1,
-          content: "comment5",
-          createAt: new Date("2024-07-14"),
-        },
-        {
-          id: 6,
-          userId: 1,
-          content: "comment6",
-          createAt: new Date("2024-07-15"),
+          created_at: "2024-07-01T15:00:00",
         },
       ],
     },
     {
       id: 3,
-      date: new Date("2024-07-10"),
+      date: "2024-07-01T15:00:00",
       location: [
         {
           id: 3,
           address_name: "서울 용산구 한강로1가 251-1",
-          kakaoMapId: "220597413",
+          kakao_map_id: "220597413",
           phone: "02-794-8592",
           place_name: "몽탄",
           place_url: "http://place.map.kakao.com/220597413",
@@ -506,27 +545,27 @@ const dataEx = {
       comment: [
         {
           id: 7,
-          userId: 1,
+          member_id: 1,
           content: "comment7",
-          createAt: new Date("2024-07-13"),
+          created_at: "2024-07-01T15:00:00",
         },
         {
           id: 8,
-          userId: 1,
+          member_id: 1,
           content: "comment8",
-          createAt: new Date("2024-07-14"),
+          created_at: "2024-07-01T15:00:00",
         },
         {
           id: 9,
-          userId: 1,
+          member_id: 1,
           content: "comment9",
-          createAt: new Date("2024-07-15"),
+          created_at: "2024-07-01T15:00:00",
         },
       ],
     },
     {
       id: 4,
-      date: new Date("2024-07-11"),
+      date: "2024-07-01T15:00:00",
       location: [],
       memo: [],
       comment: [],
@@ -534,15 +573,36 @@ const dataEx = {
   ],
 };
 
-interface FormData {
-  memo: string;
-  comment: string;
+interface IData {
+  id: number;
+  title: string;
+  first_day: string;
+  last_day: string;
+  checkBoxValue: boolean[];
+  owner: IOwner;
+  participant: IOwner[];
+  day_plan: IDayPlan[];
+}
+
+interface IOwner {
+  id: number;
+  name: string;
+  email: string;
+  profile_img: string;
+}
+
+interface IDayPlan {
+  id: number;
+  date: string;
+  location: ILocation[];
+  memo: IMemo[];
+  comment: IComment[];
 }
 
 interface ILocation {
   id: number;
   address_name: string;
-  kakaoMapId: string;
+  kakao_map_id: string;
   phone: string;
   place_name: string;
   place_url: string;
@@ -560,12 +620,18 @@ interface IMemo {
 
 interface IComment {
   id: number;
-  userId: number;
+  member_id: number;
   content: string;
-  createAt: Date;
+  created_at: string;
+}
+
+interface FormData {
+  memo: string;
+  comment: string;
 }
 
 const Plan = () => {
+  let { id } = useParams();
   const [date, setDate] = useState<Date>();
   const [index, setIndex] = useState(0);
   const [map, setMap] = useState<any>();
@@ -575,7 +641,8 @@ const Plan = () => {
   const [location, setLocation] = useState<ILocation[]>([]);
   const [memo, setMemo] = useState<IMemo[]>([]);
   const [comment, setComment] = useState<IComment[]>([]);
-  var data = dataEx;
+  const [data, setData] = useState<IData>(dataEx);
+  //var data = dataEx;
 
   const dispatch = useDispatch();
   const onLocationClicked = () => dispatch(toggleLocation());
@@ -586,22 +653,41 @@ const Plan = () => {
   const { register, getValues, handleSubmit, setValue } = useForm<FormData>();
 
   const handleDateChange = (value: Date) => {
-    data.dayPlan[index].location = location;
-    data.dayPlan[index].memo = memo;
-    data.dayPlan[index].comment = comment;
+    setData({
+      id: data.id,
+      title: data.title,
+      first_day: data.first_day,
+      last_day: data.last_day,
+      checkBoxValue: data.checkBoxValue,
+      owner: data.owner,
+      participant: data.participant,
+      day_plan: data.day_plan.map((v, i) => {
+        if (i !== index) {
+          return v;
+        } else {
+          return {
+            id: v.id,
+            date: v.date,
+            location,
+            memo,
+            comment,
+          };
+        }
+      }),
+    });
 
     var newindex = 0;
-    data.dayPlan.forEach((item, index) => {
-      if (format(value, "yyyy-MM-dd") === format(item.date, "yyyy-MM-dd")) {
+    data.day_plan.forEach((item: IDayPlan, index: number) => {
+      if (value.toISOString().slice(0, 10) === item.date.slice(0, 10)) {
         newindex = index;
       }
     });
     setDate(value);
     setIndex(newindex);
 
-    setLocation(data.dayPlan[newindex].location);
-    setMemo(data.dayPlan[newindex].memo);
-    setComment(data.dayPlan[newindex].comment);
+    setLocation(data.day_plan[newindex].location);
+    setMemo(data.day_plan[newindex].memo);
+    setComment(data.day_plan[newindex].comment);
 
     setIsMemoEditing(false);
     setIsCommentEditing(false);
@@ -610,7 +696,7 @@ const Plan = () => {
   const handleLocationChange = (infoBox: Imarkers) => {
     const {
       address_name,
-      id: kakaoMapId,
+      id: kakao_map_id,
       phone,
       place_name,
       place_url,
@@ -620,15 +706,11 @@ const Plan = () => {
       img_url,
     } = infoBox;
 
-    //axios
-    const id = 0;
-
-    setLocation((prev) => [
-      ...prev,
-      {
-        id,
+    axios
+      .post(`/api/plan/location/create`, {
+        day_plan_id: data.day_plan[index].id,
         address_name,
-        kakaoMapId,
+        kakao_map_id,
         phone,
         place_name,
         place_url,
@@ -637,9 +719,39 @@ const Plan = () => {
         road_address_name,
         category_group_name: category_group_name || "미정",
         img_url,
-      },
-    ]);
+      })
+      .then((res) => {
+        const {
+          data: { id },
+        } = res;
+        setLocation((prev) => [
+          ...prev,
+          {
+            id,
+            address_name,
+            kakao_map_id,
+            phone,
+            place_name,
+            place_url,
+            lat,
+            lng,
+            road_address_name,
+            category_group_name: category_group_name || "미정",
+            img_url,
+          },
+        ]);
+      });
   };
+
+  useEffect(() => {
+    axios.get(`/api/plan/${id}`).then((res) => {
+      const { data } = res;
+      setData(data);
+      setLocation(data.day_plan[index].location);
+      setMemo(data.day_plan[index].memo);
+      setComment(data.day_plan[index].comment);
+    });
+  }, []);
 
   useEffect(() => {
     if (location.length !== 0) {
@@ -650,7 +762,7 @@ const Plan = () => {
         // @ts-ignore
         markers.push({
           address_name: location[i].address_name,
-          id: location[i].kakaoMapId,
+          id: location[i].kakao_map_id,
           phone: location[i].phone,
           place_name: location[i].place_name,
           place_url: location[i].place_url,
@@ -660,6 +772,7 @@ const Plan = () => {
             lng: +location[i].lng,
           },
           img_url: location[i].img_url,
+          category_group_name: location[i].category_group_name,
         });
         // @ts-ignore
         bounds.extend(new kakao.maps.LatLng(location[i].lat, location[i].lng));
@@ -671,29 +784,80 @@ const Plan = () => {
       bounds.extend(new kakao.maps.LatLng(37.566826, 126.9786567));
       map?.setBounds(bounds);
     }
-  }, [location]);
-
-  useEffect(() => {
-    setLocation(dataEx.dayPlan[index].location);
-    setMemo(dataEx.dayPlan[index].memo);
-    setComment(dataEx.dayPlan[index].comment);
-  }, []);
+  }, [map, location]);
 
   const locationDeleteClicked = (index: number, id: number) => {
-    setLocation((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-    //axios
+    axios.delete(`/api/location/delete/${id}`).then((res) => {
+      const { data, status } = res;
+      console.log(data, status);
+      setLocation((prev) => [
+        ...prev.slice(0, index),
+        ...prev.slice(index + 1),
+      ]);
+    });
   };
 
   const memoDeleteClicked = (index: number, id: number) => {
-    setMemo((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-    //axios
+    axios.delete(`/api/memo/delete/${id}`).then((res) => {
+      const { status } = res;
+      if (status === 204) {
+        setMemo((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
+      }
+    });
   };
 
   const onMemoSubmit = () => {
     const { memo } = getValues();
-    // axios에서 id 받아옴
-    setMemo((prev) => [...prev, { id: 1, content: memo }]);
-    setValue("memo", "");
+    if (!memo) return;
+    axios
+      .post("/api/memo/create", {
+        day_plan_id: data.day_plan[index].id,
+        content: memo,
+      })
+      .then((res) => {
+        const {
+          data: { id },
+        } = res;
+        setMemo((prev) => [...prev, { id, content: memo }]);
+        setValue("memo", "");
+      });
+  };
+
+  const onCommentSubmit = () => {
+    const { comment } = getValues();
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (!comment) return;
+    axios
+      .post(
+        "/api/comment/create",
+        {
+          day_plan_id: data.day_plan[index].id,
+          content: comment,
+        }
+        // {
+        //   headers: {
+        //     Authorization: `Bear ${accessToken}`,
+        //     refresh: `${refreshToken}`,
+        //   },
+        // }
+      )
+      .then((res) => {
+        const {
+          data: { write_time, comment_id },
+        } = res;
+        setComment((prev) => [
+          ...prev,
+          {
+            id: comment_id,
+            content: comment,
+            member_id: 1,
+            created_at: write_time,
+          },
+        ]);
+        setValue("comment", "");
+      });
   };
 
   const onDragEnd = ({ destination, source }: DropResult) => {
@@ -706,6 +870,15 @@ const Plan = () => {
     });
   };
 
+  const formatDate = (date: string) => {
+    const hour = +date.slice(11, 13);
+    const min = +date.slice(14, 16);
+    const atNoon = hour >= 12 ? "오후" : "오전";
+    const newHour = hour > 12 ? hour - 12 : hour;
+    const newMin = min < 10 ? `0${min}` : min;
+    return `${atNoon} ${newHour}:${newMin}`;
+  };
+
   return (
     <>
       {data && (
@@ -714,7 +887,7 @@ const Plan = () => {
           <Container>
             <TopBox>
               <CheckBoxs>
-                {data.checkBoxValue.map((value: boolean, index: number) => {
+                {dataEx.checkBoxValue.map((value: boolean, index: number) => {
                   return value ? (
                     <CheckBox key={index}>{checkBoxList[index]}</CheckBox>
                   ) : null;
@@ -722,8 +895,8 @@ const Plan = () => {
               </CheckBoxs>
               <Title>{data.title}</Title>
               <AvatarBox>
-                {data.participants.slice(0, 2).map((value, index) => (
-                  <Avatar key={index} $avatarurl={value.profileImage}></Avatar>
+                {data.participant.slice(0, 2).map((value, index) => (
+                  <Avatar key={index} $avatarurl={value.profile_img}></Avatar>
                 ))}
               </AvatarBox>
             </TopBox>
@@ -758,8 +931,8 @@ const Plan = () => {
                 </Map>
               </MapBox>
               <PlanCalendar
-                firstDay={data.firstDay}
-                lastDay={data.lastDay}
+                first_day={data.first_day}
+                last_day={data.last_day}
                 onDataChange={handleDateChange}
               ></PlanCalendar>
             </MiddleBox>
@@ -820,7 +993,7 @@ const Plan = () => {
                   {isMemoEditing ? (
                     <Form onSubmit={handleSubmit(onMemoSubmit)}>
                       <Input
-                        {...register("memo", { required: true })}
+                        {...register("memo")}
                         type="text"
                         name="memo"
                         placeholder="메모를 작성하세요."
@@ -833,8 +1006,40 @@ const Plan = () => {
                 </MemoBox>
                 <CommentBox>
                   <div>
-                    <span>댓글</span>
+                    <CommentHeader>
+                      <span>댓글</span>
+                    </CommentHeader>
+                    <div>
+                      {comment.map((value, index) => {
+                        if (value.member_id === 1) {
+                          return (
+                            <CommentListMe key={index}>
+                              <span>{formatDate(value.created_at)}</span>
+                              <span>{value.content}</span>
+                            </CommentListMe>
+                          );
+                        } else {
+                          return (
+                            <CommentListNotMe key={index}>
+                              <span>{value.content}</span>
+                              <span>{formatDate(value.created_at)}</span>
+                            </CommentListNotMe>
+                          );
+                        }
+                      })}
+                    </div>
                   </div>
+                  <Form onSubmit={handleSubmit(onCommentSubmit)}>
+                    <Input
+                      {...register("comment")}
+                      type="text"
+                      name="comment"
+                      placeholder="댓글 달기..."
+                    />
+                    <button>
+                      <FontAwesomeIcon icon={faArrowUp} />
+                    </button>
+                  </Form>
                 </CommentBox>
               </MemoCommentBox>
             </BottomBox>

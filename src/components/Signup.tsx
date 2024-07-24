@@ -115,6 +115,26 @@ const Button = styled.button`
   }
 `;
 
+const KakaoBtn = styled.div`
+  width: 75%;
+  height: 50px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 19px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  margin-top: 50px;
+  background-color: ${mainColor};
+  color: white;
+  margin-top: 15px;
+  background-color: yellow;
+  color: black;
+  font-size: 18px;
+`;
+
 const ErrorMsg = styled.span`
   color: #df4d4d;
   font-size: 15px;
@@ -188,6 +208,14 @@ const Signup = () => {
       .catch((error) => setErrorMsg(error.message));
   };
 
+  const rest_api_key = process.env.REACT_APP_REST_API_KEY;
+  const redirect_uri = process.env.REACT_APP_REDIRECT_URI;
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
+
+  const onKakaoClicked = () => {
+    window.location.href = KAKAO_AUTH_URL;
+  };
+
   return (
     <Overlay
       variants={overlayVariants}
@@ -243,13 +271,13 @@ const Signup = () => {
             />
             <ErrorMsg>{errorMsg}</ErrorMsg>
             <Button>회원가입</Button>
-            <Button>
+            <KakaoBtn onClick={onKakaoClicked}>
               <FontAwesomeIcon
                 icon={faComment}
                 style={{ fontSize: "27px", marginRight: "12px" }}
               />
               카카오 로그인
-            </Button>
+            </KakaoBtn>
           </Form>
           <SearchDiv>
             <span>아이디 찾기</span>
