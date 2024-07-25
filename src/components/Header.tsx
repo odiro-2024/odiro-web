@@ -7,70 +7,130 @@ import { RootState } from "../store";
 import LoginForm from "./Login";
 import EnrollForm from "./Signup";
 import { isLoggedInVar, logUserOut } from "../useUser";
+import { g1 } from "./../color";
+import { useState } from "react";
 
-const Container = styled.div`
+const Container = styled.header`
   width: 100%;
   position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 9;
   background-color: white;
   box-shadow: 0px 1px 15px 2px rgba(0, 0, 0, 0.05);
 `;
 
 const Nav = styled.nav`
-  @media (min-width: 750px) {
-    width: 750px;
-  }
-  @media (min-width: 1050px) {
-    width: 1050px;
-  }
-  @media (min-width: 1300px) {
-    width: 1300px;
-  }
-  @media (min-width: 1500px) {
-    width: 1500px;
-  }
+  width: 100%;
+  max-width: 1200px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 2rem;
+  @media (max-width: 480px) {
+    padding: 0 1rem;
+  }
 `;
 
 const Logo = styled.h1`
   color: ${mainColor};
-  font-size: 30px;
-  margin-left: 25px;
+  font-size: 2rem;
   cursor: pointer;
   height: 80px;
   align-content: center;
 `;
 
-const Ul = styled.ul`
-  margin-right: 50px;
+const Gnb = styled.ul<{ $active: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  li {
+    font-weight: bold;
+    margin-left: 2rem;
+    font-size: 1rem;
+    padding: 1.2rem 1.5rem;
+    border-radius: 2rem;
+    color: rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    &:hover {
+      background-color: ${mainColor};
+      color: white;
+    }
+  }
+  @media (max-width: 960px) {
+    display: block;
+    position: fixed;
+    width: ${(props) => (props.$active ? "15rem" : "0")};
+    height: 100%;
+    background-color: white;
+    transition: 0.3s;
+    top: 0;
+    right: 0;
+    z-index: 99;
+    box-shadow: 0px 1px 15px 2px rgba(0, 0, 0, 0.05);
+    padding: 6rem 0;
+    li {
+      margin: 0 1rem;
+    }
+  }
+  @media (max-width: 480px) {
+    width: 100%;
+    display: ${(props) => (props.$active ? "flex" : "none")};
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
 `;
 
-const Li = styled.li`
-  font-weight: bold;
-  margin-left: 2rem;
-  font-size: 1rem;
-  padding: 1.2rem 1.5rem;
-  border-radius: 2rem;
-  color: rgba(0, 0, 0, 0.8);
+const HamBtn = styled.button<{ $active: boolean }>`
+  background-color: transparent;
+  border: none;
+  font-size: 1.8rem;
+  position: relative;
+  z-index: 999;
   cursor: pointer;
-  &:hover {
-    background-color: ${mainColor};
-    color: white;
+  display: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  span {
+    width: 100%;
+    height: ${(props) => (props.$active ? "0px" : "4px")};
+    display: block;
+    border-radius: 3px;
+    background-color: ${g1};
+    position: relative;
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 4px;
+      display: block;
+      border-radius: 3px;
+      background-color: ${g1};
+      top: ${(props) => (props.$active ? "50%" : "-10px")};
+      left: ${(props) => (props.$active ? "50%" : "0")};
+      transform: ${(props) =>
+        props.$active ? "translate(-50%, -50%) rotate(45deg)" : null};
+      transition: 0.3s;
+    }
+    &::after {
+      top: ${(props) => (props.$active ? "50%" : "10px")};
+      transform: ${(props) =>
+        props.$active ? "translate(-50%, -50%) rotate(-45deg)" : null};
+    }
+  }
+  @media (max-width: 960px) {
+    display: block;
   }
 `;
 
 const Header = () => {
+  const [isHamActive, setIsHamActive] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const loginClicked = useSelector(
     (state: RootState) => state.counter.loginClicked
   );
@@ -89,18 +149,24 @@ const Header = () => {
   return (
     <Container>
       <Nav>
-        <Logo onClick={() => navigate("/")}>ODIRO</Logo>
-        <Ul>
-          <Li onClick={() => navigate("/")}>홈</Li>
+        <Logo onClick={() => navigate("/")}>Odiro</Logo>
+        <Gnb $active={isHamActive}>
+          <li onClick={() => navigate("/")}>홈</li>
           {isLoggedInVar ? (
-            <Li onClick={onLogoutClicked}>로그아웃</Li>
+            <li onClick={onLogoutClicked}>로그아웃</li>
           ) : (
             <>
-              <Li onClick={onCreateClicked}>회원가입</Li>
-              <Li onClick={onLoginClicked}>로그인</Li>
+              <li onClick={onCreateClicked}>회원가입</li>
+              <li onClick={onLoginClicked}>로그인</li>
             </>
           )}
-        </Ul>
+        </Gnb>
+        <HamBtn
+          onClick={() => setIsHamActive((prev) => !prev)}
+          $active={isHamActive}
+        >
+          <span></span>
+        </HamBtn>
       </Nav>
       {loginClicked && <LoginForm />}
       {enrollClicked && <EnrollForm />}

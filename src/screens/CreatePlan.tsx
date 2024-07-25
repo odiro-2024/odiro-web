@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Header from "../components/Header";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { mainColor } from "./../color";
+import { mainColor } from "../color";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 

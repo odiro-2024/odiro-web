@@ -61,6 +61,9 @@ export const StyledCalendarContainer = styled.div`
   .react-calendar__tile {
     border-radius: 50%;
     color: black;
+    &:hover {
+      background-color: #e6e6e6;
+    }
   }
   //오늘 타일
   .react-calendar__tile--now {
