@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { mainColor } from "../../color";
 
 export const StyledCalendarContainer = styled.div`
-  width: 60%;
-  max-width: 350px;
+  width: 22rem;
+  height: 28rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,12 +16,13 @@ export const StyledCalendarContainer = styled.div`
   z-index: 99;
   border-radius: 0.5rem;
   .react-calendar {
+    border-radius: 0.5rem 0.5rem 0 0;
+    background-color: yellow;
     width: 100%;
     height: 100%;
     background-color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.7em;
-    border: none;
     padding: 10px;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -90,5 +91,34 @@ export const StyledCalendarContainer = styled.div`
   .react-calendar__tile--rangeEnd {
     background-color: ${mainColor};
     color: white;
+  }
+  @media (max-width: 760px) {
+    width: 18rem;
+    height: 25rem;
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.13);
+    .react-calendar {
+      line-height: 1.2rem;
+    }
+  }
+  @media (max-width: 480px) {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    max-width: none;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    .react-calendar {
+      width: 100%;
+      height: auto;
+      line-height: 10vw;
+      box-shadow: none;
+    }
   }
 `;

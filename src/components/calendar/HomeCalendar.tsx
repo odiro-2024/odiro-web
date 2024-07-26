@@ -31,25 +31,56 @@ const ScheduleBox = styled.div`
   border-top-right-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
   border-left: 1px solid rgba(0, 0, 0, 0.1);
-  span {
+  span,
+  p {
     display: block;
     color: ${mainColor};
     font-size: 19px;
     font-weight: 600;
     margin-top: 25px;
-    margin-left: 18px;
+    margin-left: 1rem;
+    position: relative;
+  }
+  span {
+    margin-left: 2rem;
+    &::before {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: ${mainColor};
+      top: 50%;
+      transform: translateY(-50%);
+      left: -1rem;
+    }
   }
   div {
     font-size: 14.3px;
     background-color: ${mainColor};
     max-width: 120px;
-    width: 60%;
-    padding: 5px 7px;
-    margin-top: 7px;
-    margin-left: 18px;
+    width: 8rem;
+    padding: 0.3rem 0.5rem;
+    margin-top: 0.5rem;
+    margin-left: 1rem;
     border-radius: 8px;
     color: white;
     font-weight: 600;
+  }
+  @media (max-width: 760px) {
+    width: 100%;
+    max-width: none;
+    min-height: 15rem;
+    height: auto;
+    margin-top: 1rem;
+    box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
+    border: 0.5rem;
+    border-radius: 0.5rem;
+    @media (max-width: 480px) {
+      width: 95%;
+      margin-top: 1rem;
+      box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
+    }
   }
 `;
 
@@ -102,6 +133,33 @@ interface Iplan {
 function HomeCalendar() {
   const modalRef = useRef<HTMLDivElement>(null);
   const [modalShow, setModalShow] = useState(false);
+
+  const [isInViewport, setIsInViewport] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!ref.current) return; // 요소가 아직 준비되지 않은 경우 중단
+
+    const callback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // 요소가 뷰포트에 나타났을 경우
+          setIsInViewport(true);
+        } else {
+          // 요소가 뷰포트를 벗어난 경우
+          setIsInViewport(false);
+        }
+      });
+    };
+
+    const options = { root: null, rootMargin: "0px", threshold: 0 };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(ref.current); // 요소 관찰 시작
+
+    return () => {
+      observer.disconnect(); // 컴포넌트 언마운트 시 관찰 중단
+    };
+  }, []);
 
   const modalOutSideClick = (e: any) => {
     if (modalRef.current === e.target) {
@@ -159,8 +217,10 @@ function HomeCalendar() {
   };
 
   return (
-    <StyledCalendarContainer>
-      {" "}
+    <StyledCalendarContainer
+      className={isInViewport ? "frame-in" : ""}
+      ref={ref}
+    >
       <MakePlanBtn onClick={() => setModalShow(true)}>새 여행</MakePlanBtn>
       {modalShow && (
         <>
@@ -168,7 +228,7 @@ function HomeCalendar() {
             ref={modalRef}
             onClick={(e: any) => modalOutSideClick(e)}
           ></Overlay>
-          <SelectDateForm></SelectDateForm>
+          <SelectDateForm onCloseClicked={setModalShow}></SelectDateForm>
         </>
       )}
       <Calendar
@@ -209,7 +269,7 @@ function HomeCalendar() {
         }
       />
       <ScheduleBox>
-        <span>Schedule</span>
+        <p>일정</p>
         <div>{format(value, "yyyy년 MM월 dd일")}</div>
         {schedule.map((value, index) => (
           <span

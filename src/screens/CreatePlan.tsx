@@ -23,6 +23,7 @@ const CreatePlanBox = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: blcak;
 `;
 
 const Form = styled.form`
@@ -31,6 +32,9 @@ const Form = styled.form`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  @media (max-width: 480px) {
+    margin: 8rem 0 2rem 0;
+  }
 `;
 
 const Input = styled.input<{ $isvalid: string }>`
@@ -71,6 +75,9 @@ const CheckBox = styled.div<{ checked: boolean }>`
   border: ${({ checked }) =>
     checked ? "1px solid white" : "1px solid rgba(0, 0, 0, 0.2)"};
   cursor: pointer;
+  @media (max-width: 480px) {
+    font-size: 3.5vw;
+  }
 `;
 
 const Button = styled.button`
@@ -105,6 +112,18 @@ const checkBox = [
   "활동적인",
   "인생샷",
   "힐링여행",
+  "혼자만",
+  "여럿이서",
+  "느긋하게",
+  "바쁘게",
+  "남자만",
+  "여자만",
+  "비용절약",
+  "플렉스",
+  "맛집위주",
+  "활동적인",
+  "인생샷",
+  "힐링여행",
 ];
 
 const CreatePlan = () => {
@@ -113,6 +132,18 @@ const CreatePlan = () => {
     state: { firstDay, lastDay },
   } = useLocation();
   const [checkBoxValue, setCheckBoxValue] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false,
     false,
     false,

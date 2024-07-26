@@ -10,8 +10,12 @@ export const StyledCalendarContainer = styled.div`
   justify-content: center;
   box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
   margin-bottom: 100px;
-  margin-top: 220px;
+  margin-top: 8rem;
   position: relative;
+  opacity: 0;
+  transition: 0.9s;
+  position: relative;
+  right: -7rem;
   .react-calendar {
     width: 70%;
     height: 600px;
@@ -29,7 +33,7 @@ export const StyledCalendarContainer = styled.div`
   //nav
   .react-calendar__navigation button {
     color: ${mainColor};
-    height: 50px;
+    height: 3rem;
     margin: 25px 0;
     font-size: 20px;
     font-weight: bold;
@@ -66,5 +70,33 @@ export const StyledCalendarContainer = styled.div`
       background-color: white;
       color: black;
     }
+  }
+  @media (max-width: 760px) {
+    max-width: 450px;
+    flex-direction: column;
+    box-shadow: none;
+    margin-top: 7rem;
+    .react-calendar {
+      width: 100%;
+      line-height: 2rem;
+      height: 30rem;
+      box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
+    }
+    .react-calendar__navigation button {
+      margin: 10px 0;
+    }
+    abbr[title] {
+      margin-top: 2rem;
+    }
+    @media (max-width: 480px) {
+      width: 95%;
+      .react-calendar__tile {
+        padding: 7px 0;
+      }
+    }
+  }
+  &.frame-in {
+    opacity: 1;
+    right: 0rem;
   }
 `;

@@ -36,9 +36,14 @@ const Nav = styled.nav`
 const Logo = styled.h1`
   color: ${mainColor};
   font-size: 2rem;
+  font-weight: bold;
   cursor: pointer;
-  height: 80px;
+  height: 70px;
   align-content: center;
+  @media (max-width: 480px) {
+    height: 50px;
+    font-size: 1.5rem;
+  }
 `;
 
 const Gnb = styled.ul<{ $active: boolean }>`

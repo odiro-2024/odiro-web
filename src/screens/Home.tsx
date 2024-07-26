@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import HomeCalendar from "../components/calendar/HomeCalendar";
 import Header from "../components/Header";
+import HomeBg from "../components/HomeBg";
 
 const Container = styled.div`
   width: 100%;
@@ -16,6 +17,7 @@ const Home = () => {
     <>
       <Header />
       <Container>
+        <HomeBg></HomeBg>
         <HomeCalendar />
       </Container>
     </>

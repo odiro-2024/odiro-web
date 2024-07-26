@@ -6,12 +6,12 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { toggleLogin } from "../counterSlice";
 import { useRef, useState } from "react";
-import { mainColor } from "../color";
+import { g1, mainColor } from "../color";
 import axios from "axios";
 import { logUserIn } from "../useUser";
 import { useNavigate } from "react-router-dom";
 
-const Overlay = styled(motion.div)`
+export const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
   left: 0;
@@ -21,13 +21,12 @@ const Overlay = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 3;
+  z-index: 999;
 `;
-
-const LoginBox = styled.div`
-  max-width: 500px;
+export const LoginBox = styled.div`
+  max-width: 31rem;
   width: 60%;
-  max-height: 540px;
+  max-height: 33rem;
   height: 80%;
   border-radius: 5px;
   background-color: white;
@@ -35,32 +34,61 @@ const LoginBox = styled.div`
   &::-webkit-scrollbar {
     width: 0px;
   }
+  @media (max-width: 760px) {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 0;
+  }
 `;
 
-const LoginBoxHeader = styled.div`
+export const LoginBoxHeader = styled.div`
   width: 100%;
-  height: 65px;
+  height: 4rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: rgba(0, 0, 0, 0.8);
   span {
-    margin: 0 23px;
+    margin: 0 1.4rem;
     &:first-child {
       font-family: "Times New Roman", Times, serif;
       letter-spacing: 1px;
-      font-size: 21px;
+      font-size: 1.4rem;
     }
     &:last-child {
       cursor: pointer;
-      opacity: 0.9;
-      font-size: 20px;
+      color: ${g1};
+      font-size: 1.3rem;
     }
+  }
+  @media (max-width: 760px) {
+    position: absolute;
+    top: 0;
   }
 `;
 
-const LoginBoxContent = styled.div`
+export const LoginBoxContent = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  @media (max-width: 760px) {
+    width: 70%;
+  }
+  @media (max-width: 480px) {
+    width: 90%;
+  }
+`;
+
+export const Form = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -68,90 +96,82 @@ const LoginBoxContent = styled.div`
   align-items: center;
 `;
 
-const Form = styled.form`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Input = styled.input<{ $isvalid: string }>`
+export const Input = styled.input<{ $isvalid: string }>`
   width: 75%;
-  height: 50px;
-  border-radius: 20px;
+  height: 3rem;
+  border-radius: 1.3rem;
   border: 1px solid
     ${({ $isvalid }) =>
       $isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
   outline: none;
-  text-indent: 15px;
-  font-size: 15px;
-  margin-top: 20px;
+  text-indent: 1rem;
+  font-size: 0.9rem;
+  margin-top: 1.2rem;
   &:first-child {
-    margin-top: 70px;
+    margin-top: 4rem;
   }
   &:focus {
     border-width: 2px;
   }
 `;
 
-const Button = styled.button`
+export const Button = styled.button`
   width: 75%;
-  height: 50px;
-  border-radius: 30px;
+  height: 3rem;
+  border-radius: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 19px;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
   border: none;
-  margin-top: 50px;
+  margin-top: 3rem;
   background-color: ${mainColor};
   color: white;
 `;
 
-const KakaoBtn = styled.div`
+export const KakaoBtn = styled.div`
   width: 75%;
-  height: 50px;
-  border-radius: 30px;
+  height: 3.1rem;
+  border-radius: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 19px;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
   border: none;
-  margin-top: 50px;
-  background-color: ${mainColor};
-  color: white;
-  margin-top: 15px;
+  margin-top: 1rem;
   background-color: yellow;
   color: black;
   font-size: 18px;
 `;
 
-const ErrorMsg = styled.span`
+export const ErrorMsg = styled.span`
   color: #df4d4d;
-  font-size: 15px;
-  font-weight: 600;
-  margin-top: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 0.6rem;
 `;
 
-const SearchDiv = styled.div`
+export const SearchDiv = styled.div`
   width: 75%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 40px 0 25px 0;
+  margin: 2.5rem 0 1.6rem 0;
   font-size: 15px;
   span {
     margin: 0 5px;
     cursor: pointer;
   }
+  @media (max-width: 560px) {
+    font-size: 3vw;
+  }
 `;
 
-const overlayVariants = {
+export const overlayVariants = {
   initial: {
     opacity: 0,
   },

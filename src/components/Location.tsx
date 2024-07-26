@@ -179,7 +179,6 @@ const Location = ({ onDataChange }: any) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
-
   const onLocationClicked = () => dispatch(toggleLocation());
 
   const { register, getValues, handleSubmit } = useForm<FormData>();
