@@ -3,14 +3,25 @@ import styled from "styled-components";
 const Section = styled.section`
   height: 100vh;
   width: 100%;
-  background: url("/images/bg.jpg") no-repeat center;
+  background-image: url("/images/bg.jpg");
+  background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   font-family: "Quicksand";
   color: white;
+  position: relative;
+  div {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10rem;
+    background: linear-gradient(rgba(0, 0, 0, 0), rgb(255, 255, 255));
+  }
   h2 {
     font-size: 2em;
     line-height: 1.2;
@@ -42,6 +53,7 @@ const HomeBg = () => {
         <span>a better future.</span>
       </h2>
       <span>CLick here to add your own text and edit me.</span>
+      <div></div>
     </Section>
   );
 };

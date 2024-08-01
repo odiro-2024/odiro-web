@@ -18,12 +18,13 @@ const List = styled.div<{ $category_len: number }>`
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  &:hover {
+  &:hover,
+  &:active {
     border-radius: 15px;
     box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
     > div {
       &:nth-child(2) {
-        transition-duration: 2s;
+        transition-duration: 0.9s;
         opacity: 1;
       }
     }

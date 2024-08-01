@@ -4,17 +4,15 @@ import { mainColor } from "../../color";
 
 export const StyledCalendarContainer = styled.div`
   width: 40%;
-  max-width: 370px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
+  justify-content: flex-end;
   .react-calendar {
-    height: 390px;
     background-color: #fff;
     font-family: Arial, Helvetica, sans-serif;
-    line-height: 2em;
+    height: 25rem;
+    box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
+    line-height: 1.7rem;
     border: none;
     padding: 5px;
     -webkit-user-select: none;
@@ -27,9 +25,9 @@ export const StyledCalendarContainer = styled.div`
     color: ${mainColor};
     height: 40px;
     margin: 5px 0;
-    font-size: 20px;
+    font-size: 1.2rem;
     font-weight: bold;
-    border-radius: 10px;
+    border-radius: 0.7rem;
     position: relative;
     &:nth-child(2) {
       pointer-events: none;

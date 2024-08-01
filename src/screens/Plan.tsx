@@ -14,7 +14,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import { isSameDay } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
 import { toggleLocation } from "../counterSlice";
@@ -24,25 +23,24 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 
 const Container = styled.div`
-  width: 100%;
+  width: 90%;
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  margin: auto;
+  gap: 3.5rem;
 `;
 
 const TopBox = styled.div`
-  width: 90%;
-  max-width: 1300px;
-  margin-top: 120px;
+  width: 100%;
+  margin-top: 7rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 `;
 
 const CheckBoxs = styled.div`
-  max-width: 450px;
-  width: 33%;
+  width: calc(100% / 3);
   display: flex;
   flex-wrap: wrap;
 `;
@@ -53,21 +51,21 @@ const CheckBox = styled.div`
   margin-right: 3px;
   margin-bottom: 10px;
   text-align: center;
-  font-weight: 600;
+  font-weight: bold;
   background-color: ${mainColor};
   color: white;
 `;
 
 const Title = styled.div`
-  width: 33%;
+  width: calc(100% / 3);
   text-align: center;
-  font-size: 22px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: ${mainColor};
 `;
 
 const AvatarBox = styled.div`
-  width: 33%;
+  width: calc(100% / 3);
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -87,84 +85,75 @@ const Avatar = styled.div<{ $avatarurl: string }>`
 `;
 
 const MiddleBox = styled.div`
-  width: 90%;
-  max-width: 1300px;
-  margin-top: 50px;
+  width: 100%;
   display: flex;
-  align-items: center;
+  justify-content: space-between;
 `;
 
 const MapBox = styled.div`
-  width: 55%;
-  height: 450px;
-  margin-right: 5%;
+  width: 60%;
+  height: 25rem;
+  position: relative;
+`;
+
+const PlacePhoto = styled.div<{ $url: string }>`
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background-color: black;
+  margin-right: 50%;
+  background-image: url(${({ $url }) => $url});
+  background-size: cover;
 `;
 
 const BottomBox = styled.div`
-  width: 90%;
-  max-width: 1300px;
-  margin-top: 50px;
+  width: 100%;
   margin-bottom: 100px;
   display: flex;
+  justify-content: space-between;
 `;
 
 const LocationBox = styled.div`
-  width: 55%;
-  margin-right: 2%;
-  border-radius: 10px;
+  width: 60%;
+  border-radius: 1rem;
   border: 1px solid ${mainColor};
-  color: #252525;
   > div {
     &:first-child {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
       span {
-        margin-top: 20px;
-        margin-left: 20px;
+        margin: 1.3rem;
         display: block;
         font-size: 25px;
         font-weight: 600;
+        color: #252525;
       }
       div {
-        margin: 10px 15px 0 0;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 25px;
+        margin: 1.3rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        text-align: center;
+        align-content: center;
+        font-size: 1.6rem;
         background-color: ${mainColor};
         color: white;
-        border-radius: 50%;
         cursor: pointer;
       }
     }
   }
 `;
 
-const PlacePhoto = styled.div<{ $url: string }>`
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: black;
-  margin-right: 20px;
-  background-image: url(${({ $url }) => $url});
-  background-size: cover;
-`;
-
 const MemoCommentBox = styled.div`
-  width: 40%;
-  max-width: 400px;
+  width: 35%;
 `;
 
 const MemoBox = styled.div`
   min-height: 220px;
   border: 1px solid ${mainColor};
-  border-radius: 10px;
-  margin-bottom: 40px;
-  color: #252525;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -174,22 +163,23 @@ const MemoHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 10px 5px 20px 10px;
+  margin: 0.7rem;
   span {
-    font-size: 20px;
+    font-family: "Quicksand";
+    color: #252525;
+    font-size: 1.2rem;
     font-weight: 600;
     display: block;
   }
   div {
     background-color: ${mainColor};
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
     color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 17px;
+    text-align: center;
+    align-content: center;
+    font-size: 1rem;
     cursor: pointer;
   }
 `;
@@ -198,25 +188,23 @@ const MemoList = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 30px;
-  margin: 0 8px 15px 10px;
+  height: 1.8rem;
+  margin: 1rem;
   span {
-    font-size: 17px;
+    font-size: 1rem;
   }
   div {
     background-color: #e67878;
-    width: 30px;
-    height: 30px;
-    border-radius: 20px;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
     color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 17px;
+    text-align: center;
+    align-content: center;
     cursor: pointer;
   }
 `;
-
+////////////////////////////////////////
 const Form = styled.form`
   margin: 10px 0 10px 10px;
   display: flex;
@@ -226,11 +214,10 @@ const Form = styled.form`
   button {
     border: none;
     position: absolute;
-    right: -2px;
-    width: 30px;
-    height: 30px;
+    right: 0.8rem;
+    width: 2rem;
+    height: 2rem;
     display: block;
-    margin-right: 8px;
     background-color: ${mainColor};
     color: white;
     border-radius: 50%;
@@ -242,18 +229,32 @@ const Form = styled.form`
 `;
 
 const Input = styled.input`
-  width: calc(100% - 45px);
-  height: 30px;
-  border-radius: 15px;
+  width: calc(100% - 3.5rem);
+  height: 1.8rem;
+  border-radius: 1rem;
   border: 1px solid rgba(0, 0, 0, 0.3);
   outline: none;
   text-indent: 10px;
 `;
 
+const CommentHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.2rem 1rem;
+  span {
+    font-family: "Quicksand";
+    color: #252525;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: block;
+  }
+`;
+
 const CommentBox = styled.div`
   min-height: 220px;
   border: 1px solid ${mainColor};
-  border-radius: 10px;
+  border-radius: 1rem;
   color: #252525;
   display: flex;
   flex-direction: column;
@@ -267,18 +268,6 @@ const CommentBox = styled.div`
         overflow-y: auto;
       }
     }
-  }
-`;
-
-const CommentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 20px 5px 30px 10px;
-  span {
-    font-size: 20px;
-    font-weight: 600;
-    display: block;
   }
 `;
 
@@ -908,8 +897,12 @@ const Plan = () => {
                     lng: 126.9786567,
                   }}
                   style={{
+                    // position: "absolute",
+                    // top: "0",
+                    // left: "0",
                     width: "100%",
                     height: "100%",
+                    //paddingTop: "60%",
                     borderRadius: "15px",
                   }}
                   level={2}
@@ -966,7 +959,7 @@ const Plan = () => {
                 <MemoBox>
                   <div>
                     <MemoHeader>
-                      <span>메모</span>
+                      <span>Memo</span>
                       {isMemoEditing ? (
                         <div onClick={() => setIsMemoEditing(false)}>
                           <FontAwesomeIcon icon={faSave} />
@@ -1007,7 +1000,7 @@ const Plan = () => {
                 <CommentBox>
                   <div>
                     <CommentHeader>
-                      <span>댓글</span>
+                      <span>Comment</span>
                     </CommentHeader>
                     <div>
                       {comment.map((value, index) => {
