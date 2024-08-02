@@ -46,8 +46,8 @@ const ScheduleBox = styled.div`
     &::before {
       content: "";
       position: absolute;
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background-color: ${mainColor};
       top: 50%;

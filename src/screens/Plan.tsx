@@ -7,8 +7,8 @@ import { CustomOverlayMap, Map } from "react-kakao-maps-sdk";
 import Location, { Imarkers } from "../components/Location";
 import {
   faPlus,
-  faPenToSquare,
-  faSave,
+  faToggleOff,
+  faToggleOn,
   faX,
   faArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
@@ -147,23 +147,15 @@ const LocationBox = styled.div`
 
 const MemoCommentBox = styled.div`
   width: 35%;
-`;
-
-const MemoBox = styled.div`
-  min-height: 220px;
-  border: 1px solid ${mainColor};
-  border-radius: 1rem;
-  margin-bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  height: 25rem;
+  position: relative;
 `;
 
 const MemoHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0.7rem;
+  margin: 0.8rem 0.7rem 0.5rem 0.7rem;
   span {
     font-family: "Quicksand";
     color: #252525;
@@ -172,15 +164,40 @@ const MemoHeader = styled.div`
     display: block;
   }
   div {
-    background-color: ${mainColor};
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    color: white;
-    text-align: center;
-    align-content: center;
-    font-size: 1rem;
+    color: ${mainColor};
     cursor: pointer;
+    font-size: 2rem;
+  }
+`;
+
+const MemoBox = styled.div<{ $active: boolean }>`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid ${mainColor};
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  perspective: 900px;
+  transition: 0.9s;
+  backface-visibility: hidden;
+  transform: ${({ $active }) =>
+    $active ? "rotateY(0deg)" : " rotateY(180deg)"};
+  > div:first-child {
+    height: calc(100% - 7rem);
+  }
+`;
+
+const MemoListBox = styled.div`
+  max-height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column-reverse;
+  &::-webkit-scrollbar {
+    width: 0px;
   }
 `;
 
@@ -189,9 +206,22 @@ const MemoList = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 1.8rem;
-  margin: 1rem;
+  margin: 0 0.1rem;
+  padding: 0.5rem 0.5rem 0.5rem 2rem;
   span {
     font-size: 1rem;
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: ${mainColor};
+      top: 50%;
+      transform: translateY(-50%);
+      left: -1rem;
+    }
   }
   div {
     background-color: #e67878;
@@ -202,11 +232,23 @@ const MemoList = styled.div`
     text-align: center;
     align-content: center;
     cursor: pointer;
+    opacity: 0;
+  }
+  &:hover,
+  &:active {
+    border-radius: 15px;
+    box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
+    > div {
+      &:nth-child(2) {
+        transition-duration: 0.9s;
+        opacity: 1;
+      }
+    }
   }
 `;
-////////////////////////////////////////
+
 const Form = styled.form`
-  margin: 10px 0 10px 10px;
+  margin: 0.5rem 0 0.6rem 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -214,7 +256,7 @@ const Form = styled.form`
   button {
     border: none;
     position: absolute;
-    right: 0.8rem;
+    right: 0.5rem;
     width: 2rem;
     height: 2rem;
     display: block;
@@ -229,7 +271,7 @@ const Form = styled.form`
 `;
 
 const Input = styled.input`
-  width: calc(100% - 3.5rem);
+  width: calc(100% - 3.2rem);
   height: 1.8rem;
   border-radius: 1rem;
   border: 1px solid rgba(0, 0, 0, 0.3);
@@ -237,82 +279,67 @@ const Input = styled.input`
   text-indent: 10px;
 `;
 
-const CommentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1.2rem 1rem;
-  span {
-    font-family: "Quicksand";
-    color: #252525;
-    font-size: 1.2rem;
-    font-weight: bold;
-    display: block;
-  }
-`;
-
-const CommentBox = styled.div`
-  min-height: 220px;
+const CommentBox = styled.div<{ $active: boolean }>`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
   border: 1px solid ${mainColor};
   border-radius: 1rem;
-  color: #252525;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  > div {
-    div {
-      &:nth-child(2) {
-        display: flex;
-        flex-direction: column-reverse;
-        max-height: 250px;
-        overflow-y: auto;
+  perspective: 900px;
+  transition: 0.9s;
+  backface-visibility: hidden;
+  transform: ${({ $active }) =>
+    $active ? "rotateY(0deg)" : " rotateY(-180deg)"};
+  > div:first-child {
+    height: calc(100% - 7rem);
+  }
+`;
+
+const CommentList = styled.div`
+  margin: 0.5rem 0.6rem;
+  display: flex;
+  .avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: blue;
+    margin-right: 1rem;
+  }
+  .content {
+    width: calc(100% - 4rem);
+    div:first-child {
+      line-height: 1.1rem;
+      h3 {
+        display: inline;
+        margin-right: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #353434;
+      }
+      p {
+        display: inline;
+        font-size: 15px;
       }
     }
-  }
-`;
-
-const CommentListNotMe = styled.div`
-  margin: 15px 10px 10px 10px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: end;
-  span {
-    &:first-child {
-      padding: 9px 13px;
-      border-radius: 17px;
-      background-color: ${mainColor};
-      color: white;
-      font-size: 17px;
-      margin-right: 5px;
-      max-width: 60%;
-      word-break: break-all;
-      line-height: 20px;
-    }
-    &:last-child {
-      font-size: 12px;
-    }
-  }
-`;
-
-const CommentListMe = styled.div`
-  margin: 15px 10px 10px 10px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: end;
-  span {
-    &:first-child {
-      font-size: 12px;
-    }
-    &:last-child {
-      padding: 10px 13px;
-      border-radius: 17px;
-      background-color: ${mainColor};
-      color: white;
-      font-size: 17px;
-      margin-left: 5px;
-      max-width: 60%;
-      word-break: break-all;
-      line-height: 20px;
+    div:last-child {
+      display: flex;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: gray;
+      span {
+        margin-right: 0.7rem;
+      }
+      button {
+        all: unset;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 12px;
+      }
     }
   }
 `;
@@ -625,13 +652,12 @@ const Plan = () => {
   const [index, setIndex] = useState(0);
   const [map, setMap] = useState<any>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
-  const [isMemoEditing, setIsMemoEditing] = useState(false);
-  const [isCommentEditing, setIsCommentEditing] = useState(false);
   const [location, setLocation] = useState<ILocation[]>([]);
   const [memo, setMemo] = useState<IMemo[]>([]);
   const [comment, setComment] = useState<IComment[]>([]);
-  const [data, setData] = useState<IData>(dataEx);
+  const [data, setData] = useState<IData>();
   //var data = dataEx;
+  const [isMemo, setIsMemo] = useState(true);
 
   const dispatch = useDispatch();
   const onLocationClicked = () => dispatch(toggleLocation());
@@ -642,6 +668,7 @@ const Plan = () => {
   const { register, getValues, handleSubmit, setValue } = useForm<FormData>();
 
   const handleDateChange = (value: Date) => {
+    if (!data) return;
     setData({
       id: data.id,
       title: data.title,
@@ -675,14 +702,12 @@ const Plan = () => {
     setIndex(newindex);
 
     setLocation(data.day_plan[newindex].location);
-    setMemo(data.day_plan[newindex].memo);
-    setComment(data.day_plan[newindex].comment);
-
-    setIsMemoEditing(false);
-    setIsCommentEditing(false);
+    setMemo(data.day_plan[newindex].memo.reverse());
+    setComment(data.day_plan[newindex].comment.reverse());
   };
 
   const handleLocationChange = (infoBox: Imarkers) => {
+    if (!data) return;
     const {
       address_name,
       id: kakao_map_id,
@@ -736,9 +761,7 @@ const Plan = () => {
     axios.get(`/api/plan/${id}`).then((res) => {
       const { data } = res;
       setData(data);
-      setLocation(data.day_plan[index].location);
-      setMemo(data.day_plan[index].memo);
-      setComment(data.day_plan[index].comment);
+      handleDateChange(new Date(data.first_day));
     });
   }, []);
 
@@ -796,6 +819,7 @@ const Plan = () => {
   };
 
   const onMemoSubmit = () => {
+    if (!data) return;
     const { memo } = getValues();
     if (!memo) return;
     axios
@@ -807,17 +831,15 @@ const Plan = () => {
         const {
           data: { id },
         } = res;
-        setMemo((prev) => [...prev, { id, content: memo }]);
+        setMemo((prev) => [{ id, content: memo }, ...prev]);
         setValue("memo", "");
       });
   };
 
   const onCommentSubmit = () => {
     const { comment } = getValues();
-    const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
+    if (!data || !comment) return;
 
-    if (!comment) return;
     axios
       .post(
         "/api/comment/create",
@@ -837,13 +859,13 @@ const Plan = () => {
           data: { write_time, comment_id },
         } = res;
         setComment((prev) => [
-          ...prev,
           {
             id: comment_id,
             content: comment,
             member_id: 1,
             created_at: write_time,
           },
+          ...prev,
         ]);
         setValue("comment", "");
       });
@@ -859,13 +881,14 @@ const Plan = () => {
     });
   };
 
-  const formatDate = (date: string) => {
-    const hour = +date.slice(11, 13);
-    const min = +date.slice(14, 16);
-    const atNoon = hour >= 12 ? "오후" : "오전";
-    const newHour = hour > 12 ? hour - 12 : hour;
-    const newMin = min < 10 ? `0${min}` : min;
-    return `${atNoon} ${newHour}:${newMin}`;
+  const formatDate = (created_at: string) => {
+    const milliSecDiff = Date.now() - new Date(created_at).getTime();
+    const minDiff = milliSecDiff / (1000 * 60);
+    const hourDiff = minDiff / 60;
+    const dayDiff = hourDiff / 24;
+    if (dayDiff > 1) return dayDiff.toFixed(0) + "일 전";
+    if (hourDiff > 1) return dayDiff.toFixed(0) + "시간 전";
+    return minDiff.toFixed(0) + "분 전";
   };
 
   return (
@@ -956,71 +979,65 @@ const Plan = () => {
                 </DragDropContext>
               </LocationBox>
               <MemoCommentBox>
-                <MemoBox>
+                <MemoBox $active={isMemo}>
                   <div>
                     <MemoHeader>
                       <span>Memo</span>
-                      {isMemoEditing ? (
-                        <div onClick={() => setIsMemoEditing(false)}>
-                          <FontAwesomeIcon icon={faSave} />
-                        </div>
-                      ) : (
-                        <div onClick={() => setIsMemoEditing(true)}>
-                          <FontAwesomeIcon icon={faPenToSquare} />
-                        </div>
-                      )}
+                      <div onClick={() => setIsMemo((prev) => !prev)}>
+                        <FontAwesomeIcon icon={faToggleOn} />
+                      </div>
                     </MemoHeader>
-                    {memo?.map((value, index) => (
-                      <MemoList key={index}>
-                        <span>{value.content}</span>
-                        {isMemoEditing ? (
+                    <MemoListBox>
+                      {memo?.map((value, index) => (
+                        <MemoList key={index}>
+                          <span>{value.content}</span>
                           <div
+                            className="delete-memo"
                             onClick={() => memoDeleteClicked(index, value.id)}
                           >
                             <FontAwesomeIcon icon={faX} />
                           </div>
-                        ) : null}
-                      </MemoList>
-                    ))}
+                        </MemoList>
+                      ))}
+                    </MemoListBox>
                   </div>
-                  {isMemoEditing ? (
-                    <Form onSubmit={handleSubmit(onMemoSubmit)}>
-                      <Input
-                        {...register("memo")}
-                        type="text"
-                        name="memo"
-                        placeholder="메모를 작성하세요."
-                      />
-                      <button>
-                        <FontAwesomeIcon icon={faArrowUp} />
-                      </button>
-                    </Form>
-                  ) : null}
+                  <Form onSubmit={handleSubmit(onMemoSubmit)}>
+                    <Input
+                      {...register("memo")}
+                      type="text"
+                      name="memo"
+                      placeholder="메모를 작성하세요."
+                    />
+                    <button>
+                      <FontAwesomeIcon icon={faArrowUp} />
+                    </button>
+                  </Form>
                 </MemoBox>
-                <CommentBox>
+                <CommentBox $active={!isMemo}>
                   <div>
-                    <CommentHeader>
+                    <MemoHeader>
                       <span>Comment</span>
-                    </CommentHeader>
-                    <div>
-                      {comment.map((value, index) => {
-                        if (value.member_id === 1) {
-                          return (
-                            <CommentListMe key={index}>
+                      <div onClick={() => setIsMemo((prev) => !prev)}>
+                        <FontAwesomeIcon icon={faToggleOff} />
+                      </div>
+                    </MemoHeader>
+                    <MemoListBox>
+                      {comment.map((value, index) => (
+                        <CommentList key={index}>
+                          <div className="avatar"></div>
+                          <div className="content">
+                            <div>
+                              <h3>h_jjing</h3>
+                              <p>{value.content}</p>
+                            </div>
+                            <div>
                               <span>{formatDate(value.created_at)}</span>
-                              <span>{value.content}</span>
-                            </CommentListMe>
-                          );
-                        } else {
-                          return (
-                            <CommentListNotMe key={index}>
-                              <span>{value.content}</span>
-                              <span>{formatDate(value.created_at)}</span>
-                            </CommentListNotMe>
-                          );
-                        }
-                      })}
-                    </div>
+                              <button>답글 달기</button>
+                            </div>
+                          </div>
+                        </CommentList>
+                      ))}
+                    </MemoListBox>
                   </div>
                   <Form onSubmit={handleSubmit(onCommentSubmit)}>
                     <Input
