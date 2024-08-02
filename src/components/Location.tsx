@@ -39,11 +39,16 @@ const overlayVariants = {
 
 const LocationBox = styled(LoginBox)`
   width: 80%;
+  max-width: 1200px;
   height: 70%;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 860px) {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const LocationMap = styled.div`
@@ -73,7 +78,7 @@ const Divs = styled.div`
   position: absolute;
   top: 70px;
   left: 15px;
-  z-index: 2;
+  z-index: 9;
   max-height: 70%;
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -81,6 +86,9 @@ const Divs = styled.div`
   &::-webkit-scrollbar {
     width: 0px;
     height: 0px;
+  }
+  @media (max-width: 560px) {
+    max-height: 25%;
   }
 `;
 
@@ -102,6 +110,12 @@ const Div = styled.div`
     &:last-child {
       color: green;
       margin-bottom: 15px;
+    }
+  }
+  @media (max-width: 1024px) {
+    width: 220px;
+    span {
+      font-size: 0.9rem;
     }
   }
 `;
@@ -148,6 +162,14 @@ const InfoBox = styled.div`
         margin: 0 12px 0 10px;
         cursor: pointer;
       }
+    }
+  }
+  @media (max-width: 1024px) {
+    > span {
+      font-size: 0.9rem;
+    }
+    div {
+      margin-top: 10px;
     }
   }
 `;

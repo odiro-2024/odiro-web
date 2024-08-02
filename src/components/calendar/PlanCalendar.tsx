@@ -11,6 +11,13 @@ const Line = styled.div`
   height: 8px;
   width: 100%;
   background-color: ${mainColor};
+  @media (max-width: 860px) {
+    bottom: 3px;
+  }
+  @media (max-width: 480px) {
+    bottom: 3px;
+    height: 6px;
+  }
 `;
 
 type ValuePiece = Date | null;

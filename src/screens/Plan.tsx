@@ -37,12 +37,36 @@ const TopBox = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  position: relative;
+  @media (max-width: 860px) {
+  }
+`;
+
+const EmptyDiv = styled.div`
+  @media (max-width: 860px) {
+    width: calc(100% / 3);
+  }
 `;
 
 const CheckBoxs = styled.div`
   width: calc(100% / 3);
   display: flex;
   flex-wrap: wrap;
+  @media (max-width: 860px) {
+    position: absolute;
+    z-index: 9;
+    &:hover {
+      div {
+        display: block;
+        &:first-child::before {
+          display: none;
+        }
+      }
+    }
+  }
+  @media (max-width: 480px) {
+    width: 50%;
+  }
 `;
 
 const CheckBox = styled.div`
@@ -54,6 +78,26 @@ const CheckBox = styled.div`
   font-weight: bold;
   background-color: ${mainColor};
   color: white;
+  @media (max-width: 860px) {
+    &:not(:first-child) {
+      display: none;
+    }
+    &:nth-child(1) {
+      position: relative;
+      &::before {
+        content: ". . .";
+        position: absolute;
+        padding: 12px;
+        border-radius: 20px;
+        top: 0;
+        right: -3.5rem;
+        text-align: center;
+        font-weight: bold;
+        background-color: ${mainColor};
+        color: white;
+      }
+    }
+  }
 `;
 
 const Title = styled.div`
@@ -88,22 +132,50 @@ const MiddleBox = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
+  @media (max-width: 750px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const MapBox = styled.div`
-  width: 60%;
+  flex-grow: 1;
   height: 25rem;
   position: relative;
+  @media (max-width: 1024px) {
+    height: 24rem;
+  }
+  @media (max-width: 860px) {
+    height: 19rem;
+  }
+  @media (max-width: 750px) {
+    width: 80%;
+    height: 19rem;
+    order: 1;
+  }
+  @media (max-width: 480px) {
+    order: 1;
+    width: 100%;
+    height: 17rem;
+  }
 `;
 
 const PlacePhoto = styled.div<{ $url: string }>`
-  width: 5rem;
-  height: 5rem;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 50%;
   background-color: black;
   margin-right: 50%;
   background-image: url(${({ $url }) => $url});
   background-size: cover;
+  @media (max-width: 860px) {
+    width: 4rem;
+    height: 4rem;
+  }
+  @media (max-width: 480px) {
+    width: 3rem;
+    height: 3rem;
+  }
 `;
 
 const BottomBox = styled.div`
@@ -111,10 +183,18 @@ const BottomBox = styled.div`
   margin-bottom: 100px;
   display: flex;
   justify-content: space-between;
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 860px) {
+    flex-direction: column;
+    align-items: center;
+  }
+  @media (max-width: 480px) {
+  }
 `;
 
 const LocationBox = styled.div`
-  width: 60%;
+  flex-grow: 1;
   border-radius: 1rem;
   border: 1px solid ${mainColor};
   > div {
@@ -143,12 +223,35 @@ const LocationBox = styled.div`
       }
     }
   }
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 860px) {
+    min-height: 15rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    max-width: 30rem;
+    width: 100%;
+  }
+  @media (max-width: 480px) {
+  }
 `;
 
 const MemoCommentBox = styled.div`
-  width: 35%;
+  width: 22rem;
+  margin-left: 2rem;
   height: 25rem;
   position: relative;
+  @media (max-width: 1024px) {
+    width: 19rem;
+  }
+  @media (max-width: 860px) {
+    max-width: 30rem;
+    height: 20rem;
+    margin-left: 0rem;
+    width: 100%;
+  }
+  @media (max-width: 480px) {
+  }
 `;
 
 const MemoHeader = styled.div`
@@ -199,16 +302,18 @@ const MemoListBox = styled.div`
   &::-webkit-scrollbar {
     width: 0px;
   }
+  padding-bottom: 1rem;
 `;
 
 const MemoList = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 1.8rem;
   margin: 0 0.1rem;
   padding: 0.5rem 0.5rem 0.5rem 2rem;
+  word-break: break-all;
   span {
+    width: calc(100% - 2rem);
     font-size: 1rem;
     position: relative;
     &::before {
@@ -253,6 +358,8 @@ const Form = styled.form`
   justify-content: space-between;
   align-items: center;
   position: relative;
+  padding-top: 0.5rem;
+  background-color: white;
   button {
     border: none;
     position: absolute;
@@ -303,6 +410,7 @@ const CommentBox = styled.div<{ $active: boolean }>`
 const CommentList = styled.div`
   margin: 0.5rem 0.6rem;
   display: flex;
+  word-break: break-all;
   .avatar {
     width: 2rem;
     height: 2rem;
@@ -316,7 +424,7 @@ const CommentList = styled.div`
       line-height: 1.1rem;
       h3 {
         display: inline;
-        margin-right: 0.5rem;
+        margin-right: 0.4rem;
         font-size: 0.9rem;
         font-weight: bold;
         color: #353434;
@@ -667,33 +775,34 @@ const Plan = () => {
 
   const { register, getValues, handleSubmit, setValue } = useForm<FormData>();
 
-  const handleDateChange = (value: Date) => {
-    if (!data) return;
+  const handleDateChange = (value: Date, propData?: IData) => {
+    const scopeData: IData | undefined = data || propData;
+    if (!scopeData) return;
     setData({
-      id: data.id,
-      title: data.title,
-      first_day: data.first_day,
-      last_day: data.last_day,
-      checkBoxValue: data.checkBoxValue,
-      owner: data.owner,
-      participant: data.participant,
-      day_plan: data.day_plan.map((v, i) => {
+      id: scopeData.id,
+      title: scopeData.title,
+      first_day: scopeData.first_day,
+      last_day: scopeData.last_day,
+      checkBoxValue: scopeData.checkBoxValue,
+      owner: scopeData.owner,
+      participant: scopeData.participant,
+      day_plan: scopeData.day_plan.map((v, i) => {
         if (i !== index) {
           return v;
         } else {
           return {
             id: v.id,
             date: v.date,
-            location,
-            memo,
-            comment,
+            location: propData?.day_plan[i].location || location,
+            memo: propData?.day_plan[i].memo || memo,
+            comment: propData?.day_plan[i].comment || comment,
           };
         }
       }),
     });
 
     var newindex = 0;
-    data.day_plan.forEach((item: IDayPlan, index: number) => {
+    scopeData.day_plan.forEach((item: IDayPlan, index: number) => {
       if (value.toISOString().slice(0, 10) === item.date.slice(0, 10)) {
         newindex = index;
       }
@@ -701,9 +810,14 @@ const Plan = () => {
     setDate(value);
     setIndex(newindex);
 
-    setLocation(data.day_plan[newindex].location);
-    setMemo(data.day_plan[newindex].memo.reverse());
-    setComment(data.day_plan[newindex].comment.reverse());
+    setLocation(scopeData.day_plan[newindex].location);
+    if (propData) {
+      setMemo(scopeData.day_plan[newindex].memo.reverse());
+      setComment(scopeData.day_plan[newindex].comment.reverse());
+    } else {
+      setMemo(scopeData.day_plan[newindex].memo);
+      setComment(scopeData.day_plan[newindex].comment);
+    }
   };
 
   const handleLocationChange = (infoBox: Imarkers) => {
@@ -761,7 +875,7 @@ const Plan = () => {
     axios.get(`/api/plan/${id}`).then((res) => {
       const { data } = res;
       setData(data);
-      handleDateChange(new Date(data.first_day));
+      handleDateChange(new Date(data.first_day), data);
     });
   }, []);
 
@@ -887,7 +1001,7 @@ const Plan = () => {
     const hourDiff = minDiff / 60;
     const dayDiff = hourDiff / 24;
     if (dayDiff > 1) return dayDiff.toFixed(0) + "일 전";
-    if (hourDiff > 1) return dayDiff.toFixed(0) + "시간 전";
+    if (hourDiff > 1) return hourDiff.toFixed(0) + "시간 전";
     return minDiff.toFixed(0) + "분 전";
   };
 
@@ -898,6 +1012,7 @@ const Plan = () => {
           <Header />
           <Container>
             <TopBox>
+              <EmptyDiv />
               <CheckBoxs>
                 {dataEx.checkBoxValue.map((value: boolean, index: number) => {
                   return value ? (
@@ -938,10 +1053,7 @@ const Plan = () => {
                       xAnchor={0.4}
                       yAnchor={1.2}
                     >
-                      <PlacePhoto
-                        style={{ width: "70px", height: "70px" }}
-                        $url={marker.img_url}
-                      ></PlacePhoto>
+                      <PlacePhoto $url={marker.img_url}></PlacePhoto>
                     </CustomOverlayMap>
                   ))}
                 </Map>

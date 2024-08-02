@@ -16,7 +16,7 @@ const Container = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9;
+  z-index: 99;
   background-color: white;
   box-shadow: 0px 1px 15px 2px rgba(0, 0, 0, 0.05);
 `;

@@ -12,7 +12,7 @@ const List = styled.div<{ $category_len: number }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 100px;
+  padding: 0.9rem 0;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -31,9 +31,12 @@ const List = styled.div<{ $category_len: number }>`
   }
 
   > div {
+    display: flex;
+    align-items: center;
     &:nth-child(1) {
       margin-left: 5px;
       display: flex;
+      width: calc(100% - 3.5rem);
       > span {
         font-size: 22px;
       }
@@ -81,6 +84,18 @@ const List = styled.div<{ $category_len: number }>`
       font-size: 17px;
     }
   }
+  ///////////////////////////////////
+  @media (max-width: 480px) {
+    span {
+      font-size: 15px;
+    }
+    > div {
+      &:nth-child(2) {
+        width: 35px;
+        height: 35px;
+      }
+    }
+  }
 `;
 
 const PlacePhoto = styled.div<{ $url: string }>`
@@ -91,6 +106,10 @@ const PlacePhoto = styled.div<{ $url: string }>`
   margin-right: 20px;
   background-image: url(${({ $url }) => $url});
   background-size: cover;
+  @media (max-width: 480px) {
+    width: 60px;
+    height: 60px;
+  }
 `;
 
 interface IProps {
@@ -133,13 +152,13 @@ const DraggableLocation = ({ location, index, onDeleteClick }: IProps) => {
             <Link target="_blank" to={location.place_url}>
               <PlacePhoto $url={location.img_url} />
             </Link>
-            <div>
+            <div className="locaton-content">
               <div>{location.category_group_name}</div>
               <span>{location.place_name}</span>
               <span>{location.address_name}</span>
             </div>
           </div>
-          <div onClick={() => onClicked(index, location.id)}>
+          <div className="delete" onClick={() => onClicked(index, location.id)}>
             <FontAwesomeIcon icon={faX} />
           </div>
         </List>

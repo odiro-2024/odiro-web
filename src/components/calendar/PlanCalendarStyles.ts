@@ -3,13 +3,15 @@ import styled from "styled-components";
 import { mainColor } from "../../color";
 
 export const StyledCalendarContainer = styled.div`
-  width: 40%;
+  width: 22rem;
+  height: 25rem;
   display: flex;
   justify-content: flex-end;
+  margin-left: 2rem;
   .react-calendar {
     background-color: #fff;
     font-family: Arial, Helvetica, sans-serif;
-    height: 25rem;
+    height: 100%;
     box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
     line-height: 1.7rem;
@@ -58,6 +60,30 @@ export const StyledCalendarContainer = styled.div`
     &:focus {
       background-color: white;
       color: black;
+    }
+  }
+  @media (max-width: 1024px) {
+    width: 19rem;
+    height: 24rem;
+    .react-calendar {
+      line-height: 1.6rem;
+    }
+  }
+  @media (max-width: 860px) {
+    margin-bottom: 1rem;
+    width: 17rem;
+    height: 19rem;
+    .react-calendar {
+      line-height: 0.9rem;
+    }
+  }
+  @media (max-width: 480px) {
+    margin-bottom: 1rem;
+    width: 18rem;
+    height: 19rem;
+    margin-left: 0;
+    .react-calendar {
+      line-height: 0.9rem;
     }
   }
 `;
