@@ -4,6 +4,7 @@ interface IToken {
 }
 
 export var isLoggedInVar = Boolean(localStorage.getItem("accessToken"));
+export const ACCESS_TOKEN = localStorage.getItem("accessToken");
 
 export const logUserIn = (token: IToken) => {
   localStorage.setItem("accessToken", token.accessToken);

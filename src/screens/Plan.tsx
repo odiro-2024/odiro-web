@@ -21,6 +21,7 @@ import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
 import DraggableLocation from "../components/DraggableLocation";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { ACCESS_TOKEN } from "../useUser";
 
 const Container = styled.div`
   width: 90%;
@@ -55,9 +56,11 @@ const CheckBoxs = styled.div`
   @media (max-width: 860px) {
     position: absolute;
     z-index: 9;
+
     &:hover {
       div {
-        display: block;
+        opacity: 1;
+        visibility: visible;
         &:first-child::before {
           display: none;
         }
@@ -69,7 +72,7 @@ const CheckBoxs = styled.div`
   }
 `;
 
-const CheckBox = styled.div`
+const CheckBox = styled.div<{ $index: number }>`
   padding: 12px;
   border-radius: 20px;
   margin-right: 3px;
@@ -80,7 +83,8 @@ const CheckBox = styled.div`
   color: white;
   @media (max-width: 860px) {
     &:not(:first-child) {
-      display: none;
+      opacity: 0;
+      visibility: hidden;
     }
     &:nth-child(1) {
       position: relative;
@@ -166,7 +170,7 @@ const PlacePhoto = styled.div<{ $url: string }>`
   border-radius: 50%;
   background-color: black;
   margin-right: 50%;
-  background-image: url(${({ $url }) => $url});
+  background-image: url("//t1.kakaocdn.net/thumb/T800x0.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2Fsearchregister_1590713355");
   background-size: cover;
   @media (max-width: 860px) {
     width: 4rem;
@@ -241,6 +245,7 @@ const MemoCommentBox = styled.div`
   margin-left: 2rem;
   height: 25rem;
   position: relative;
+  perspective: 1200px;
   @media (max-width: 1024px) {
     width: 19rem;
   }
@@ -415,8 +420,10 @@ const CommentList = styled.div`
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    background-color: blue;
-    margin-right: 1rem;
+    background-image: url("https://newsimg-hams.hankookilbo.com/2022/11/14/b62ae00e-5a61-46bf-b721-16ebc34873d2.jpg");
+    background-size: cover;
+    background-color: black;
+    margin-right: 0.7rem;
   }
   .content {
     width: calc(100% - 4rem);
@@ -835,19 +842,27 @@ const Plan = () => {
     } = infoBox;
 
     axios
-      .post(`/api/plan/location/create`, {
-        day_plan_id: data.day_plan[index].id,
-        address_name,
-        kakao_map_id,
-        phone,
-        place_name,
-        place_url,
-        lat,
-        lng,
-        road_address_name,
-        category_group_name: category_group_name || "미정",
-        img_url,
-      })
+      .post(
+        `/api/location/create`,
+        {
+          day_plan_id: data.day_plan[index].id,
+          address_name,
+          kakao_map_id,
+          phone,
+          place_name,
+          place_url,
+          lat,
+          lng,
+          road_address_name,
+          category_group_name: category_group_name || "미정",
+          img_url,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
       .then((res) => {
         const {
           data: { id },
@@ -872,11 +887,18 @@ const Plan = () => {
   };
 
   useEffect(() => {
-    axios.get(`/api/plan/${id}`).then((res) => {
-      const { data } = res;
-      setData(data);
-      handleDateChange(new Date(data.first_day), data);
-    });
+    const ACCESS_TOKEN = localStorage.getItem("accessToken");
+    axios
+      .get(`/api/plan/${id}`, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then((res) => {
+        const { data } = res;
+        setData(data);
+        handleDateChange(new Date(data.first_day), data);
+      });
   }, []);
 
   useEffect(() => {
@@ -913,23 +935,38 @@ const Plan = () => {
   }, [map, location]);
 
   const locationDeleteClicked = (index: number, id: number) => {
-    axios.delete(`/api/location/delete/${id}`).then((res) => {
-      const { data, status } = res;
-      console.log(data, status);
-      setLocation((prev) => [
-        ...prev.slice(0, index),
-        ...prev.slice(index + 1),
-      ]);
-    });
+    axios
+      .delete(`/api/location/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then((res) => {
+        const { data, status } = res;
+        console.log(data, status);
+        setLocation((prev) => [
+          ...prev.slice(0, index),
+          ...prev.slice(index + 1),
+        ]);
+      });
   };
 
   const memoDeleteClicked = (index: number, id: number) => {
-    axios.delete(`/api/memo/delete/${id}`).then((res) => {
-      const { status } = res;
-      if (status === 204) {
-        setMemo((prev) => [...prev.slice(0, index), ...prev.slice(index + 1)]);
-      }
-    });
+    axios
+      .delete(`/api/memo/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then((res) => {
+        const { status } = res;
+        if (status === 204) {
+          setMemo((prev) => [
+            ...prev.slice(0, index),
+            ...prev.slice(index + 1),
+          ]);
+        }
+      });
   };
 
   const onMemoSubmit = () => {
@@ -937,10 +974,18 @@ const Plan = () => {
     const { memo } = getValues();
     if (!memo) return;
     axios
-      .post("/api/memo/create", {
-        day_plan_id: data.day_plan[index].id,
-        content: memo,
-      })
+      .post(
+        "/api/memo/create",
+        {
+          day_plan_id: data.day_plan[index].id,
+          content: memo,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
       .then((res) => {
         const {
           data: { id },
@@ -960,6 +1005,11 @@ const Plan = () => {
         {
           day_plan_id: data.day_plan[index].id,
           content: comment,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
         }
         // {
         //   headers: {
@@ -1005,6 +1055,22 @@ const Plan = () => {
     return minDiff.toFixed(0) + "분 전";
   };
 
+  const $boxs = document.querySelector(".boxs");
+  $boxs?.addEventListener("mouseenter", (e) => {
+    const child = $boxs.childNodes as NodeListOf<HTMLElement>;
+    child.forEach((v, i) => {
+      v.style.transitionDelay = `${0.2 * i}s`;
+      v.style.transitionDuration = `0.9s`;
+    });
+  });
+  $boxs?.addEventListener("mouseleave", () => {
+    const child = $boxs.childNodes as NodeListOf<HTMLElement>;
+    child.forEach((v, i) => {
+      v.style.transitionDelay = `0s`;
+      v.style.transitionDuration = "0s";
+    });
+  });
+
   return (
     <>
       {data && (
@@ -1013,12 +1079,16 @@ const Plan = () => {
           <Container>
             <TopBox>
               <EmptyDiv />
-              <CheckBoxs>
-                {dataEx.checkBoxValue.map((value: boolean, index: number) => {
-                  return value ? (
-                    <CheckBox key={index}>{checkBoxList[index]}</CheckBox>
-                  ) : null;
-                })}
+              <CheckBoxs className="boxs">
+                {dataEx.checkBoxValue
+                  .filter((v) => v)
+                  .map((value: boolean, index: number) => {
+                    return value ? (
+                      <CheckBox $index={index} key={index}>
+                        {checkBoxList[index]}
+                      </CheckBox>
+                    ) : null;
+                  })}
               </CheckBoxs>
               <Title>{data.title}</Title>
               <AvatarBox>
@@ -1139,7 +1209,7 @@ const Plan = () => {
                           <div className="avatar"></div>
                           <div className="content">
                             <div>
-                              <h3>h_jjing</h3>
+                              <h3>Seo_jh</h3>
                               <p>{value.content}</p>
                             </div>
                             <div>

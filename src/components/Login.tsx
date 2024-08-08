@@ -184,7 +184,7 @@ export const overlayVariants = {
 };
 
 interface FormData {
-  nickname: string;
+  username: string;
   password: string;
 }
 
@@ -208,10 +208,10 @@ const Login = () => {
   } = useForm<FormData>();
 
   const onSubmitValid = () => {
-    const { nickname, password } = getValues();
+    const { username, password } = getValues();
     axios
       .post("/api/signin", {
-        nickname,
+        username,
         password,
       })
       .then((res) => {
@@ -251,11 +251,11 @@ const Login = () => {
         <LoginBoxContent>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <Input
-              {...register("nickname", { required: true })}
+              {...register("username", { required: true })}
               type="text"
-              name="nickname"
+              name="username"
               placeholder="아이디를 입력해주세요"
-              $isvalid={!errors?.nickname ? "true" : "false"}
+              $isvalid={!errors?.username ? "true" : "false"}
             />
             <Input
               {...register("password", {

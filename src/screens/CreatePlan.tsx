@@ -5,6 +5,7 @@ import { useState } from "react";
 import { mainColor } from "../color";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ACCESS_TOKEN } from "../useUser";
 
 const Container = styled.div`
   width: 100%;
@@ -171,15 +172,24 @@ const CreatePlan = () => {
     const first_day = firstDay.toISOString();
     const last_day = lastDay.toISOString();
     axios
-      .post("/api/plan/create", {
-        title,
-        first_day,
-        last_day,
-      })
+      .post(
+        "/api/plan/create",
+        {
+          title,
+          first_day,
+          last_day,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
       .then((res) => {
         const { id } = res.data;
         navigate(`/plan/${id}`);
-      });
+      })
+      .catch((error) => console.log(error));
   };
 
   const onClicked = (index: number) => {

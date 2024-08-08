@@ -55,7 +55,7 @@ const EnrollInput = styled(Input)`
 `;
 
 interface FormData {
-  nickname: string;
+  username: string;
   password: string;
   password2: string;
   email: string;
@@ -80,10 +80,10 @@ const Signup = () => {
   } = useForm<FormData>();
 
   const onSubmitValid = () => {
-    const { password, nickname, email } = getValues();
+    const { username, password, email } = getValues();
     axios
       .post("/api/signup", {
-        nickname,
+        username,
         password,
         email,
       })
@@ -122,11 +122,11 @@ const Signup = () => {
         <LoginBoxContent>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <EnrollInput
-              {...register("nickname", { required: true })}
+              {...register("username", { required: true })}
               type="text"
-              name="nickname"
+              name="username"
               placeholder="이름을 입력해주세요"
-              $isvalid={!errors?.nickname ? "true" : "false"}
+              $isvalid={!errors?.username ? "true" : "false"}
             />
             <EnrollInput
               {...register("password", {

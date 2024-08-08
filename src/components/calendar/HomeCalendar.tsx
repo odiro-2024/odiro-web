@@ -7,6 +7,7 @@ import { color, mainColor } from "../../color";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SelectDateForm from "./SelectDate";
+import { ACCESS_TOKEN } from "../../useUser";
 
 const TopLine = styled.div<{ $i: number }>`
   position: absolute;
@@ -190,11 +191,17 @@ function HomeCalendar() {
   }
 
   useEffect(() => {
-    axios.get("/api/home").then((res) => {
-      const { data } = res;
-      setPlan(data);
-      console.log(data);
-    });
+    axios
+      .get("/api/home", {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then((res) => {
+        const { data } = res;
+        setPlan(data);
+      })
+      .catch((error) => console.log(error));
   }, []);
 
   useEffect(() => {

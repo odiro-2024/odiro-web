@@ -104,7 +104,7 @@ const PlacePhoto = styled.div<{ $url: string }>`
   border-radius: 50%;
   background-color: black;
   margin-right: 20px;
-  background-image: url(${({ $url }) => $url});
+  background-image: url("//t1.kakaocdn.net/thumb/T800x0.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2Fsearchregister_1590713355");
   background-size: cover;
   @media (max-width: 480px) {
     width: 60px;
