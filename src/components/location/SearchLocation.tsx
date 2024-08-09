@@ -1,68 +1,39 @@
 import { styled } from "styled-components";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { toggleLocation } from "../counterSlice";
-import { useDispatch } from "react-redux";
+import { toggleLocation } from "../../contexts/counterSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { tablet_L } from "../../utils/size";
+import { tablet_M } from "../../utils/size";
+import { RootState } from "../../contexts/store";
+import Modal from "../shared/Modal";
 
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-`;
-
-const LoginBox = styled.div`
-  border-radius: 5px;
-  background-color: white;
-`;
-
-const overlayVariants = {
-  initial: {
-    opacity: 0,
-  },
-  animate: {
-    opacity: 1,
-  },
-  exit: {
-    opacity: 0,
-  },
-};
-
-const LocationBox = styled(LoginBox)`
+const LocationBox = styled.div`
+  height: 70%;
   width: 80%;
   max-width: 1200px;
   height: 70%;
+  border-radius: 5px;
+  background-color: white;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  @media (max-width: 860px) {
+  @media (max-width: ${tablet_L}) {
     width: 100%;
     height: 100%;
   }
 `;
 
-const LocationMap = styled.div`
+const MapWrap = styled.div`
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
 `;
 
 const Form = styled.form`
   position: absolute;
   top: 30px;
   left: 15px;
-  z-index: 1;
+  z-index: 9;
 `;
 
 const Input = styled.input`
@@ -74,25 +45,25 @@ const Input = styled.input`
   text-indent: 10px;
 `;
 
-const Divs = styled.div`
+const Divs = styled.ul`
   position: absolute;
   top: 70px;
   left: 15px;
   z-index: 9;
   max-height: 70%;
-  border-radius: 20px;
+  border-radius: 1rem;
   border: 1px solid rgba(0, 0, 0, 0.2);
   overflow: scroll;
   &::-webkit-scrollbar {
     width: 0px;
     height: 0px;
   }
-  @media (max-width: 560px) {
+  @media (max-width: ${tablet_M}) {
     max-height: 25%;
   }
 `;
 
-const Div = styled.div`
+const Div = styled.li`
   width: 240px;
   background-color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -110,12 +81,6 @@ const Div = styled.div`
     &:last-child {
       color: green;
       margin-bottom: 15px;
-    }
-  }
-  @media (max-width: 1024px) {
-    width: 220px;
-    span {
-      font-size: 0.9rem;
     }
   }
 `;
@@ -164,14 +129,6 @@ const InfoBox = styled.div`
       }
     }
   }
-  @media (max-width: 1024px) {
-    > span {
-      font-size: 0.9rem;
-    }
-    div {
-      margin-top: 10px;
-    }
-  }
 `;
 
 interface FormData {
@@ -193,15 +150,17 @@ export interface Imarkers {
   img_url: string;
 }
 
-const Location = ({ onDataChange }: any) => {
+const SearchLocation = ({ onDataChange }: any) => {
   const [map, setMap] = useState<any>();
   const [infoBox, setInfoBox] = useState<Imarkers | null>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
   var temporaryMarkers: Imarkers[] = [];
-  const modalRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useDispatch();
   const onLocationClicked = () => dispatch(toggleLocation());
+  const locationClicked = useSelector(
+    (state: RootState) => state.counter.locationClicked
+  );
 
   const { register, getValues, handleSubmit } = useForm<FormData>();
 
@@ -244,8 +203,9 @@ const Location = ({ onDataChange }: any) => {
     });
   };
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async () => {
     temporaryMarkers = [];
+    setInfoBox(null);
     fetchData();
   };
 
@@ -262,23 +222,10 @@ const Location = ({ onDataChange }: any) => {
     }
   };
 
-  const modalOutSideClick = (e: any) => {
-    if (modalRef.current === e.target) {
-      onLocationClicked();
-    }
-  };
-
   return (
-    <Overlay
-      variants={overlayVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      ref={modalRef}
-      onClick={(e: any) => modalOutSideClick(e)}
-    >
+    <Modal active={locationClicked} modalClose={onLocationClicked}>
       <LocationBox>
-        <LocationMap>
+        <MapWrap>
           <Map
             center={{
               lat: 37.566826,
@@ -287,7 +234,7 @@ const Location = ({ onDataChange }: any) => {
             style={{
               width: "100%",
               height: "100%",
-              borderRadius: "15px",
+              borderRadius: "1rem",
             }}
             level={3}
             onCreate={setMap}
@@ -318,7 +265,7 @@ const Location = ({ onDataChange }: any) => {
               ></MapMarker>
             ))}
           </Map>
-        </LocationMap>
+        </MapWrap>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Input
             {...register("keyword", { required: true })}
@@ -337,8 +284,8 @@ const Location = ({ onDataChange }: any) => {
           ))}
         </Divs>
       </LocationBox>
-    </Overlay>
+    </Modal>
   );
 };
 
-export default Location;
+export default SearchLocation;

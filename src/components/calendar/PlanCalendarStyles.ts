@@ -1,6 +1,7 @@
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import { mainColor } from "../../color";
+import { mainColor } from "../../utils/color";
+import { desktop, phone, tablet_M } from "../../utils/size";
 
 export const StyledCalendarContainer = styled.div`
   width: 22rem;
@@ -8,18 +9,16 @@ export const StyledCalendarContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-left: 2rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
   .react-calendar {
     background-color: #fff;
     font-family: Arial, Helvetica, sans-serif;
     height: 100%;
-    box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
     line-height: 1.7rem;
     border: none;
     padding: 5px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
   }
   //nav
@@ -62,14 +61,14 @@ export const StyledCalendarContainer = styled.div`
       color: black;
     }
   }
-  @media (max-width: 1024px) {
+  @media (max-width: ${desktop}) {
     width: 19rem;
     height: 24rem;
     .react-calendar {
       line-height: 1.6rem;
     }
   }
-  @media (max-width: 860px) {
+  @media (max-width: ${tablet_M}) {
     margin-bottom: 1rem;
     width: 17rem;
     height: 19rem;
@@ -77,7 +76,7 @@ export const StyledCalendarContainer = styled.div`
       line-height: 0.9rem;
     }
   }
-  @media (max-width: 480px) {
+  @media (max-width: ${phone}) {
     margin-bottom: 1rem;
     width: 18rem;
     height: 19rem;

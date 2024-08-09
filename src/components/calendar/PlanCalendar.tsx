@@ -3,7 +3,8 @@ import { StyledCalendarContainer } from "./PlanCalendarStyles";
 import { format } from "date-fns";
 import Calendar from "react-calendar";
 import styled from "styled-components";
-import { mainColor } from "../../color";
+import { mainColor } from "../../utils/color";
+import { phone, tablet_M } from "../../utils/size";
 
 const Line = styled.div`
   position: absolute;
@@ -11,10 +12,10 @@ const Line = styled.div`
   height: 8px;
   width: 100%;
   background-color: ${mainColor};
-  @media (max-width: 860px) {
+  @media (max-width: ${tablet_M}) {
     bottom: 3px;
   }
-  @media (max-width: 480px) {
+  @media (max-width: ${phone}) {
     bottom: 3px;
     height: 6px;
   }

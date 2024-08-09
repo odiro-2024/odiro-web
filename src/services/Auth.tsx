@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { logUserIn } from "../useUser";
+import { logUserIn } from "./useUser";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -17,7 +17,8 @@ const Auth = () => {
         const { data } = res;
         logUserIn(data);
         navigate("/");
-      });
+      })
+      .catch((error) => console.log(error));
   });
 
   return <></>;

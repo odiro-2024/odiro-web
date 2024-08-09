@@ -2,9 +2,9 @@ import { styled } from "styled-components";
 import { faComment, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { toggleLogin, toggleSignup } from "../counterSlice";
-import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleLogin, toggleSignup } from "../contexts/counterSlice";
+import { useState } from "react";
 import axios from "axios";
 import {
   Button,
@@ -12,42 +12,24 @@ import {
   Form,
   Input,
   KakaoBtn,
-  LoginBoxContent,
+  LoginBoxMain,
   LoginBoxHeader,
-  Overlay,
-  overlayVariants,
-  SearchDiv,
+  FindAccount,
+  LoginBox,
 } from "./Login";
+import { tablet_M } from "../utils/size";
+import { RootState } from "../contexts/store";
+import Modal from "../components/shared/Modal";
 
-const EnrollBox = styled.div`
-  max-width: 31rem;
-  width: 60%;
+const EnrollBox = styled(LoginBox)`
   max-height: 40rem;
-  height: 80%;
-  border-radius: 5px;
-  background-color: white;
-  overflow: scroll;
-  &::-webkit-scrollbar {
-    width: 0px;
-  }
-  @media (max-width: 760px) {
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
-    max-width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    border-radius: 0;
-  }
 `;
 
 const EnrollInput = styled(Input)`
   &:first-child {
     margin-top: 3rem;
   }
-  @media (max-width: 760px) {
+  @media (max-width: ${tablet_M}) {
     &:first-child {
       margin-top: 5rem;
     }
@@ -62,15 +44,12 @@ interface FormData {
 }
 
 const Signup = () => {
-  const modalRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState("");
-
-  const modalOutSideClick = (e: any) => {
-    if (modalRef.current === e.target) {
-      dispatch(toggleSignup());
-    }
-  };
+  const dispatch = useDispatch();
+  const onSignupClicked = () => dispatch(toggleSignup());
+  const enrollClicked = useSelector(
+    (state: RootState) => state.counter.signupClicked
+  );
 
   const {
     register,
@@ -87,31 +66,22 @@ const Signup = () => {
         password,
         email,
       })
-      .then((res) => {
-        console.log(res.data);
+      .then(() => {
         dispatch(toggleSignup());
         dispatch(toggleLogin());
       })
       .catch((error) => setErrorMsg(error.message));
   };
 
-  const rest_api_key = process.env.REACT_APP_REST_API_KEY;
-  const redirect_uri = process.env.REACT_APP_REDIRECT_URI;
-  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
-
   const onKakaoClicked = () => {
+    const rest_api_key = process.env.REACT_APP_REST_API_KEY;
+    const redirect_uri = process.env.REACT_APP_REDIRECT_URI;
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
     window.location.href = KAKAO_AUTH_URL;
   };
 
   return (
-    <Overlay
-      variants={overlayVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      ref={modalRef}
-      onClick={(e: any) => modalOutSideClick(e)}
-    >
+    <Modal active={enrollClicked} modalClose={onSignupClicked}>
       <EnrollBox>
         <LoginBoxHeader>
           <span>SignUp</span>
@@ -119,7 +89,7 @@ const Signup = () => {
             <FontAwesomeIcon icon={faX} />
           </span>
         </LoginBoxHeader>
-        <LoginBoxContent>
+        <LoginBoxMain>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <EnrollInput
               {...register("username", { required: true })}
@@ -166,16 +136,16 @@ const Signup = () => {
               카카오 로그인
             </KakaoBtn>
           </Form>
-          <SearchDiv>
+          <FindAccount>
             <span>아이디 찾기</span>
             <span>|</span>
             <span>비밀번호 찾기</span>
             <span>|</span>
             <span>로그인</span>
-          </SearchDiv>
-        </LoginBoxContent>
+          </FindAccount>
+        </LoginBoxMain>
       </EnrollBox>
-    </Overlay>
+    </Modal>
   );
 };
 

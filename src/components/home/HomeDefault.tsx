@@ -1,8 +1,9 @@
 import styled from "styled-components";
-import { mainColor } from "../color";
+import { mainColor } from "../../utils/color";
 import { useEffect, useRef, useState } from "react";
-import { toggleLogin } from "../counterSlice";
+import { toggleLogin } from "../../contexts/counterSlice";
 import { useDispatch } from "react-redux";
+import { font_cute } from "../../utils/font";
 
 const Container = styled.section`
   margin: 5rem 0;
@@ -11,21 +12,16 @@ const Container = styled.section`
   padding-top: min(45%, 380px);
   border: 1px solid ${mainColor};
   border-radius: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   position: relative;
   opacity: 0;
-  transition: 0.9s;
-  position: relative;
-  right: -7rem;
-  p {
+  transition: 1.2s;
+  right: -9rem;
+  h2 {
     position: absolute;
     top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: "Quicksand";
+    font-family: ${font_cute};
     color: ${mainColor};
     font-weight: bold;
     font-size: min(3vw, 2.1rem);
@@ -82,6 +78,7 @@ const Plus = styled.div`
 `;
 
 const HomePlus = () => {
+  const dispatch = useDispatch();
   const [isInViewport, setIsInViewport] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -109,8 +106,6 @@ const HomePlus = () => {
     };
   }, []);
 
-  const dispatch = useDispatch();
-
   const onLoginClicked = () => dispatch(toggleLogin());
 
   return (
@@ -118,7 +113,7 @@ const HomePlus = () => {
       <Plus onClick={onLoginClicked}>
         <span></span>
       </Plus>
-      <p>Make your happy trip!</p>
+      <h2>Make your happy trip!</h2>
     </Container>
   );
 };

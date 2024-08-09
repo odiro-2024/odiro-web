@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "./screens/Home";
-import CreatePlan from "./screens/CreatePlan";
-import Plan from "./screens/Plan";
-import Auth from "./screens/Auth";
+import Home from "./pages/Home";
+import CreatePlan from "./pages/CreatePlan";
+import Plan from "./pages/Plan";
+import Auth from "./services/Auth";
 
 function App() {
   return (

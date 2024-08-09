@@ -3,11 +3,21 @@ import { StyledCalendarContainer } from "./HomeCalendarStyles";
 import { format } from "date-fns";
 import Calendar from "react-calendar";
 import styled from "styled-components";
-import { color, mainColor } from "../../color";
+import { color, mainColor } from "../../utils/color";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SelectDateForm from "./SelectDate";
-import { ACCESS_TOKEN } from "../../useUser";
+import { ACCESS_TOKEN } from "../../services/useUser";
+import { phone, tablet_M } from "../../utils/size";
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 98;
+`;
 
 const TopLine = styled.div<{ $i: number }>`
   position: absolute;
@@ -16,12 +26,8 @@ const TopLine = styled.div<{ $i: number }>`
   width: 100%;
   background-color: ${(props) => color[props.$i]};
 `;
-const BottomLine = styled.div<{ $i: number }>`
-  position: absolute;
+const BottomLine = styled(TopLine)`
   bottom: 0;
-  height: 8px;
-  width: 100%;
-  background-color: ${(props) => color[props.$i]};
 `;
 
 const ScheduleBox = styled.div`
@@ -29,11 +35,9 @@ const ScheduleBox = styled.div`
   max-width: 210px;
   height: 600px;
   margin-left: 2px;
-  border-top-right-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
   border-left: 1px solid rgba(0, 0, 0, 0.1);
   span,
-  p {
+  h2 {
     display: block;
     color: ${mainColor};
     font-size: 19px;
@@ -41,6 +45,18 @@ const ScheduleBox = styled.div`
     margin-top: 25px;
     margin-left: 1rem;
     position: relative;
+  }
+  div {
+    font-size: 14.3px;
+    background-color: ${mainColor};
+    max-width: 120px;
+    width: 8rem;
+    padding: 0.3rem 0.5rem;
+    margin-top: 0.5rem;
+    margin-left: 1rem;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
   }
   span {
     margin-left: 2rem;
@@ -56,19 +72,7 @@ const ScheduleBox = styled.div`
       left: -1rem;
     }
   }
-  div {
-    font-size: 14.3px;
-    background-color: ${mainColor};
-    max-width: 120px;
-    width: 8rem;
-    padding: 0.3rem 0.5rem;
-    margin-top: 0.5rem;
-    margin-left: 1rem;
-    border-radius: 8px;
-    color: white;
-    font-weight: 600;
-  }
-  @media (max-width: 760px) {
+  @media (max-width: ${tablet_M}) {
     width: 100%;
     max-width: none;
     min-height: 15rem;
@@ -77,7 +81,7 @@ const ScheduleBox = styled.div`
     box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
     border: 0.5rem;
     border-radius: 0.5rem;
-    @media (max-width: 480px) {
+    @media (max-width: ${phone}) {
       width: 95%;
       margin-top: 1rem;
       box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.13);
@@ -106,15 +110,6 @@ const MakePlanBtn = styled.div`
   }
 `;
 
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-`;
-
 type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece] | any;
@@ -134,44 +129,16 @@ interface Iplan {
 function HomeCalendar() {
   const modalRef = useRef<HTMLDivElement>(null);
   const [modalShow, setModalShow] = useState(false);
-
   const [isInViewport, setIsInViewport] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!ref.current) return; // 요소가 아직 준비되지 않은 경우 중단
-
-    const callback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          // 요소가 뷰포트에 나타났을 경우
-          setIsInViewport(true);
-        } else {
-          // 요소가 뷰포트를 벗어난 경우
-          setIsInViewport(false);
-        }
-      });
-    };
-
-    const options = { root: null, rootMargin: "0px", threshold: 0 };
-    const observer = new IntersectionObserver(callback, options);
-    observer.observe(ref.current); // 요소 관찰 시작
-
-    return () => {
-      observer.disconnect(); // 컴포넌트 언마운트 시 관찰 중단
-    };
-  }, []);
-
-  const modalOutSideClick = (e: any) => {
-    if (modalRef.current === e.target) {
-      setModalShow(false);
-    }
-  };
   const [value, setValue] = useState<Value>(new Date());
   const [schedule, setSchedule] = useState<Ischedule[]>([]);
-  const navigate = useNavigate();
   const [plan, setPlan] = useState<Iplan[]>([]);
   const chooseLine: number[] = [];
+  const navigate = useNavigate();
+
+  //같은날 여행이 2개 이상일때
+  //라인을 위로 or 아래로 그릴지 설정하는 코드=
   for (var i = 0; i < plan.length; i++) {
     if (i === 0) {
       chooseLine.push(1);
@@ -205,11 +172,12 @@ function HomeCalendar() {
   }, []);
 
   useEffect(() => {
+    //일정 박스 설정 코드
     setSchedule([]);
     for (let i = 0; i < plan.length; i++) {
       const isPlanHit =
-        format(value, "yyyy-MM-dd") >= plan[i].first_day &&
-        format(value, "yyyy-MM-dd") <= plan[i].last_day;
+        value.toISOString() >= plan[i].first_day &&
+        value.toISOString() <= plan[i].last_day;
       if (isPlanHit) {
         setSchedule((prev) => [
           ...prev,
@@ -218,6 +186,36 @@ function HomeCalendar() {
       }
     }
   }, [plan, value]);
+
+  useEffect(() => {
+    if (!ref.current) return; // 요소가 아직 준비되지 않은 경우 중단
+
+    const callback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // 요소가 뷰포트에 나타났을 경우
+          setIsInViewport(true);
+        } else {
+          // 요소가 뷰포트를 벗어난 경우
+          setIsInViewport(false);
+        }
+      });
+    };
+
+    const options = { root: null, rootMargin: "0px", threshold: 0 };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(ref.current); // 요소 관찰 시작
+
+    return () => {
+      observer.disconnect(); // 컴포넌트 언마운트 시 관찰 중단
+    };
+  }, []);
+
+  const modalOutSideClick = (e: any) => {
+    if (modalRef.current === e.target) {
+      setModalShow(false);
+    }
+  };
 
   const onClicked = (value: any) => {
     setValue(value);
@@ -229,15 +227,6 @@ function HomeCalendar() {
       ref={ref}
     >
       <MakePlanBtn onClick={() => setModalShow(true)}>새 여행</MakePlanBtn>
-      {modalShow && (
-        <>
-          <Overlay
-            ref={modalRef}
-            onClick={(e: any) => modalOutSideClick(e)}
-          ></Overlay>
-          <SelectDateForm onCloseClicked={setModalShow}></SelectDateForm>
-        </>
-      )}
       <Calendar
         value={value}
         onClickDay={(value) => onClicked(value)}
@@ -249,8 +238,8 @@ function HomeCalendar() {
         tileContent={({ date }) =>
           plan.map((value, index) => {
             const isPlanHit =
-              format(date, "yyyy-MM-dd") >= value.first_day &&
-              format(date, "yyyy-MM-dd") <= value.last_day;
+              date.toISOString() >= value.first_day &&
+              date.toISOString() <= value.last_day;
             if (!isPlanHit) {
               return null;
             }
@@ -276,7 +265,7 @@ function HomeCalendar() {
         }
       />
       <ScheduleBox>
-        <p>일정</p>
+        <h2>일정</h2>
         <div>{format(value, "yyyy년 MM월 dd일")}</div>
         {schedule.map((value, index) => (
           <span
@@ -288,6 +277,15 @@ function HomeCalendar() {
           </span>
         ))}
       </ScheduleBox>
+      {modalShow && (
+        <>
+          <Overlay
+            ref={modalRef}
+            onClick={(e: any) => modalOutSideClick(e)}
+          ></Overlay>
+          <SelectDateForm onCloseClicked={setModalShow}></SelectDateForm>
+        </>
+      )}
     </StyledCalendarContainer>
   );
 }

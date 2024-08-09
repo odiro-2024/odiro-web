@@ -1,14 +1,14 @@
 import styled from "styled-components";
-import { mainColor } from "../color";
+import { mainColor } from "../../utils/color";
 import { useNavigate } from "react-router-dom";
-import { toggleSignup, toggleLogin } from "../counterSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
-import LoginForm from "./Login";
-import EnrollForm from "./Signup";
-import { isLoggedInVar, logUserOut } from "../useUser";
-import { g1 } from "./../color";
+import { toggleSignup, toggleLogin } from "../../contexts/counterSlice";
+import { useDispatch } from "react-redux";
+import LoginForm from "../../pages/Login";
+import EnrollForm from "../../pages/Signup";
+import { isLoggedInVar, logUserOut } from "../../services/useUser";
+import { g1 } from "../../utils/color";
 import { useState } from "react";
+import { phone, tablet_L } from "../../utils/size";
 
 const Container = styled.header`
   width: 100%;
@@ -28,7 +28,7 @@ const Nav = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
-  @media (max-width: 480px) {
+  @media (max-width: ${phone}) {
     padding: 0 1rem;
   }
 `;
@@ -40,9 +40,9 @@ const Logo = styled.h1`
   cursor: pointer;
   height: 70px;
   align-content: center;
-  @media (max-width: 480px) {
-    height: 50px;
+  @media (max-width: ${phone}) {
     font-size: 1.5rem;
+    height: 50px;
   }
 `;
 
@@ -63,7 +63,7 @@ const Gnb = styled.ul<{ $active: boolean }>`
       color: white;
     }
   }
-  @media (max-width: 960px) {
+  @media (max-width: ${tablet_L}) {
     display: block;
     position: fixed;
     width: ${(props) => (props.$active ? "15rem" : "0")};
@@ -79,7 +79,7 @@ const Gnb = styled.ul<{ $active: boolean }>`
       margin: 0 1rem;
     }
   }
-  @media (max-width: 480px) {
+  @media (max-width: ${phone}) {
     width: 100%;
     display: ${(props) => (props.$active ? "flex" : "none")};
     flex-direction: column;
@@ -96,9 +96,9 @@ const HamBtn = styled.button<{ $active: boolean }>`
   position: relative;
   z-index: 999;
   cursor: pointer;
-  display: none;
   width: 2.5rem;
   height: 2.5rem;
+  display: none;
   span {
     width: 100%;
     height: ${(props) => (props.$active ? "0px" : "4px")};
@@ -127,7 +127,7 @@ const HamBtn = styled.button<{ $active: boolean }>`
         props.$active ? "translate(-50%, -50%) rotate(-45deg)" : null};
     }
   }
-  @media (max-width: 960px) {
+  @media (max-width: ${tablet_L}) {
     display: block;
   }
 `;
@@ -136,12 +136,6 @@ const Header = () => {
   const [isHamActive, setIsHamActive] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const loginClicked = useSelector(
-    (state: RootState) => state.counter.loginClicked
-  );
-  const enrollClicked = useSelector(
-    (state: RootState) => state.counter.signupClicked
-  );
 
   const onLoginClicked = () => dispatch(toggleLogin());
   const onCreateClicked = () => dispatch(toggleSignup());
@@ -173,8 +167,8 @@ const Header = () => {
           <span></span>
         </HamBtn>
       </Nav>
-      {loginClicked && <LoginForm />}
-      {enrollClicked && <EnrollForm />}
+      <LoginForm />
+      <EnrollForm />
     </Container>
   );
 };

@@ -1,40 +1,31 @@
 import { styled } from "styled-components";
-import { motion } from "framer-motion";
 import { faComment, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { toggleLogin } from "../counterSlice";
-import { useRef, useState } from "react";
-import { g1, mainColor } from "../color";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleLogin } from "../contexts/counterSlice";
+import { useState } from "react";
+import { g1, mainColor } from "../utils/color";
 import axios from "axios";
-import { logUserIn } from "../useUser";
+import { logUserIn } from "../services/useUser";
 import { useNavigate } from "react-router-dom";
+import { phone, tablet_M, tablet_S } from "../utils/size";
+import { font_sharp } from "../utils/font";
+import { RootState } from "../contexts/store";
+import Modal from "../components/shared/Modal";
 
-export const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-`;
 export const LoginBox = styled.div`
   max-width: 31rem;
-  width: 60%;
   max-height: 33rem;
+  width: 60%;
   height: 80%;
   border-radius: 5px;
   background-color: white;
-  overflow: scroll;
+  overflow: auto;
   &::-webkit-scrollbar {
     width: 0px;
   }
-  @media (max-width: 760px) {
+  @media (max-width: ${tablet_M}) {
     width: 100%;
     height: 100%;
     max-height: 100%;
@@ -58,7 +49,7 @@ export const LoginBoxHeader = styled.div`
   span {
     margin: 0 1.4rem;
     &:first-child {
-      font-family: "Times New Roman", Times, serif;
+      font-family: ${font_sharp};
       letter-spacing: 1px;
       font-size: 1.4rem;
     }
@@ -68,22 +59,22 @@ export const LoginBoxHeader = styled.div`
       font-size: 1.3rem;
     }
   }
-  @media (max-width: 760px) {
+  @media (max-width: ${tablet_M}) {
     position: absolute;
     top: 0;
   }
 `;
 
-export const LoginBoxContent = styled.div`
+export const LoginBoxMain = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  @media (max-width: 760px) {
+  @media (max-width: ${tablet_M}) {
     width: 70%;
   }
-  @media (max-width: 480px) {
+  @media (max-width: ${phone}) {
     width: 90%;
   }
 `;
@@ -145,7 +136,7 @@ export const KakaoBtn = styled.div`
   margin-top: 1rem;
   background-color: yellow;
   color: black;
-  font-size: 18px;
+  font-size: 1.1rem;
 `;
 
 export const ErrorMsg = styled.span`
@@ -155,33 +146,21 @@ export const ErrorMsg = styled.span`
   margin-top: 0.6rem;
 `;
 
-export const SearchDiv = styled.div`
+export const FindAccount = styled.ul`
   width: 75%;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 2.5rem 0 1.6rem 0;
   font-size: 15px;
-  span {
-    margin: 0 5px;
+  li {
+    margin: 0 0.3rem;
     cursor: pointer;
   }
-  @media (max-width: 560px) {
+  @media (max-width: ${tablet_S}) {
     font-size: 3vw;
   }
 `;
-
-export const overlayVariants = {
-  initial: {
-    opacity: 0,
-  },
-  animate: {
-    opacity: 1,
-  },
-  exit: {
-    opacity: 0,
-  },
-};
 
 interface FormData {
   username: string;
@@ -189,16 +168,13 @@ interface FormData {
 }
 
 const Login = () => {
-  const modalRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState("");
-
-  const modalOutSideClick = (e: any) => {
-    if (modalRef.current === e.target) {
-      dispatch(toggleLogin());
-    }
-  };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const onLoginClicked = () => dispatch(toggleLogin());
+  const loginClicked = useSelector(
+    (state: RootState) => state.counter.loginClicked
+  );
 
   const {
     register,
@@ -224,23 +200,15 @@ const Login = () => {
       .catch((error) => setErrorMsg(error.message));
   };
 
-  const rest_api_key = process.env.REACT_APP_REST_API_KEY;
-  const redirect_uri = process.env.REACT_APP_REDIRECT_URI;
-  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
-
   const onKakaoClicked = () => {
+    const rest_api_key = process.env.REACT_APP_REST_API_KEY;
+    const redirect_uri = process.env.REACT_APP_REDIRECT_URI;
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
     window.location.href = KAKAO_AUTH_URL;
   };
 
   return (
-    <Overlay
-      variants={overlayVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      ref={modalRef}
-      onClick={(e: any) => modalOutSideClick(e)}
-    >
+    <Modal active={loginClicked} modalClose={onLoginClicked}>
       <LoginBox>
         <LoginBoxHeader>
           <span>LOGIN</span>
@@ -248,7 +216,7 @@ const Login = () => {
             <FontAwesomeIcon icon={faX} />
           </span>
         </LoginBoxHeader>
-        <LoginBoxContent>
+        <LoginBoxMain>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
             <Input
               {...register("username", { required: true })}
@@ -277,16 +245,16 @@ const Login = () => {
               카카오 로그인
             </KakaoBtn>
           </Form>
-          <SearchDiv>
-            <span>아이디 찾기</span>
-            <span>|</span>
-            <span>비밀번호 찾기</span>
-            <span>|</span>
-            <span>회원가입</span>
-          </SearchDiv>
-        </LoginBoxContent>
+          <FindAccount>
+            <li>아이디 찾기</li>
+            <li>|</li>
+            <li>비밀번호 찾기</li>
+            <li>|</li>
+            <li>회원가입</li>
+          </FindAccount>
+        </LoginBoxMain>
       </LoginBox>
-    </Overlay>
+    </Modal>
   );
 };
 

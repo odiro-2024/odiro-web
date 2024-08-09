@@ -1,10 +1,10 @@
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import { mainColor } from "../../color";
+import { mainColor } from "../../utils/color";
+import { phone, tablet_M } from "../../utils/size";
 
 export const StyledCalendarContainer = styled.div`
   width: 22rem;
-  height: 28rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,8 +15,9 @@ export const StyledCalendarContainer = styled.div`
   right: -1rem;
   z-index: 99;
   border-radius: 0.5rem;
+  overflow: hidden;
   .react-calendar {
-    border-radius: 0.5rem 0.5rem 0 0;
+    border-radius: 0px;
     background-color: yellow;
     width: 100%;
     height: 100%;
@@ -32,8 +33,8 @@ export const StyledCalendarContainer = styled.div`
   //nav
   .react-calendar__navigation button {
     color: ${mainColor};
-    height: 30px;
-    margin: 25px 0;
+    height: 35px;
+    margin: 20px 0;
     font-size: 20px;
     font-weight: bold;
     border-radius: 10px;
@@ -92,15 +93,14 @@ export const StyledCalendarContainer = styled.div`
     background-color: ${mainColor};
     color: white;
   }
-  @media (max-width: 760px) {
+  @media (max-width: ${tablet_M}) {
     width: 18rem;
-    height: 25rem;
     box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.13);
     .react-calendar {
       line-height: 1.2rem;
     }
   }
-  @media (max-width: 480px) {
+  @media (max-width: ${phone}) {
     position: fixed;
     width: 100%;
     height: 100%;

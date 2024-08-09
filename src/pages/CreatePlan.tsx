@@ -1,30 +1,26 @@
 import styled from "styled-components";
-import Header from "../components/Header";
+import Header from "../components/header/Header";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { mainColor } from "../color";
+import { mainColor } from "../utils/color";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ACCESS_TOKEN } from "../useUser";
+import { ACCESS_TOKEN } from "../services/useUser";
+import { phone } from "../utils/size";
 
-const Container = styled.div`
+const Container = styled.main`
   width: 100%;
-  height: 100vh;
-  min-height: 550px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
 `;
 
-const CreatePlanBox = styled.div`
+const CreatePlanBox = styled.section`
   max-width: 410px;
   width: 70%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: blcak;
+  margin: 11rem 0 6rem 0;
+  @media (max-width: ${phone}) {
+    margin: 8rem 0 2rem 0;
+  }
 `;
 
 const Form = styled.form`
@@ -33,9 +29,6 @@ const Form = styled.form`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  @media (max-width: 480px) {
-    margin: 8rem 0 2rem 0;
-  }
 `;
 
 const Input = styled.input<{ $isvalid: string }>`
@@ -46,25 +39,24 @@ const Input = styled.input<{ $isvalid: string }>`
     ${({ $isvalid }) =>
       $isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
   outline: none;
-  text-indent: 15px;
-  font-size: 15px;
-  margin-top: 20px;
-  &:first-child {
-    margin-top: 90px;
-  }
+  text-indent: 1rem;
+  font-size: 1rem;
   &:focus {
     border-width: 2px;
   }
+  @media (max-width: ${phone}) {
+    font-size: 3vw;
+  }
 `;
 
-const CheckBoxs = styled.div`
+const CheckBoxs = styled.ul`
   width: 100%;
-  margin: 50px 0;
+  margin: 40px 0;
   display: flex;
   flex-wrap: wrap;
 `;
 
-const CheckBox = styled.div<{ checked: boolean }>`
+const CheckBox = styled.li<{ checked: boolean }>`
   padding: 12px;
   border-radius: 20px;
   margin-right: 3px;
@@ -81,7 +73,7 @@ const CheckBox = styled.div<{ checked: boolean }>`
   }
 `;
 
-const Button = styled.button`
+const Button = styled.h2`
   width: 100%;
   height: 50px;
   border-radius: 30px;
@@ -89,7 +81,7 @@ const Button = styled.button`
   justify-content: center;
   align-items: center;
   font-size: 19px;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
   border: none;
   background-color: ${mainColor};
@@ -232,7 +224,7 @@ const CreatePlan = () => {
                 </CheckBox>
               ))}
             </CheckBoxs>
-            <Button>여행 만들기</Button>
+            <Button onClick={onSubmitValid}>여행 만들기</Button>
           </Form>
         </CreatePlanBox>
       </Container>

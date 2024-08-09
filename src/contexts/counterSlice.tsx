@@ -28,7 +28,6 @@ export const counterSlice = createSlice({
   },
 });
 
-// Action creators are generated for each case reducer function
 export const { toggleLogin, toggleSignup, toggleLocation } =
   counterSlice.actions;
 
