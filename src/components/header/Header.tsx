@@ -13,6 +13,8 @@ import { phone, tablet_L } from "../../utils/size";
 const Container = styled.header`
   width: 100%;
   position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -138,7 +140,8 @@ const Header = () => {
   const dispatch = useDispatch();
 
   const onLoginClicked = () => dispatch(toggleLogin());
-  const onCreateClicked = () => dispatch(toggleSignup());
+  const onSignupClicked = () => dispatch(toggleSignup());
+  const onProfileClicked = () => navigate("/profile");
   const onLogoutClicked = () => {
     logUserOut();
     navigate("/");
@@ -152,10 +155,13 @@ const Header = () => {
         <Gnb $active={isHamActive}>
           <li onClick={() => navigate("/")}>홈</li>
           {isLoggedInVar ? (
-            <li onClick={onLogoutClicked}>로그아웃</li>
+            <>
+              <li onClick={onProfileClicked}>회원정보</li>
+              <li onClick={onLogoutClicked}>로그아웃</li>
+            </>
           ) : (
             <>
-              <li onClick={onCreateClicked}>회원가입</li>
+              <li onClick={onSignupClicked}>회원가입</li>
               <li onClick={onLoginClicked}>로그인</li>
             </>
           )}

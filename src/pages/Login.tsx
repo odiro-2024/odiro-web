@@ -222,7 +222,7 @@ const Login = () => {
               {...register("username", { required: true })}
               type="text"
               name="username"
-              placeholder="아이디를 입력해주세요"
+              placeholder="이름을 입력해주세요"
               $isvalid={!errors?.username ? "true" : "false"}
             />
             <Input
