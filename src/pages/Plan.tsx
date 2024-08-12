@@ -32,6 +32,9 @@ const TopBox = styled.section`
   justify-content: space-between;
   align-items: flex-start;
   position: relative;
+  @media (max-width: ${tablet_M}) {
+    align-items: center;
+  }
 `;
 
 const EmptyDiv = styled.div`

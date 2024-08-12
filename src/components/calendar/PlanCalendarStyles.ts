@@ -1,7 +1,7 @@
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import { mainColor } from "../../utils/color";
-import { desktop, phone, tablet_M } from "../../utils/size";
+import { g4, mainColor } from "../../utils/color";
+import { desktop, tablet_M } from "../../utils/size";
 
 export const StyledCalendarContainer = styled.div`
   width: 22rem;
@@ -55,34 +55,29 @@ export const StyledCalendarContainer = styled.div`
     color: black;
     position: relative;
     padding: 10px 0;
-    &:hover,
-    &:focus {
+    &:hover {
       background-color: white;
+      color: black;
+    }
+    &:focus {
+      background-color: ${g4};
       color: black;
     }
   }
   @media (max-width: ${desktop}) {
     width: 19rem;
-    height: 24rem;
+    height: 23.5rem;
     .react-calendar {
-      line-height: 1.6rem;
+      line-height: 1.5rem;
     }
   }
   @media (max-width: ${tablet_M}) {
-    margin-bottom: 1rem;
-    width: 17rem;
-    height: 19rem;
-    .react-calendar {
-      line-height: 0.9rem;
-    }
-  }
-  @media (max-width: ${phone}) {
-    margin-bottom: 1rem;
+    margin: 2rem 0;
     width: 18rem;
-    height: 19rem;
+    height: 21.5rem;
     margin-left: 0;
     .react-calendar {
-      line-height: 0.9rem;
+      line-height: 1.2rem;
     }
   }
 `;

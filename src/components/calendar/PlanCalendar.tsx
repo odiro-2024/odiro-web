@@ -8,15 +8,15 @@ import { phone, tablet_M } from "../../utils/size";
 
 const Line = styled.div`
   position: absolute;
-  bottom: 8px;
+  bottom: 0;
   height: 8px;
   width: 100%;
   background-color: ${mainColor};
   @media (max-width: ${tablet_M}) {
-    bottom: 3px;
+    bottom: 0px;
   }
   @media (max-width: ${phone}) {
-    bottom: 3px;
+    bottom: 0px;
     height: 6px;
   }
 `;

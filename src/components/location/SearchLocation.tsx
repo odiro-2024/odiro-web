@@ -51,7 +51,7 @@ const Divs = styled.ul`
   left: 15px;
   z-index: 9;
   max-height: 70%;
-  border-radius: 1rem;
+  border-radius: 0.8rem;
   border: 1px solid rgba(0, 0, 0, 0.2);
   overflow: scroll;
   &::-webkit-scrollbar {

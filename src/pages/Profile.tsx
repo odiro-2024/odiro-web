@@ -62,7 +62,7 @@ const FormLeft = styled.div`
   color: ${g1};
   p {
     margin-top: 2.5rem;
-    font-size: 2rem;
+    font-size: 1.9rem;
   }
   span {
     margin-top: 1.2rem;

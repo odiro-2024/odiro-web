@@ -31,10 +31,11 @@ export const StyledCalendarContainer = styled.section`
   //nav
   .react-calendar__navigation button {
     color: ${mainColor};
-    height: 3rem;
+    height: 2.7rem;
     margin: 25px 0;
     font-size: 20px;
     font-weight: bold;
+    border-radius: 0.5rem;
     position: relative;
     &:nth-child(2) {
       pointer-events: none;

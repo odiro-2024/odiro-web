@@ -11,7 +11,8 @@ const Conntainer = styled.h2`
     height: 24rem;
   }
   @media (max-width: ${tablet_M}) {
-    width: 80%;
+    width: 100%;
+    max-width: 30rem;
     height: 19rem;
     order: 1;
   }

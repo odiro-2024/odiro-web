@@ -9,7 +9,9 @@ const Container = styled.ul`
   @media (max-width: ${tablet_M}) {
     position: absolute;
     z-index: 9;
+    height: 3rem;
     &:hover {
+      height: auto;
       li {
         opacity: 1;
         visibility: visible;

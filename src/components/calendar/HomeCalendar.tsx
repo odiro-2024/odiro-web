@@ -26,6 +26,7 @@ const TopLine = styled.div<{ $i: number }>`
   width: 100%;
   background-color: ${(props) => color[props.$i]};
 `;
+
 const BottomLine = styled(TopLine)`
   bottom: 0;
 `;
