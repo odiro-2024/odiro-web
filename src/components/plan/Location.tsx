@@ -66,13 +66,29 @@ const Location = ({ day_plan_id, index, location, setLocation }: IProps) => {
 
   const onDragEnd = ({ destination, source }: DropResult) => {
     if (!destination) return;
+    const reordered_location_ids: number[] = [];
     setLocation((prev: ILocation[]) => {
       const copy = [...prev];
-      const aa = copy.splice(source.index, 1);
-      copy.splice(destination?.index, 0, aa[0]);
+      const dragingValue = copy.splice(source.index, 1);
+      copy.splice(destination?.index, 0, dragingValue[0]);
+      copy.forEach((v) => reordered_location_ids.push(v.id));
       return copy;
     });
-    console.log(day_plan_id);
+    axios
+      .post(
+        "/api/location/reorder",
+        {
+          day_plan_id,
+          reordered_location_ids,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
+      .then()
+      .catch((error) => console.log(error));
   };
 
   const locationDeleteClicked = (index: number, id: number) => {
