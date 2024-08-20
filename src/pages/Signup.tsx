@@ -119,6 +119,7 @@ const Signup = () => {
     setUsernameValid(false);
     setEmailValid(false);
     setEmailVerifing(false);
+    setErrorMsg("");
   };
 
   const onSignupClose = () => {
@@ -129,34 +130,62 @@ const Signup = () => {
   const onUsernameCheck = () => {
     if (usernameValid) return;
     const { username } = getValues();
-    console.log(username);
-    setUsernameValid(true);
     //
+    setUsernameValid(true);
   };
 
   const onEmailCheck = () => {
     if (emailValid) return;
+    const { email } = getValues();
     //
-    setEmailValid(true);
-    setEmailVerifyValid(false);
-    setEmailVerifing(true);
+    axios
+      .post(
+        "/api/emails/verification-requests",
+        { data: {} },
+        {
+          params: {
+            email,
+          },
+        }
+      )
+      .then(() => {
+        setEmailValid(true);
+        setEmailVerifing(true);
+        setEmailVerifyValid(false);
+      })
+      .catch((error) => setErrorMsg(error.response.data.message));
     //
   };
 
   const onEmailVerifyCheck = () => {
     if (emailVerifyValid) return;
-    const { emailVerify } = getValues();
-    console.log(emailVerify);
-    setEmailVerifyValid(true);
+    const { email, emailVerify } = getValues();
     //
+    axios
+      .get("/api/emails/verifications", {
+        params: {
+          email,
+          code: emailVerify,
+        },
+      })
+      .then(() => {
+        setEmailVerifyValid(true);
+      })
+      .catch((error) => setErrorMsg(error.response.data.message));
   };
 
   const onSubmit = () => {
+    if (!usernameValid || !emailValid || !emailVerifyValid) {
+      setErrorMsg("유호성을 확인해주세요.");
+      return;
+    }
+
     const { username, password, password2, email } = getValues();
     if (password !== password2) {
       setErrorMsg("비밀번호가 다릅니다.");
       return;
     }
+
     axios
       .post("/api/signup", {
         username,

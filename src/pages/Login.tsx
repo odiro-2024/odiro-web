@@ -187,6 +187,7 @@ const Login = () => {
   const clear = () => {
     setValue("username", "");
     setValue("password", "");
+    setErrorMsg("");
   };
 
   const onLoginClose = () => {
@@ -208,7 +209,7 @@ const Login = () => {
         navigate("/");
         window.location.reload();
       })
-      .catch((error) => setErrorMsg(error.message));
+      .catch((error) => setErrorMsg(error.response.data.message));
   };
 
   const onKakaoClicked = () => {

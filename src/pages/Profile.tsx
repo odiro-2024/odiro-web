@@ -9,6 +9,9 @@ import PwCheck from "../components/shared/PwCheck";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck as faCircleCheckSolid } from "@fortawesome/free-solid-svg-icons";
 import { faCircleCheck as faCircleCheckRegular } from "@fortawesome/free-regular-svg-icons";
+import axios from "axios";
+import { ACCESS_TOKEN } from "../services/useUser";
+import { ErrorMsg as errormsg } from "./Login";
 
 const Container = styled.main`
   width: 90%;
@@ -117,6 +120,8 @@ const DuplicateCheck = styled.div`
   cursor: pointer;
 `;
 
+const ErrorMsg = styled(errormsg)``;
+
 // const FormRight = styled.div`
 //   display: flex;
 //   flex-direction: column;
@@ -153,7 +158,6 @@ const data = {
 interface FormData {
   username: String;
   email: String;
-  summary: String;
   password: String;
   password2: String;
   emailVerify: string;
@@ -168,30 +172,49 @@ const EditProfile = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [emailVerifing, setEmailVerifing] = useState(false);
   const [emailVerifyValid, setEmailVerifyValid] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const { register, getValues, setValue } = useForm<FormData>();
 
   const clear = () => {
     setValue("username", "");
     setValue("email", "");
-    setValue("summary", "");
     setValue("password", "");
     setValue("password2", "");
     setEmailVerifing(false);
+    setErrorMsg("");
   };
 
   const onSubmit = () => {
-    const { username, email, password, password2, summary } = getValues();
+    if (!usernameValid || !emailValid) return;
+    if (emailVerifing && !emailVerifyValid) return;
+
+    const { username, email, password, password2 } = getValues();
 
     if (password !== password2) {
-      window.confirm("비밀번호가 일치하지 않습니다.");
+      setErrorMsg("비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    //
-
-    setIsEditing(false);
-    clear();
+    axios
+      .patch(
+        "/api/user/update",
+        {
+          ...(username !== data.username && { username }),
+          ...(email !== data.email && { email }),
+          ...(password !== data.password && { password }),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
+      .then(() => {
+        setIsEditing(false);
+        clear();
+      })
+      .catch((error) => setErrorMsg(error.response.data.message));
   };
 
   const onPwCorrect = () => {
@@ -200,7 +223,6 @@ const EditProfile = () => {
     setValue("email", data.email);
     setValue("password", data.password);
     setValue("password2", data.password);
-    setValue("summary", data.summary);
   };
 
   const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,6 +248,7 @@ const EditProfile = () => {
   const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === data.email) {
       setEmailValid(true);
+      setEmailVerifing(false);
     } else {
       setEmailValid(false);
     }
@@ -234,26 +257,57 @@ const EditProfile = () => {
   const onUsernameCheck = () => {
     if (usernameValid) return;
     const { username } = getValues();
-    console.log(username);
-    setUsernameValid(true);
     //
+    axios
+      .get("/api/user/check-username", {
+        params: { username },
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then(() => {
+        setUsernameValid(true);
+      })
+      .catch((error) => setErrorMsg(error.response.data.message));
   };
 
   const onEmailCheck = () => {
     if (emailValid) return;
+    const { email } = getValues();
     //
-    setEmailValid(true);
-    setEmailVerifyValid(false);
-    setEmailVerifing(true);
-    //
+    axios
+      .post(
+        "/api/emails/verification-requests",
+        { data: {} },
+        {
+          params: {
+            email,
+          },
+        }
+      )
+      .then(() => {
+        setEmailValid(true);
+        setEmailVerifing(true);
+        setEmailVerifyValid(false);
+      })
+      .catch((error) => setErrorMsg(error.response.data.message));
   };
 
   const onEmailVerifyCheck = () => {
     if (emailVerifyValid) return;
-    const { emailVerify } = getValues();
-    console.log(emailVerify);
-    setEmailVerifyValid(true);
+    const { email, emailVerify } = getValues();
     //
+    axios
+      .get("/api/emails/verifications", {
+        params: {
+          email,
+          code: emailVerify,
+        },
+      })
+      .then(() => {
+        setEmailVerifyValid(true);
+      })
+      .catch((error) => setErrorMsg(error.response.data.message));
   };
 
   return (
@@ -352,6 +406,7 @@ const EditProfile = () => {
                     autoComplete="off"
                   />
                 </InputBox>
+                <ErrorMsg>{errorMsg}</ErrorMsg>
               </>
             ) : (
               <>
