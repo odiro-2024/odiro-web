@@ -11,7 +11,6 @@ const Container = styled.ul`
     z-index: 9;
     height: 3rem;
     &:hover {
-      height: auto;
       li {
         opacity: 1;
         visibility: visible;

@@ -139,7 +139,7 @@ function HomeCalendar() {
   const navigate = useNavigate();
 
   //같은날 여행이 2개 이상일때
-  //라인을 위로 or 아래로 그릴지 설정하는 코드=
+  //라인을 위로 or 아래로 그릴지 설정하는 코드
   for (var i = 0; i < plan.length; i++) {
     if (i === 0) {
       chooseLine.push(1);

@@ -1,6 +1,6 @@
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import { g4, mainColor } from "../../utils/color";
+import { mainColor } from "../../utils/color";
 import { desktop, tablet_M } from "../../utils/size";
 
 export const StyledCalendarContainer = styled.div`
@@ -55,12 +55,9 @@ export const StyledCalendarContainer = styled.div`
     color: black;
     position: relative;
     padding: 10px 0;
-    &:hover {
-      background-color: white;
-      color: black;
-    }
+    &:hover,
     &:focus {
-      background-color: ${g4};
+      background-color: white;
       color: black;
     }
   }
