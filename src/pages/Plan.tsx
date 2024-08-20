@@ -366,6 +366,7 @@ const Plan = () => {
             </MiddleBox>
             <BottomBox>
               <LocationBox
+                day_plan_id={data.day_plan[index].id}
                 index={index}
                 location={location}
                 setLocation={setLocation}

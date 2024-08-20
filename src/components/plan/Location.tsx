@@ -54,12 +54,13 @@ const LocationBox = styled.div`
 `;
 
 interface IProps {
+  day_plan_id: number;
   index: number;
   location: ILocation[];
   setLocation: Dispatch<SetStateAction<ILocation[]>>;
 }
 
-const Location = ({ index, location, setLocation }: IProps) => {
+const Location = ({ day_plan_id, index, location, setLocation }: IProps) => {
   const dispatch = useDispatch();
   const onLocationClicked = () => dispatch(toggleLocation());
 
@@ -71,6 +72,7 @@ const Location = ({ index, location, setLocation }: IProps) => {
       copy.splice(destination?.index, 0, aa[0]);
       return copy;
     });
+    console.log(day_plan_id);
   };
 
   const locationDeleteClicked = (index: number, id: number) => {

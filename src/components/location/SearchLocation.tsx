@@ -9,6 +9,9 @@ import { tablet_L } from "../../utils/size";
 import { tablet_M } from "../../utils/size";
 import { RootState } from "../../contexts/store";
 import Modal from "../shared/Modal";
+import { g1, mainColor } from "../../utils/color";
+import { faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const LocationBox = styled.div`
   height: 70%;
@@ -21,6 +24,23 @@ const LocationBox = styled.div`
   @media (max-width: ${tablet_L}) {
     width: 100%;
     height: 100%;
+  }
+`;
+
+const Close = styled.div`
+  width: 2.5rem;
+  height: 2.5rem;
+  position: absolute;
+  top: 0.7rem;
+  right: 0.5rem;
+  z-index: 9;
+  cursor: pointer;
+  font-size: 1.6rem;
+  text-align: center;
+  align-content: center;
+  color: ${g1};
+  @media (max-width: ${tablet_L}) {
+    top: 1.5rem;
   }
 `;
 
@@ -112,20 +132,21 @@ const InfoBox = styled.div`
     width: 100%;
     justify-content: flex-end;
     span {
+      padding: 5px;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
       &:first-child {
-        background-color: #dd4141;
-        padding: 5px;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
+        background-color: #64d442;
+      }
+      &:nth-child(2) {
+        margin: 0 10px;
+        padding: 5px 10px;
+        background-color: ${mainColor};
       }
       &:last-child {
-        background-color: #56ce31;
-        padding: 5px;
-        color: white;
-        border-radius: 5px;
-        margin: 0 12px 0 10px;
-        cursor: pointer;
+        background-color: #e95b5b;
+        margin-right: 12px;
       }
     }
   }
@@ -157,12 +178,18 @@ const SearchLocation = ({ onDataChange }: any) => {
   var temporaryMarkers: Imarkers[] = [];
 
   const dispatch = useDispatch();
-  const onLocationClicked = () => dispatch(toggleLocation());
   const locationClicked = useSelector(
     (state: RootState) => state.counter.locationClicked
   );
 
-  const { register, getValues, handleSubmit } = useForm<FormData>();
+  const { register, getValues, handleSubmit, setValue } = useForm<FormData>();
+
+  const locationClose = () => {
+    dispatch(toggleLocation());
+    setInfoBox(null);
+    setMarkers([]);
+    setValue("keyword", "");
+  };
 
   const fetchData = () => {
     const { keyword } = getValues();
@@ -218,13 +245,16 @@ const SearchLocation = ({ onDataChange }: any) => {
   const onEnrollClick = () => {
     if (window.confirm("이 장소를 등록하시겠습니까?")) {
       onDataChange(infoBox);
-      onLocationClicked();
+      locationClose();
     }
   };
 
   return (
-    <Modal active={locationClicked} modalClose={onLocationClicked}>
+    <Modal active={locationClicked} modalClose={locationClose}>
       <LocationBox>
+        <Close onClick={locationClose}>
+          <FontAwesomeIcon icon={faX} />
+        </Close>
         <MapWrap>
           <Map
             center={{
@@ -251,8 +281,9 @@ const SearchLocation = ({ onDataChange }: any) => {
                   <span>{infoBox.road_address_name}</span>
                   <span>{infoBox.phone}</span>
                   <div>
-                    <span onClick={() => setInfoBox(null)}>닫기</span>
                     <span onClick={onEnrollClick}>등록</span>
+                    <span>찜</span>
+                    <span onClick={() => setInfoBox(null)}>닫기</span>
                   </div>
                 </InfoBox>
               </CustomOverlayMap>
