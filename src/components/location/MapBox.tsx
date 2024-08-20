@@ -28,7 +28,7 @@ const PlacePhoto = styled.div<{ $url: string }>`
   height: 4.5rem;
   border-radius: 50%;
   background-color: black;
-  background-image: url("//t1.kakaocdn.net/thumb/T800x0.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2Fsearchregister_1590713355");
+  background-image: url(${({ $url }) => $url});
   background-size: cover;
   @media (max-width: ${tablet_M}) {
     width: 4rem;

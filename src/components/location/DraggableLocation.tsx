@@ -8,7 +8,7 @@ import { faX } from "@fortawesome/free-solid-svg-icons";
 import { phone } from "../../utils/size";
 
 const List = styled.li<{ $category_len: number }>`
-  margin: 5px 5px 0 15px;
+  margin: 5px 5px 5px 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -87,7 +87,7 @@ const PlacePhoto = styled.div<{ $url: string }>`
   border-radius: 50%;
   background-color: black;
   margin-right: 20px;
-  background-image: url("//t1.kakaocdn.net/thumb/T800x0.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocalfiy%2Fsearchregister_1590713355");
+  background-image: url(${({ $url }) => $url});
   background-size: cover;
   @media (max-width: ${phone}) {
     width: 60px;
