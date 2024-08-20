@@ -15,13 +15,16 @@ import { RootState } from "../contexts/store";
 import Modal from "../components/shared/Modal";
 
 export const LoginBox = styled.div`
-  max-width: 31rem;
-  max-height: 33rem;
+  max-width: 27rem;
+  max-height: 29.5rem;
   width: 60%;
   height: 80%;
   border-radius: 5px;
   background-color: white;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   &::-webkit-scrollbar {
     width: 0px;
   }
@@ -30,17 +33,15 @@ export const LoginBox = styled.div`
     height: 100%;
     max-height: 100%;
     max-width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     position: relative;
     border-radius: 0;
+    justify-content: center;
   }
 `;
 
 export const LoginBoxHeader = styled.div`
   width: 100%;
-  height: 4rem;
+  padding: 1.2rem 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
@@ -66,13 +67,13 @@ export const LoginBoxHeader = styled.div`
 `;
 
 export const LoginBoxMain = styled.div`
-  width: 100%;
+  width: 75%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   @media (max-width: ${tablet_M}) {
-    width: 70%;
+    width: 60%;
   }
   @media (max-width: ${phone}) {
     width: 90%;
@@ -88,7 +89,7 @@ export const Form = styled.form`
 `;
 
 export const Input = styled.input<{ $isvalid: string }>`
-  width: 75%;
+  width: 100%;
   height: 3rem;
   border-radius: 1.3rem;
   border: 1px solid
@@ -99,7 +100,7 @@ export const Input = styled.input<{ $isvalid: string }>`
   font-size: 0.9rem;
   margin-top: 1.2rem;
   &:first-child {
-    margin-top: 4rem;
+    margin-top: 2.5rem;
   }
   &:focus {
     border-width: 2px;
@@ -107,7 +108,7 @@ export const Input = styled.input<{ $isvalid: string }>`
 `;
 
 export const Button = styled.button`
-  width: 75%;
+  width: 100%;
   height: 3rem;
   border-radius: 2rem;
   display: flex;
@@ -117,13 +118,13 @@ export const Button = styled.button`
   font-weight: bold;
   cursor: pointer;
   border: none;
-  margin-top: 3rem;
+  margin-top: 2rem;
   background-color: ${mainColor};
   color: white;
 `;
 
 export const KakaoBtn = styled.div`
-  width: 75%;
+  width: 100%;
   height: 3.1rem;
   border-radius: 2rem;
   display: flex;
@@ -143,15 +144,15 @@ export const ErrorMsg = styled.span`
   color: #df4d4d;
   font-size: 1rem;
   font-weight: bold;
-  margin-top: 0.6rem;
+  margin-top: 1rem;
 `;
 
 export const FindAccount = styled.ul`
-  width: 75%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 2.5rem 0 1.6rem 0;
+  margin: 2rem 0 1.6rem 0;
   font-size: 15px;
   li {
     margin: 0 0.3rem;
@@ -171,7 +172,6 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const onLoginClicked = () => dispatch(toggleLogin());
   const loginClicked = useSelector(
     (state: RootState) => state.counter.loginClicked
   );
@@ -179,9 +179,20 @@ const Login = () => {
   const {
     register,
     getValues,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
+
+  const clear = () => {
+    setValue("username", "");
+    setValue("password", "");
+  };
+
+  const onLoginClose = () => {
+    dispatch(toggleLogin());
+    clear();
+  };
 
   const onSubmitValid = () => {
     const { username, password } = getValues();
@@ -208,11 +219,11 @@ const Login = () => {
   };
 
   return (
-    <Modal active={loginClicked} modalClose={onLoginClicked}>
+    <Modal active={loginClicked} modalClose={onLoginClose}>
       <LoginBox>
         <LoginBoxHeader>
           <span>LOGIN</span>
-          <span onClick={() => dispatch(toggleLogin())}>
+          <span onClick={onLoginClose}>
             <FontAwesomeIcon icon={faX} />
           </span>
         </LoginBoxHeader>

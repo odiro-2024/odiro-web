@@ -5,6 +5,10 @@ import { g1, g3, mainColor } from "../utils/color";
 import { font_sharp } from "../utils/font";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import PwCheck from "../components/shared/PwCheck";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleCheck as faCircleCheckSolid } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck as faCircleCheckRegular } from "@fortawesome/free-regular-svg-icons";
 
 const Container = styled.main`
   width: 90%;
@@ -30,8 +34,8 @@ const ProfileHeader = styled.section`
     font-family: ${font_sharp};
   }
   button {
-    width: 6rem;
-    height: 3rem;
+    width: 5.7rem;
+    height: 2.8rem;
     border-radius: 1.5rem;
     text-align: center;
     align-content: center;
@@ -50,12 +54,12 @@ const UserInfoBox = styled.section`
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 `;
 
-const Form = styled.form`
-  display: flex;
-  justify-content: center;
-`;
+// const Form = styled.form`
+//   display: flex;
+//   justify-content: center;
+// `;
 
-const FormLeft = styled.div`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -86,11 +90,15 @@ const Label = styled.label`
   cursor: pointer;
 `;
 
+const InputBox = styled.div`
+  position: relative;
+`;
+
 const Input = styled.input`
   height: 1.6rem;
   width: 10rem;
+  margin: 0.3rem 0;
   border-radius: 0.6rem;
-  margin-top: 0.6rem;
   text-indent: 0.5rem;
   border: 1px solid ${g3};
   outline: none;
@@ -99,33 +107,44 @@ const Input = styled.input`
   }
 `;
 
-const FormRight = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-left: 10rem;
-  label {
-    margin-bottom: 1rem;
-    font-size: 1.7rem;
-    color: ${g1};
-  }
+const DuplicateCheck = styled.div`
+  position: absolute;
+  right: -1.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.3rem;
+  color: ${mainColor};
+  cursor: pointer;
 `;
 
-const TextArea = styled.textarea`
-  width: 24rem;
-  height: 15rem;
-  border: 1px solid ${mainColor};
-  resize: none;
-  outline: none;
-  border-radius: 1rem;
-  padding: 1rem;
-  line-height: 1.5rem;
-  font-size: 1rem;
-  overflow: auto;
-`;
+// const FormRight = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   margin-left: 10rem;
+//   label {
+//     margin-bottom: 1rem;
+//     font-size: 1.7rem;
+//     color: ${g1};
+//   }
+// `;
+
+// const TextArea = styled.textarea`
+//   width: 24rem;
+//   height: 15rem;
+//   border: 1px solid ${mainColor};
+//   resize: none;
+//   outline: none;
+//   border-radius: 1rem;
+//   padding: 1rem;
+//   line-height: 1.5rem;
+//   font-size: 1rem;
+//   overflow: auto;
+// `;
 
 const data = {
   user_id: 1,
   username: "jinhyukSeo777",
+  password: "11",
   email: "tjwlsgur2556@naver.com",
   profile_img: "/images/1.jpg",
   summary: "11111111",
@@ -137,12 +156,18 @@ interface FormData {
   summary: String;
   password: String;
   password2: String;
+  emailVerify: string;
 }
 
 const EditProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File>();
   const [newProfileImg, setNewProfileImg] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [usernameValid, setUsernameValid] = useState(true);
+  const [emailValid, setEmailValid] = useState(true);
+  const [emailVerifing, setEmailVerifing] = useState(false);
+  const [emailVerifyValid, setEmailVerifyValid] = useState(false);
 
   const { register, getValues, setValue } = useForm<FormData>();
 
@@ -152,6 +177,7 @@ const EditProfile = () => {
     setValue("summary", "");
     setValue("password", "");
     setValue("password2", "");
+    setEmailVerifing(false);
   };
 
   const onSubmit = () => {
@@ -162,10 +188,19 @@ const EditProfile = () => {
       return;
     }
 
-    console.log(username, email, password, password2, summary, avatarFile);
+    //
 
-    setIsEditing((prev) => !prev);
+    setIsEditing(false);
     clear();
+  };
+
+  const onPwCorrect = () => {
+    setIsEditing(true);
+    setValue("username", data.username);
+    setValue("email", data.email);
+    setValue("password", data.password);
+    setValue("password2", data.password);
+    setValue("summary", data.summary);
   };
 
   const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,6 +215,47 @@ const EditProfile = () => {
     reader.readAsDataURL(e.target.files[0]);
   };
 
+  const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === data.username) {
+      setUsernameValid(true);
+    } else {
+      setUsernameValid(false);
+    }
+  };
+
+  const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === data.email) {
+      setEmailValid(true);
+    } else {
+      setEmailValid(false);
+    }
+  };
+
+  const onUsernameCheck = () => {
+    if (usernameValid) return;
+    const { username } = getValues();
+    console.log(username);
+    setUsernameValid(true);
+    //
+  };
+
+  const onEmailCheck = () => {
+    if (emailValid) return;
+    //
+    setEmailValid(true);
+    setEmailVerifyValid(false);
+    setEmailVerifing(true);
+    //
+  };
+
+  const onEmailVerifyCheck = () => {
+    if (emailVerifyValid) return;
+    const { emailVerify } = getValues();
+    console.log(emailVerify);
+    setEmailVerifyValid(true);
+    //
+  };
+
   return (
     <>
       <Header></Header>
@@ -189,63 +265,101 @@ const EditProfile = () => {
           {isEditing ? (
             <button onClick={onSubmit}>수정완료</button>
           ) : (
-            <button onClick={() => setIsEditing(true)}>수정하기</button>
+            <button onClick={() => setModalOpen(true)}>수정하기</button>
           )}
         </ProfileHeader>
         <UserInfoBox>
-          <h2 hidden>유저정보</h2>
           <Form>
-            <FormLeft>
-              <ProfileImg
-                url={newProfileImg ? newProfileImg : data.profile_img}
-              ></ProfileImg>
-              {isEditing && (
-                <>
-                  <Label htmlFor="profileImg">프로필 이미지 변경</Label>
-                  <input
-                    style={{ display: "none" }}
-                    type="file"
-                    accept="image/*"
-                    id="profileImg"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      onAvatarChange(e)
-                    }
-                  />
-                </>
-              )}
-              {isEditing ? (
-                <>
+            <ProfileImg
+              url={newProfileImg ? newProfileImg : data.profile_img}
+            ></ProfileImg>
+            {isEditing && (
+              <>
+                <Label htmlFor="profileImg">프로필 이미지 변경</Label>
+                <input
+                  style={{ display: "none" }}
+                  type="file"
+                  accept="image/*"
+                  id="profileImg"
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    onAvatarChange(e)
+                  }
+                />
+              </>
+            )}
+            {isEditing ? (
+              <>
+                <InputBox>
                   <Input
                     {...register("username")}
                     type="text"
                     placeholder={data.username}
+                    onChange={(e) => onUsernameChange(e)}
                   />
+                  <DuplicateCheck onClick={onUsernameCheck}>
+                    {usernameValid ? (
+                      <FontAwesomeIcon icon={faCircleCheckSolid} />
+                    ) : (
+                      <FontAwesomeIcon icon={faCircleCheckRegular} />
+                    )}
+                  </DuplicateCheck>
+                </InputBox>
+                <InputBox>
                   <Input
                     {...register("email")}
-                    type="text"
+                    type="email"
                     placeholder={data.email}
+                    onChange={(e) => onEmailChange(e)}
                   />
+                  <DuplicateCheck onClick={onEmailCheck}>
+                    {emailValid ? (
+                      <FontAwesomeIcon icon={faCircleCheckSolid} />
+                    ) : (
+                      <FontAwesomeIcon icon={faCircleCheckRegular} />
+                    )}
+                  </DuplicateCheck>
+                </InputBox>
+                {emailVerifing && (
+                  <InputBox>
+                    <Input
+                      {...register("emailVerify")}
+                      type="text"
+                      onChange={() => setEmailVerifyValid(false)}
+                      placeholder="인증번호를 입력하세요."
+                    />
+                    <DuplicateCheck onClick={onEmailVerifyCheck}>
+                      {emailVerifyValid ? (
+                        <FontAwesomeIcon icon={faCircleCheckSolid} />
+                      ) : (
+                        <FontAwesomeIcon icon={faCircleCheckRegular} />
+                      )}
+                    </DuplicateCheck>
+                  </InputBox>
+                )}
+                <InputBox>
                   <Input
                     {...register("password")}
                     type="password"
                     placeholder={"new password"}
                     autoComplete="off"
                   />
+                </InputBox>
+                <InputBox>
                   <Input
                     {...register("password2")}
                     type="password"
                     placeholder={"new password2"}
                     autoComplete="off"
                   />
-                </>
-              ) : (
-                <>
-                  <p>{data.username}</p>
-                  <span>{data.email}</span>
-                </>
-              )}
-            </FormLeft>
-            <FormRight>
+                </InputBox>
+              </>
+            ) : (
+              <>
+                <p>{data.username}</p>
+                <span>{data.email}</span>
+              </>
+            )}
+            {/* <FormRight>
               <label htmlFor="summary">자기소개</label>
               {isEditing ? (
                 <TextArea
@@ -256,10 +370,13 @@ const EditProfile = () => {
               ) : (
                 <TextArea id="summary" readOnly value={data.summary}></TextArea>
               )}
-            </FormRight>
+            </FormRight> */}
           </Form>
         </UserInfoBox>
       </Container>
+      {modalOpen && (
+        <PwCheck setModalOpen={setModalOpen} onPwCorrect={onPwCorrect} />
+      )}
     </>
   );
 };
