@@ -5,10 +5,15 @@ import { toggleSignup, toggleLogin } from "../../contexts/counterSlice";
 import { useDispatch } from "react-redux";
 import LoginForm from "../../pages/Login";
 import EnrollForm from "../../pages/Signup";
-import { isLoggedInVar, logUserOut } from "../../services/useUser";
+import {
+  ACCESS_TOKEN,
+  isLoggedInVar,
+  logUserOut,
+} from "../../services/useUser";
 import { g1 } from "../../utils/color";
 import { useState } from "react";
 import { phone, tablet_L } from "../../utils/size";
+import axios from "axios";
 
 const Container = styled.header`
   width: 100%;
@@ -143,6 +148,11 @@ const Header = () => {
   const onSignupClicked = () => dispatch(toggleSignup());
   const onProfileClicked = () => navigate("/profile");
   const onLogoutClicked = () => {
+    axios.get("/api/logout", {
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    });
     logUserOut();
     navigate("/");
     window.location.reload();
