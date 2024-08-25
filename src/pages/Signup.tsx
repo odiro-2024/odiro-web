@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import { keyframes, styled } from "styled-components";
 import {
   faComment,
   faX,
@@ -63,24 +63,30 @@ const EnrollInput = styled(Input)`
 `;
 
 const DuplicateCheck = styled.div`
-  /* position: absolute;
-  width: 55px;
-  height: calc(100% + 2px);
-  top: -1px;
-  right: 0;
-  border-radius: 0 1.3rem 1.3rem 0;
-  font-size: 0.9em;
-  font-weight: bold;
-  background-color: ${mainColor};
-  text-align: center;
-  align-content: center;
-  color: white;
-  cursor: pointer; */
   position: absolute;
   right: 0.5rem;
   font-size: 1.8rem;
   color: ${mainColor};
   cursor: pointer;
+`;
+const spin = keyframes`
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+`;
+
+export const Loader = styled.div`
+  position: absolute;
+  right: -2.2rem;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid ${mainColor};
+  animation: ${spin} 2s linear infinite;
 `;
 
 interface FormData {
@@ -97,6 +103,9 @@ const Signup = () => {
   const [emailValid, setEmailValid] = useState(false);
   const [emailVerifing, setEmailVerifing] = useState(false);
   const [emailVerifyValid, setEmailVerifyValid] = useState(false);
+  const [usernameValidLoader, setUsernameValidLoader] = useState(false);
+  const [emailValidLoader, setEmailValidLoader] = useState(false);
+  const [emailVerifyValidLoader, setEmailVerifyValidLoader] = useState(false);
   const dispatch = useDispatch();
   const enrollClicked = useSelector(
     (state: RootState) => state.counter.signupClicked
@@ -131,6 +140,7 @@ const Signup = () => {
     if (usernameValid) return;
     const { username } = getValues();
     //
+    setUsernameValidLoader(false);
     setUsernameValid(true);
   };
 
@@ -138,6 +148,7 @@ const Signup = () => {
     if (emailValid) return;
     const { email } = getValues();
     //
+    setEmailValidLoader(true);
     axios
       .post(
         "/api/emails/verification-requests",
@@ -152,6 +163,7 @@ const Signup = () => {
         setEmailValid(true);
         setEmailVerifing(true);
         setEmailVerifyValid(false);
+        setEmailValidLoader(false);
       })
       .catch((error) => setErrorMsg(error.response.data.message));
     //
@@ -160,6 +172,7 @@ const Signup = () => {
   const onEmailVerifyCheck = () => {
     if (emailVerifyValid) return;
     const { email, emailVerify } = getValues();
+    setEmailVerifyValidLoader(true);
     //
     axios
       .get("/api/emails/verifications", {
@@ -170,6 +183,7 @@ const Signup = () => {
       })
       .then(() => {
         setEmailVerifyValid(true);
+        setEmailVerifyValidLoader(false);
       })
       .catch((error) => setErrorMsg(error.response.data.message));
   };
@@ -234,6 +248,7 @@ const Signup = () => {
                   <FontAwesomeIcon icon={faCircleCheckRegular} />
                 )}
               </DuplicateCheck>
+              {usernameValidLoader && <Loader></Loader>}
             </InputBox>
             <InputBox>
               <EnrollInput
@@ -275,6 +290,7 @@ const Signup = () => {
                   <FontAwesomeIcon icon={faCircleCheckRegular} />
                 )}
               </DuplicateCheck>
+              {emailValidLoader && <Loader></Loader>}
             </InputBox>
             {emailVerifing && (
               <InputBox>
@@ -293,6 +309,7 @@ const Signup = () => {
                     <FontAwesomeIcon icon={faCircleCheckRegular} />
                   )}
                 </DuplicateCheck>
+                {emailVerifyValidLoader && <Loader></Loader>}
               </InputBox>
             )}
             <ErrorMsg>{errorMsg}</ErrorMsg>

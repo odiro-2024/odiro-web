@@ -12,6 +12,7 @@ import { faCircleCheck as faCircleCheckRegular } from "@fortawesome/free-regular
 import axios from "axios";
 import { ACCESS_TOKEN } from "../services/useUser";
 import { ErrorMsg as errormsg } from "./Login";
+import { Loader } from "./Signup";
 
 const Container = styled.main`
   width: 90%;
@@ -120,31 +121,14 @@ const DuplicateCheck = styled.div`
   cursor: pointer;
 `;
 
+const ProfileLoader = styled(Loader)`
+  width: 12px;
+  height: 12px;
+  right: -3.7rem;
+  top: 0.5rem;
+`;
+
 const ErrorMsg = styled(errormsg)``;
-
-// const FormRight = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   margin-left: 10rem;
-//   label {
-//     margin-bottom: 1rem;
-//     font-size: 1.7rem;
-//     color: ${g1};
-//   }
-// `;
-
-// const TextArea = styled.textarea`
-//   width: 24rem;
-//   height: 15rem;
-//   border: 1px solid ${mainColor};
-//   resize: none;
-//   outline: none;
-//   border-radius: 1rem;
-//   padding: 1rem;
-//   line-height: 1.5rem;
-//   font-size: 1rem;
-//   overflow: auto;
-// `;
 
 const data = {
   user_id: 1,
@@ -172,6 +156,9 @@ const EditProfile = () => {
   const [emailValid, setEmailValid] = useState(true);
   const [emailVerifing, setEmailVerifing] = useState(false);
   const [emailVerifyValid, setEmailVerifyValid] = useState(false);
+  const [usernameValidLoader, setUsernameValidLoader] = useState(false);
+  const [emailValidLoader, setEmailValidLoader] = useState(false);
+  const [emailVerifyValidLoader, setEmailVerifyValidLoader] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   const { register, getValues, setValue } = useForm<FormData>();
@@ -257,6 +244,7 @@ const EditProfile = () => {
   const onUsernameCheck = () => {
     if (usernameValid) return;
     const { username } = getValues();
+    setUsernameValidLoader(true);
     //
     axios
       .get("/api/user/check-username", {
@@ -267,6 +255,7 @@ const EditProfile = () => {
       })
       .then(() => {
         setUsernameValid(true);
+        setUsernameValidLoader(false);
       })
       .catch((error) => setErrorMsg(error.response.data.message));
   };
@@ -274,6 +263,7 @@ const EditProfile = () => {
   const onEmailCheck = () => {
     if (emailValid) return;
     const { email } = getValues();
+    setEmailValidLoader(true);
     //
     axios
       .post(
@@ -289,6 +279,7 @@ const EditProfile = () => {
         setEmailValid(true);
         setEmailVerifing(true);
         setEmailVerifyValid(false);
+        setEmailValidLoader(false);
       })
       .catch((error) => setErrorMsg(error.response.data.message));
   };
@@ -296,6 +287,7 @@ const EditProfile = () => {
   const onEmailVerifyCheck = () => {
     if (emailVerifyValid) return;
     const { email, emailVerify } = getValues();
+    setEmailVerifyValidLoader(true);
     //
     axios
       .get("/api/emails/verifications", {
@@ -306,6 +298,7 @@ const EditProfile = () => {
       })
       .then(() => {
         setEmailVerifyValid(true);
+        setEmailVerifyValidLoader(false);
       })
       .catch((error) => setErrorMsg(error.response.data.message));
   };
@@ -357,6 +350,7 @@ const EditProfile = () => {
                       <FontAwesomeIcon icon={faCircleCheckRegular} />
                     )}
                   </DuplicateCheck>
+                  {usernameValidLoader && <ProfileLoader></ProfileLoader>}
                 </InputBox>
                 <InputBox>
                   <Input
@@ -372,6 +366,7 @@ const EditProfile = () => {
                       <FontAwesomeIcon icon={faCircleCheckRegular} />
                     )}
                   </DuplicateCheck>
+                  {emailValidLoader && <ProfileLoader></ProfileLoader>}
                 </InputBox>
                 {emailVerifing && (
                   <InputBox>
@@ -388,6 +383,7 @@ const EditProfile = () => {
                         <FontAwesomeIcon icon={faCircleCheckRegular} />
                       )}
                     </DuplicateCheck>
+                    {emailVerifyValidLoader && <ProfileLoader></ProfileLoader>}
                   </InputBox>
                 )}
                 <InputBox>
@@ -414,18 +410,6 @@ const EditProfile = () => {
                 <span>{data.email}</span>
               </>
             )}
-            {/* <FormRight>
-              <label htmlFor="summary">자기소개</label>
-              {isEditing ? (
-                <TextArea
-                  id="summary"
-                  {...register("summary")}
-                  placeholder={data.summary}
-                />
-              ) : (
-                <TextArea id="summary" readOnly value={data.summary}></TextArea>
-              )}
-            </FormRight> */}
           </Form>
         </UserInfoBox>
       </Container>
