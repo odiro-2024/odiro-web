@@ -93,7 +93,7 @@ const PwCheck = ({ setModalOpen, onPwCorrect }: IProps) => {
   };
 
   return (
-    <Modal active={true} modalClose={modalClose}>
+    <Modal isActive={true} modalClose={modalClose}>
       <Form onSubmit={handleSubmit(onSubmitValid)}>
         <PwInput
           {...register("password", {

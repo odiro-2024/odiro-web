@@ -18,12 +18,12 @@ const Overlay = styled.div<{ $active?: boolean }>`
 `;
 
 interface IProps {
-  active: boolean;
+  isActive: boolean;
   children?: React.ReactNode;
   modalClose: () => void;
 }
 
-const Modal = ({ active, children, modalClose }: IProps) => {
+const Modal = ({ isActive, children, modalClose }: IProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const modalOutSideClick = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -34,7 +34,7 @@ const Modal = ({ active, children, modalClose }: IProps) => {
   };
   return (
     <Overlay
-      $active={active}
+      $active={isActive}
       ref={modalRef}
       onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) =>
         modalOutSideClick(e)

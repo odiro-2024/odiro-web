@@ -220,7 +220,7 @@ const Login = () => {
   };
 
   return (
-    <Modal active={loginClicked} modalClose={onLoginClose}>
+    <Modal isActive={loginClicked} modalClose={onLoginClose}>
       <LoginBox>
         <LoginBoxHeader>
           <span>LOGIN</span>
