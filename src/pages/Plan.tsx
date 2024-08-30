@@ -15,6 +15,8 @@ import MapBox from "../components/location/MapBox";
 import AvatarBox from "../components/plan/AvatarBox";
 import CheckBoxs from "../components/plan/CheckBoxs";
 import SearchLocation from "../components/location/SearchLocation";
+import { RootState } from "../contexts/store";
+import { useSelector } from "react-redux";
 
 const Container = styled.main`
   width: 90%;
@@ -162,8 +164,12 @@ const Plan = () => {
   const [location, setLocation] = useState<ILocation[]>([]);
   const [memo, setMemo] = useState<IMemo[]>([]);
   const [comment, setComment] = useState<IComment[]>([]);
+  const [wishlist, setWishList] = useState<ILocation[]>([]);
   const [data, setData] = useState<IData>();
   const [isMemo, setIsMemo] = useState(true);
+  const locationClicked = useSelector(
+    (state: RootState) => state.counter.locationClicked
+  );
 
   const handleDateChange = (value: Date, propData?: IData) => {
     const scopeData: IData | undefined = data || propData;
@@ -221,7 +227,6 @@ const Plan = () => {
       position: { lat, lng },
       road_address_name,
       category_group_name,
-      img_url,
     } = infoBox;
 
     axios
@@ -238,7 +243,6 @@ const Plan = () => {
           lng,
           road_address_name,
           category_group_name: category_group_name || "미정",
-          img_url,
         },
         {
           headers: {
@@ -248,9 +252,67 @@ const Plan = () => {
       )
       .then((res) => {
         const {
-          data: { id },
+          data: { id, img_url },
         } = res;
         setLocation((prev) => [
+          ...prev,
+          {
+            id,
+            address_name,
+            kakao_map_id,
+            phone,
+            place_name,
+            place_url,
+            lat,
+            lng,
+            road_address_name,
+            category_group_name: category_group_name || "미정",
+            img_url,
+          },
+        ]);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const createWishlist = (infoBox: Imarkers) => {
+    if (!data) return;
+    const {
+      address_name,
+      id: kakao_map_id,
+      phone,
+      place_name,
+      place_url,
+      position: { lat, lng },
+      road_address_name,
+      category_group_name,
+    } = infoBox;
+
+    axios
+      .post(
+        `/api/wishLocation/create`,
+        {
+          plan_id: data.id,
+          address_name,
+          kakao_map_id,
+          phone,
+          place_name,
+          place_url,
+          lat,
+          lng,
+          road_address_name,
+          category_group_name: category_group_name || "미정",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
+      .then((res) => {
+        const {
+          data: { id, img_url },
+        } = res;
+        setWishList((prev) => [
           ...prev,
           {
             id,
@@ -389,7 +451,14 @@ const Plan = () => {
               </MemoCommentBox>
             </BottomBox>
           </Container>
-          <SearchLocation onDataChange={createLocation} />
+          {locationClicked && (
+            <SearchLocation
+              wishlist={wishlist}
+              createWishlist={createWishlist}
+              createLocation={createLocation}
+              setWishlist={setWishList}
+            />
+          )}
         </>
       )}
     </>
