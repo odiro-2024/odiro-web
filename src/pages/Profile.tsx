@@ -263,8 +263,14 @@ const EditProfile = () => {
   const onEmailCheck = () => {
     if (emailValid) return;
     const { email } = getValues();
-    setEmailValidLoader(true);
     //
+    setEmailValidLoader(true);
+    const emailSuccessCallback = setTimeout(() => {
+      setEmailValid(true);
+      setEmailVerifing(true);
+      setEmailVerifyValid(false);
+      setEmailValidLoader(false);
+    }, 500);
     axios
       .post(
         "/api/emails/verification-requests",
@@ -275,13 +281,12 @@ const EditProfile = () => {
           },
         }
       )
-      .then(() => {
-        setEmailValid(true);
-        setEmailVerifing(true);
-        setEmailVerifyValid(false);
+      .then(() => {})
+      .catch((error) => {
+        setErrorMsg(error.response.data.message);
         setEmailValidLoader(false);
-      })
-      .catch((error) => setErrorMsg(error.response.data.message));
+        clearTimeout(emailSuccessCallback);
+      });
   };
 
   const onEmailVerifyCheck = () => {

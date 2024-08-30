@@ -149,6 +149,12 @@ const Signup = () => {
     const { email } = getValues();
     //
     setEmailValidLoader(true);
+    const emailSuccessCallback = setTimeout(() => {
+      setEmailValid(true);
+      setEmailVerifing(true);
+      setEmailVerifyValid(false);
+      setEmailValidLoader(false);
+    }, 500);
     axios
       .post(
         "/api/emails/verification-requests",
@@ -159,13 +165,12 @@ const Signup = () => {
           },
         }
       )
-      .then(() => {
-        setEmailValid(true);
-        setEmailVerifing(true);
-        setEmailVerifyValid(false);
+      .then(() => {})
+      .catch((error) => {
+        setErrorMsg(error.response.data.message);
         setEmailValidLoader(false);
-      })
-      .catch((error) => setErrorMsg(error.response.data.message));
+        clearTimeout(emailSuccessCallback);
+      });
     //
   };
 
@@ -222,7 +227,7 @@ const Signup = () => {
   };
 
   return (
-    <Modal active={enrollClicked} modalClose={onSignupClose}>
+    <Modal isActive={enrollClicked} modalClose={onSignupClose}>
       <EnrollBox $emailVerifing={emailVerifing}>
         <LoginBoxHeader>
           <span>SignUp</span>
