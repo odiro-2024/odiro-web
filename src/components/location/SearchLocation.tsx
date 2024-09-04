@@ -4,26 +4,29 @@ import { useForm } from "react-hook-form";
 import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
 import { Link } from "react-router-dom";
 import { toggleLocation } from "../../contexts/counterSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { tablet_L } from "../../utils/size";
 import { tablet_M } from "../../utils/size";
-import { RootState } from "../../contexts/store";
 import Modal from "../shared/Modal";
-import { g1, mainColor } from "../../utils/color";
+import { mainColor } from "../../utils/color";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ILocation } from "../../pages/Plan";
+import WishList from "../shared/WishList";
 
 const LocationBox = styled.div`
-  height: 70%;
   width: 80%;
-  max-width: 1200px;
+  max-width: 1000px;
   height: 70%;
+  max-height: 700px;
   border-radius: 5px;
   background-color: white;
   position: relative;
   @media (max-width: ${tablet_L}) {
     width: 100%;
     height: 100%;
+    max-width: none;
+    max-height: none;
   }
 `;
 
@@ -38,10 +41,7 @@ const Close = styled.div`
   font-size: 1.6rem;
   text-align: center;
   align-content: center;
-  color: ${g1};
-  @media (max-width: ${tablet_L}) {
-    top: 1.5rem;
-  }
+  color: gray;
 `;
 
 const MapWrap = styled.div`
@@ -51,7 +51,7 @@ const MapWrap = styled.div`
 
 const Form = styled.form`
   position: absolute;
-  top: 30px;
+  top: 1rem;
   left: 15px;
   z-index: 9;
 `;
@@ -67,11 +67,11 @@ const Input = styled.input`
 
 const Divs = styled.ul`
   position: absolute;
-  top: 70px;
+  top: 65px;
   left: 15px;
   z-index: 9;
   max-height: 70%;
-  border-radius: 0.8rem;
+  border-radius: 0.6rem;
   border: 1px solid rgba(0, 0, 0, 0.2);
   overflow: scroll;
   &::-webkit-scrollbar {
@@ -84,17 +84,15 @@ const Divs = styled.ul`
 `;
 
 const Div = styled.li`
-  width: 240px;
+  width: 220px;
   background-color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
   span {
-    font-size: 15px;
+    font-size: 14px;
     margin: 15px 15px 0 20px;
-    &:first-child {
-      cursor: pointer;
-    }
     &:nth-child(3) {
       color: gray;
     }
@@ -171,16 +169,25 @@ export interface Imarkers {
   img_url: string;
 }
 
-const SearchLocation = ({ onDataChange }: any) => {
+interface IProps {
+  wishlist: ILocation[];
+  createWishlist: (infoBox: Imarkers) => void;
+  createLocation: (infoBox: Imarkers) => void;
+  setWishlist: React.Dispatch<React.SetStateAction<ILocation[]>>;
+}
+
+const SearchLocation = ({
+  wishlist,
+  createWishlist,
+  createLocation,
+  setWishlist,
+}: IProps) => {
   const [map, setMap] = useState<any>();
   const [infoBox, setInfoBox] = useState<Imarkers | null>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
   var temporaryMarkers: Imarkers[] = [];
 
   const dispatch = useDispatch();
-  const locationClicked = useSelector(
-    (state: RootState) => state.counter.locationClicked
-  );
 
   const { register, getValues, handleSubmit, setValue } = useForm<FormData>();
 
@@ -236,21 +243,28 @@ const SearchLocation = ({ onDataChange }: any) => {
     fetchData();
   };
 
-  const onSideDivClick = ({ lng, lat }: { lng: number; lat: number }) => {
+  const sideDivClicked = ({ lng, lat }: { lng: number; lat: number }) => {
     const bounds = new kakao.maps.LatLngBounds();
     bounds.extend(new kakao.maps.LatLng(lat, lng));
     map.setBounds(bounds);
   };
 
-  const onEnrollClick = () => {
+  const addLocationClicked = () => {
     if (window.confirm("이 장소를 등록하시겠습니까?")) {
-      onDataChange(infoBox);
+      if (!infoBox) return;
+      createLocation(infoBox);
       locationClose();
     }
   };
 
+  const addWishlistClicked = () => {
+    if (!infoBox) return;
+    createWishlist(infoBox);
+    setInfoBox(null);
+  };
+
   return (
-    <Modal active={locationClicked} modalClose={locationClose}>
+    <Modal isActive={true} modalClose={locationClose}>
       <LocationBox>
         <Close onClick={locationClose}>
           <FontAwesomeIcon icon={faX} />
@@ -281,8 +295,8 @@ const SearchLocation = ({ onDataChange }: any) => {
                   <span>{infoBox.road_address_name}</span>
                   <span>{infoBox.phone}</span>
                   <div>
-                    <span onClick={onEnrollClick}>등록</span>
-                    <span>찜</span>
+                    <span onClick={addLocationClicked}>등록</span>
+                    <span onClick={addWishlistClicked}>찜</span>
                     <span onClick={() => setInfoBox(null)}>닫기</span>
                   </div>
                 </InfoBox>
@@ -306,7 +320,7 @@ const SearchLocation = ({ onDataChange }: any) => {
         </Form>
         <Divs>
           {markers.map((value, index) => (
-            <Div onClick={() => onSideDivClick(value.position)} key={index}>
+            <Div onClick={() => sideDivClicked(value.position)} key={index}>
               <span>{value.place_name}</span>
               <span>{value.address_name}</span>
               <span>{value.road_address_name}</span>
@@ -314,6 +328,12 @@ const SearchLocation = ({ onDataChange }: any) => {
             </Div>
           ))}
         </Divs>
+        <WishList
+          wishlist={wishlist}
+          setWishlist={setWishlist}
+          locationClose={locationClose}
+          createLocation={createLocation}
+        ></WishList>
       </LocationBox>
     </Modal>
   );
