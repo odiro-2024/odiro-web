@@ -91,7 +91,7 @@ const Location = ({ day_plan_id, index, location, setLocation }: IProps) => {
       .catch((error) => console.log(error));
   };
 
-  const locationDeleteClicked = (index: number, id: number) => {
+  const deleteLocation = (index: number, id: number) => {
     axios
       .delete(`/api/location/delete/${id}`, {
         headers: {
@@ -127,7 +127,7 @@ const Location = ({ day_plan_id, index, location, setLocation }: IProps) => {
                   key={index}
                   location={value}
                   index={index}
-                  onDeleteClick={locationDeleteClicked}
+                  deleteLocation={deleteLocation}
                 />
               ))}
               {magic.placeholder}

@@ -67,6 +67,9 @@ const List = styled.li<{ $category_len: number }>`
     justify-content: center;
     align-items: center;
     font-size: 1rem;
+    @media (hover: none) {
+      opacity: 1;
+    }
   }
   @media (max-width: ${phone}) {
     span {
@@ -110,18 +113,18 @@ interface IProps {
     img_url: string;
   };
   index: number;
-  onDeleteClick: any;
+  deleteLocation: (index: number, id: number) => void;
 }
 
-const DraggableLocation = ({ location, index, onDeleteClick }: IProps) => {
-  const onClicked = (index: number, id: number) => {
-    onDeleteClick(index, id);
+const DraggableLocation = ({ location, index, deleteLocation }: IProps) => {
+  const onDeleteClicked = (index: number, id: number) => {
+    deleteLocation(index, id);
   };
 
   return (
     <Draggable
-      key={location.kakao_map_id}
-      draggableId={location.kakao_map_id}
+      key={location.kakao_map_id + location.id}
+      draggableId={location.kakao_map_id + location.id}
       index={index}
     >
       {(magic) => (
@@ -141,7 +144,10 @@ const DraggableLocation = ({ location, index, onDeleteClick }: IProps) => {
               <span>{location.address_name}</span>
             </div>
           </div>
-          <div className="delete" onClick={() => onClicked(index, location.id)}>
+          <div
+            className="delete"
+            onClick={() => onDeleteClicked(index, location.id)}
+          >
             <FontAwesomeIcon icon={faX} />
           </div>
         </List>
