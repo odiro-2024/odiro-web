@@ -113,6 +113,7 @@ export interface IData {
   owner: IOwner;
   participant: IOwner[];
   day_plan: IDayPlan[];
+  wish_location: ILocation[];
 }
 
 interface IOwner {
@@ -162,9 +163,9 @@ const Plan = () => {
   const [map, setMap] = useState<any>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
   const [location, setLocation] = useState<ILocation[]>([]);
+  const [wishlist, setWishList] = useState<ILocation[]>([]);
   const [memo, setMemo] = useState<IMemo[]>([]);
   const [comment, setComment] = useState<IComment[]>([]);
-  const [wishlist, setWishList] = useState<ILocation[]>([]);
   const [data, setData] = useState<IData>();
   const [isMemo, setIsMemo] = useState(true);
   const locationClicked = useSelector(
@@ -182,6 +183,7 @@ const Plan = () => {
       checkBoxValue: scopeData.checkBoxValue,
       owner: scopeData.owner,
       participant: scopeData.participant,
+      wish_location: scopeData.wish_location,
       day_plan: scopeData.day_plan.map((v, i) => {
         if (i !== index) {
           return v;
@@ -207,6 +209,8 @@ const Plan = () => {
     setIndex(newindex);
 
     setLocation(scopeData.day_plan[newindex].location);
+    setWishList(scopeData.wish_location);
+    //처음이면 리버스
     if (propData) {
       setMemo(scopeData.day_plan[newindex].memo.reverse());
       setComment(scopeData.day_plan[newindex].comment.reverse());
