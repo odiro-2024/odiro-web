@@ -164,6 +164,7 @@ const Header = () => {
         <Logo onClick={() => navigate("/")}>Odiro</Logo>
         <Gnb $active={isHamActive}>
           <li onClick={() => navigate("/")}>홈</li>
+          <li onClick={() => navigate("/search/user")}>친구찾기</li>
           {isLoggedInVar ? (
             <>
               <li onClick={onProfileClicked}>회원정보</li>
