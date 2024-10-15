@@ -14,7 +14,7 @@ const CommentBox = styled(MemoBox)`
     $active ? "rotateY(0deg)" : " rotateY(-180deg)"};
 `;
 
-const CommentList = styled.li`
+const CommentList = styled.li<{ $url: string }>`
   margin: 0.5rem 0.6rem;
   display: flex;
   word-break: break-all;
@@ -22,7 +22,7 @@ const CommentList = styled.li`
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    background-image: url("https://newsimg-hams.hankookilbo.com/2022/11/14/b62ae00e-5a61-46bf-b721-16ebc34873d2.jpg");
+    background: url(${({ $url }) => $url}) center no-repeat;
     background-size: cover;
     background-color: black;
     margin-right: 0.7rem;
@@ -136,7 +136,12 @@ const Comment = ({
         </MemoHeader>
         <MemoListBox>
           {comment.map((value, index) => (
-            <CommentList key={index}>
+            <CommentList
+              $url={
+                "https://t1.daumcdn.net/brunch/service/user/8LOK/file/d0LZ8mYR5L0ZFf6vqc8buq8WkKE.jpg?download"
+              }
+              key={index}
+            >
               <div className="avatar"></div>
               <div className="content">
                 <div>

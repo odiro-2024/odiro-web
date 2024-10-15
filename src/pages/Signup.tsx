@@ -156,15 +156,7 @@ const Signup = () => {
       setEmailValidLoader(false);
     }, 500);
     axios
-      .post(
-        "/api/emails/verification-requests",
-        { data: {} },
-        {
-          params: {
-            email,
-          },
-        }
-      )
+      .get("/api/emails/verification-requests", { params: { email } })
       .then(() => {})
       .catch((error) => {
         setErrorMsg(error.response.data.message);

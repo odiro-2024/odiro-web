@@ -78,13 +78,11 @@ interface IProps {
 const CheckBoxs = ({ checkBoxValue }: IProps) => {
   return (
     <Container className="boxs">
-      {checkBoxValue
-        .filter((v) => v)
-        .map((value: boolean, index: number) => {
-          return value ? (
-            <CheckBox key={index}>{checkBoxList[index]}</CheckBox>
-          ) : null;
-        })}
+      {checkBoxValue.map((value: boolean, index: number) => {
+        return value ? (
+          <CheckBox key={index}>{checkBoxList[index]}</CheckBox>
+        ) : null;
+      })}
     </Container>
   );
 };

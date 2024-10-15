@@ -15,6 +15,7 @@ const Container = styled.section`
   max-width: 1200px;
   width: 90%;
   margin-bottom: 10rem;
+  margin-top: 5rem;
   position: relative;
   bottom: -10rem;
   opacity: 0;
@@ -31,6 +32,13 @@ const Container = styled.section`
   &.frame-in {
     opacity: 1;
     bottom: 0rem;
+  }
+  &::before {
+    content: "이번주 추천 페스티벌";
+    margin-bottom: 2rem;
+    display: block;
+    font-size: 1.5rem;
+    font-family: ${font_cute};
   }
 `;
 
