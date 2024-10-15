@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Header from "../components/header/Header";
 import { mw } from "../utils/size";
 import { g1, g3, mainColor } from "../utils/color";
 import { font_sharp } from "../utils/font";
@@ -310,7 +309,6 @@ const EditProfile = () => {
 
   return (
     <>
-      <Header></Header>
       <Container>
         <ProfileHeader>
           <h2>MyPage</h2>

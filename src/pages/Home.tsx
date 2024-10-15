@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import HomeCalendar from "../components/calendar/HomeCalendar";
-import Header from "../components/header/Header";
 import HomeBg from "../components/home/HomeBg";
 import HomePlus from "../components/home/HomeDefault";
 import { isLoggedInVar } from "../services/useUser";
@@ -19,11 +18,10 @@ const Container = styled.main`
 const Home = () => {
   return (
     <>
-      <Header />
       <Container>
         <HomeBg />
         {isLoggedInVar ? <HomeCalendar /> : <HomePlus />}
-        <Festival></Festival>
+        {isLoggedInVar ? <Festival /> : null}
       </Container>
     </>
   );

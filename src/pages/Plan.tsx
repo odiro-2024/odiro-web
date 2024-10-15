@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Header from "../components/header/Header";
 import { mainColor } from "../utils/color";
 import PlanCalendar from "../components/calendar/PlanCalendar";
 import { useEffect, useState } from "react";
@@ -91,17 +90,17 @@ const MemoCommentBox = styled.div`
 
 const checkBoxValue = [
   false,
+  true,
   false,
   false,
   true,
   false,
   false,
   false,
+  true,
+  true,
+  true,
   false,
-  true,
-  true,
-  true,
-  true,
 ];
 
 export interface IData {
@@ -414,7 +413,6 @@ const Plan = () => {
     <>
       {data && (
         <>
-          <Header />
           <Container>
             <TopBox>
               <EmptyDiv />

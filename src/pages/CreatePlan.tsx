@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Header from "../components/header/Header";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { mainColor } from "../utils/color";
@@ -202,7 +201,6 @@ const CreatePlan = () => {
 
   return (
     <>
-      <Header />
       <Container>
         <CreatePlanBox>
           <Form onSubmit={handleSubmit(onSubmitValid)}>
