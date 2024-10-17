@@ -4,6 +4,7 @@ import HomeBg from "../components/home/HomeBg";
 import HomePlus from "../components/home/HomeDefault";
 import { isLoggedInVar } from "../services/useUser";
 import Festival from "../components/home/Festival";
+import ShowPlans from "../components/home/ShowPlans";
 
 const Container = styled.main`
   width: 100%;
@@ -22,6 +23,7 @@ const Home = () => {
         <HomeBg />
         {isLoggedInVar ? <HomeCalendar /> : <HomePlus />}
         {isLoggedInVar ? <Festival /> : null}
+        <ShowPlans></ShowPlans>
       </Container>
     </>
   );
