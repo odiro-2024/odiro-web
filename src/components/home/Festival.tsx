@@ -6,15 +6,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { font_cute } from "../../utils/font";
-import { g3, mainColor } from "../../utils/color";
+import { g3 } from "../../utils/color";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Container = styled.section`
   max-width: 1200px;
   width: 90%;
-  margin-bottom: 10rem;
+  margin-bottom: 7rem;
   margin-top: 5rem;
   position: relative;
   bottom: -10rem;
@@ -37,8 +36,8 @@ const Container = styled.section`
     content: "이번주 추천 페스티벌";
     margin-bottom: 2rem;
     display: block;
-    font-size: 1.5rem;
-    font-family: ${font_cute};
+    font-size: 1.8rem;
+    font-weight: bold;
   }
 `;
 
@@ -54,7 +53,7 @@ const Item = styled.div`
 const Img = styled.div<{ $url: string }>`
   width: 100%;
   height: 195px;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   background: url(${({ $url }) => $url}) center no-repeat;
   background-size: cover;
 `;
@@ -62,10 +61,9 @@ const Img = styled.div<{ $url: string }>`
 const InfoBox = styled.div`
   width: 90%;
   span {
-    font-size: 1rem;
+    font-size: 1.1rem;
     margin-top: 1rem;
     display: block;
-    font-family: ${font_cute};
     &:nth-child(1) {
       font-weight: bold;
     }
@@ -89,7 +87,6 @@ const CustomNavButton = styled.div`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  border: 1px solid ${g3};
   color: ${g3};
   width: 40px;
   height: 40px;
@@ -99,11 +96,6 @@ const CustomNavButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  &:hover {
-    background-color: ${mainColor};
-    color: white;
-    border: none;
-  }
 `;
 
 const PrevButton = styled(CustomNavButton)`

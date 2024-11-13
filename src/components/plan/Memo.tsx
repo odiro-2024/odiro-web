@@ -126,7 +126,7 @@ export const Form = styled.form`
 
 export const Input = styled.input`
   width: calc(100% - 3.2rem);
-  height: 1.8rem;
+  height: 2rem;
   border-radius: 1rem;
   border: 1px solid rgba(0, 0, 0, 0.3);
   outline: none;
@@ -134,6 +134,7 @@ export const Input = styled.input`
 `;
 
 interface IProps {
+  planId: number;
   memo: IMemo[];
   setMemo: Dispatch<SetStateAction<IMemo[]>>;
   isMemo: boolean;
@@ -145,7 +146,14 @@ interface FormData {
   memo: string;
 }
 
-const Memo = ({ memo, setMemo, isMemo, setIsMemo, day_plan_id }: IProps) => {
+const Memo = ({
+  planId,
+  memo,
+  setMemo,
+  isMemo,
+  setIsMemo,
+  day_plan_id,
+}: IProps) => {
   const { register, getValues, handleSubmit, setValue } = useForm<FormData>();
 
   const onMemoSubmit = () => {
@@ -153,7 +161,7 @@ const Memo = ({ memo, setMemo, isMemo, setIsMemo, day_plan_id }: IProps) => {
     if (!memo) return;
     axios
       .post(
-        "/api/memo/create",
+        `/api/${planId}/memo/create`,
         {
           day_plan_id,
           content: memo,
@@ -176,7 +184,7 @@ const Memo = ({ memo, setMemo, isMemo, setIsMemo, day_plan_id }: IProps) => {
 
   const memoDeleteClicked = (index: number, id: number) => {
     axios
-      .delete(`/api/memo/delete/${id}`, {
+      .delete(`/api/${planId}/memo/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

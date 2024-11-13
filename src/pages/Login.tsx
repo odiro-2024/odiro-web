@@ -97,7 +97,8 @@ export const Input = styled.input<{ $isvalid: string }>`
       $isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
   outline: none;
   text-indent: 1rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-family: "HakgyoansimGeurimilgi";
   margin-top: 1.2rem;
   &:first-child {
     margin-top: 2.5rem;
@@ -114,7 +115,8 @@ export const Button = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  font-family: "HakgyoansimGeurimilgi";
   font-weight: bold;
   cursor: pointer;
   border: none;
@@ -130,14 +132,13 @@ export const KakaoBtn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
   border: none;
   margin-top: 1rem;
   background-color: yellow;
   color: black;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 `;
 
 export const ErrorMsg = styled.span`
@@ -153,7 +154,7 @@ export const FindAccount = styled.ul`
   justify-content: center;
   align-items: center;
   margin: 2rem 0 1.6rem 0;
-  font-size: 15px;
+  font-size: 1.1rem;
   li {
     margin: 0 0.3rem;
     cursor: pointer;

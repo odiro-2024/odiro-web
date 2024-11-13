@@ -4,7 +4,7 @@ import { mainColor } from "../../utils/color";
 import { phone, tablet_M } from "../../utils/size";
 
 export const StyledCalendarContainer = styled.div`
-  width: 22rem;
+  width: 20rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,7 +23,7 @@ export const StyledCalendarContainer = styled.div`
     height: 100%;
     background-color: #fff;
     font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.7em;
+    line-height: 1.4em;
     padding: 10px;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -58,9 +58,11 @@ export const StyledCalendarContainer = styled.div`
     margin-top: 20px;
     display: block;
     font-size: 14px;
+    font-family: "HakgyoansimGeurimilgi", sans-serif;
   }
   //타일 기본 설정
   .react-calendar__tile {
+    font-family: "HakgyoansimGeurimilgi", sans-serif;
     border-radius: 50%;
     color: black;
     &:hover {

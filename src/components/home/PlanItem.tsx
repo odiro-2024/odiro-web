@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
-  margin: 1rem 2rem 1rem 0;
   cursor: pointer;
 `;
 
@@ -23,7 +22,7 @@ const InfoArea = styled.div`
   span {
     font-size: 1.1rem;
     font-weight: bold;
-    margin: 1rem 0;
+    margin: 0.8rem 0 0.5rem 0;
     display: block;
   }
 `;
@@ -84,9 +83,9 @@ const PlanItem = ({ data }: IProps) => {
           lng: 126.9786567,
         }}
         style={{
-          width: "300px",
+          width: "280px",
           height: "200px",
-          borderRadius: "15px",
+          borderRadius: "0.5rem",
         }}
         level={2}
         onCreate={setMap}

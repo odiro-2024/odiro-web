@@ -9,14 +9,15 @@ import { phone } from "../utils/size";
 
 const Container = styled.main`
   width: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
 const CreatePlanBox = styled.section`
   max-width: 410px;
   width: 70%;
-  margin: 11rem 0 6rem 0;
   @media (max-width: ${phone}) {
     margin: 8rem 0 2rem 0;
   }
@@ -34,12 +35,13 @@ const Input = styled.input<{ $isvalid: string }>`
   width: 100%;
   height: 50px;
   border-radius: 20px;
+  font-family: "HakgyoansimGeurimilgi", sans-serif;
   border: 1px solid
     ${({ $isvalid }) =>
       $isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
   outline: none;
   text-indent: 1rem;
-  font-size: 1rem;
+  font-size: 1.1rem;
   &:focus {
     border-width: 2px;
   }
@@ -59,6 +61,7 @@ const CheckBox = styled.li<{ checked: boolean }>`
   padding: 12px;
   border-radius: 20px;
   margin-right: 3px;
+  font-size: 1.1rem;
   margin-bottom: 20px;
   text-align: center;
   font-weight: ${({ checked }) => (checked ? 600 : 500)};
@@ -79,7 +82,7 @@ const Button = styled.h2`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 19px;
+  font-size: 1.3rem;
   font-weight: bold;
   cursor: pointer;
   border: none;
@@ -101,19 +104,7 @@ const checkBox = [
   "비용절약",
   "플렉스",
   "맛집위주",
-  "활동적인",
-  "인생샷",
-  "힐링여행",
-  "혼자만",
-  "여럿이서",
-  "느긋하게",
-  "바쁘게",
-  "남자만",
-  "여자만",
-  "비용절약",
-  "플렉스",
-  "맛집위주",
-  "활동적인",
+  "활동위주",
   "인생샷",
   "힐링여행",
 ];
@@ -136,19 +127,8 @@ const CreatePlan = () => {
     false,
     false,
     false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
   ]);
+  const [isPublic, setIsPublic] = useState(false);
 
   const {
     register,
@@ -157,11 +137,27 @@ const CreatePlan = () => {
     formState: { errors },
   } = useForm<FormData>();
 
+  const getFilter = () => {
+    const pairMap: { [key: string]: string } = {
+      "false,false": "0",
+      "true,false": "1",
+      "false,true": "2",
+    };
+
+    let result = "";
+    for (let i = 0; i < checkBoxValue.length; i += 2) {
+      const pairKey = `${checkBoxValue[i]},${checkBoxValue[i + 1]}`;
+      result += pairMap[pairKey];
+    }
+    return result;
+  };
+
   const onSubmitValid = () => {
     const { title } = getValues();
-
     const first_day = firstDay.toISOString();
     const last_day = lastDay.toISOString();
+    const plan_filter = getFilter();
+
     axios
       .post(
         "/api/plan/create",
@@ -169,6 +165,8 @@ const CreatePlan = () => {
           title,
           first_day,
           last_day,
+          is_public: isPublic,
+          plan_filter,
         },
         {
           headers: {
@@ -183,19 +181,30 @@ const CreatePlan = () => {
       .catch((error) => console.log(error));
   };
 
-  const onClicked = (index: number) => {
-    if (checkBoxValue[index] === false) {
-      setCheckBoxValue([
-        ...checkBoxValue.slice(0, index),
-        true,
-        ...checkBoxValue.slice(index + 1),
-      ]);
-    } else {
+  const handleCheckboxClicked = (index: number) => {
+    // 체크 on / off
+    if (checkBoxValue[index] === true) {
       setCheckBoxValue([
         ...checkBoxValue.slice(0, index),
         false,
         ...checkBoxValue.slice(index + 1),
       ]);
+    } else {
+      if (index % 2 === 0) {
+        setCheckBoxValue([
+          ...checkBoxValue.slice(0, index),
+          true,
+          false,
+          ...checkBoxValue.slice(index + 2),
+        ]);
+      } else {
+        setCheckBoxValue([
+          ...checkBoxValue.slice(0, index - 1),
+          false,
+          true,
+          ...checkBoxValue.slice(index + 1),
+        ]);
+      }
     }
   };
 
@@ -212,11 +221,17 @@ const CreatePlan = () => {
               $isvalid={!errors?.title ? "true" : "false"}
             />
             <CheckBoxs>
+              <CheckBox
+                checked={isPublic}
+                onClick={() => setIsPublic((prev) => !prev)}
+              >
+                여행 공개
+              </CheckBox>
               {checkBox.map((value, index) => (
                 <CheckBox
                   key={index}
                   checked={checkBoxValue[index]}
-                  onClick={() => onClicked(index)}
+                  onClick={() => handleCheckboxClicked(index)}
                 >
                   {value}
                 </CheckBox>

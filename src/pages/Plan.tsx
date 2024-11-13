@@ -24,6 +24,7 @@ const Container = styled.main`
   flex-direction: column;
   margin: auto;
   gap: 3.5rem;
+  margin-top: 2rem;
 `;
 
 const TopBox = styled.section`
@@ -47,7 +48,7 @@ const EmptyDiv = styled.div`
 const Title = styled.h2`
   width: calc(100% / 3);
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: bold;
   color: ${mainColor};
 `;
@@ -234,7 +235,7 @@ const Plan = () => {
 
     axios
       .post(
-        `/api/location/create`,
+        `/api/${data.id}/location/create`,
         {
           day_plan_id: data.day_plan[index].id,
           address_name,
@@ -292,7 +293,7 @@ const Plan = () => {
 
     axios
       .post(
-        `/api/wishLocation/create`,
+        `/api/${data.id}/wishLocation/create`,
         {
           plan_id: data.id,
           address_name,
@@ -430,6 +431,7 @@ const Plan = () => {
             </MiddleBox>
             <BottomBox>
               <LocationBox
+                planId={data.id}
                 day_plan_id={data.day_plan[index].id}
                 index={index}
                 location={location}
@@ -437,6 +439,7 @@ const Plan = () => {
               ></LocationBox>
               <MemoCommentBox>
                 <Memo
+                  planId={data.id}
                   memo={memo}
                   setMemo={setMemo}
                   isMemo={isMemo}
@@ -444,6 +447,7 @@ const Plan = () => {
                   day_plan_id={data.day_plan[index].id}
                 ></Memo>
                 <Comment
+                  planId={data.id}
                   comment={comment}
                   setComment={setComment}
                   isMemo={isMemo}
@@ -455,6 +459,7 @@ const Plan = () => {
           </Container>
           {locationClicked && (
             <SearchLocation
+              planId={data.id}
               wishlist={wishlist}
               createWishlist={createWishlist}
               createLocation={createLocation}

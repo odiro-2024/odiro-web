@@ -21,7 +21,7 @@ const LocationBox = styled.div`
     justify-content: space-between;
     align-items: center;
     span {
-      margin: 1.3rem;
+      margin: 1rem 1.3rem;
       display: block;
       font-size: 25px;
       font-weight: bold;
@@ -29,7 +29,7 @@ const LocationBox = styled.div`
     }
     button {
       border: none;
-      margin: 1.3rem;
+      margin: 1rem 1.3rem;
       width: 2.5rem;
       height: 2.5rem;
       border-radius: 50%;
@@ -54,13 +54,20 @@ const LocationBox = styled.div`
 `;
 
 interface IProps {
+  planId: number;
   day_plan_id: number;
   index: number;
   location: ILocation[];
   setLocation: Dispatch<SetStateAction<ILocation[]>>;
 }
 
-const Location = ({ day_plan_id, index, location, setLocation }: IProps) => {
+const Location = ({
+  planId,
+  day_plan_id,
+  index,
+  location,
+  setLocation,
+}: IProps) => {
   const dispatch = useDispatch();
   const onLocationClicked = () => dispatch(toggleLocation());
 
@@ -76,7 +83,7 @@ const Location = ({ day_plan_id, index, location, setLocation }: IProps) => {
     });
     axios
       .post(
-        "/api/location/reorder",
+        `/api/${planId}/location/reorder`,
         {
           day_plan_id,
           reordered_location_ids,
@@ -93,7 +100,7 @@ const Location = ({ day_plan_id, index, location, setLocation }: IProps) => {
 
   const deleteLocation = (index: number, id: number) => {
     axios
-      .delete(`/api/location/delete/${id}`, {
+      .delete(`/api/${planId}/location/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

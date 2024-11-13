@@ -1,8 +1,11 @@
 import styled from "styled-components";
 import { tablet_M } from "../../utils/size";
+import HomeCalendar from "../calendar/HomeCalendar";
+import HomePlus from "./HomeDefault";
+import { isLoggedInVar } from "../../services/useUser";
 
 const Section = styled.section`
-  height: 100vh;
+  height: 60rem;
   width: 100%;
   background: url("/images/bg.jpg") no-repeat center;
   background-size: cover;
@@ -10,7 +13,6 @@ const Section = styled.section`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-family: "Quicksand";
   color: white;
   position: relative;
   h2 {
@@ -46,12 +48,7 @@ const Gradient = styled.div`
 const HomeBg = () => {
   return (
     <Section>
-      <h2>
-        <span>We strive to greet</span>
-        <br></br>
-        <span>a better future.</span>
-      </h2>
-      <span>CLick here to add your own text and edit me.</span>
+      {isLoggedInVar ? <HomeCalendar /> : <HomePlus />}
       <Gradient></Gradient>
     </Section>
   );

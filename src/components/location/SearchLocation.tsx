@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { tablet_L } from "../../utils/size";
 import { tablet_M } from "../../utils/size";
 import Modal from "../shared/Modal";
-import { mainColor } from "../../utils/color";
+import { g1, g2, mainColor } from "../../utils/color";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ILocation } from "../../pages/Plan";
@@ -41,7 +41,7 @@ const Close = styled.div`
   font-size: 1.6rem;
   text-align: center;
   align-content: center;
-  color: gray;
+  color: ${g2};
 `;
 
 const MapWrap = styled.div`
@@ -91,7 +91,7 @@ const Div = styled.li`
   flex-direction: column;
   cursor: pointer;
   span {
-    font-size: 14px;
+    font-size: 1rem;
     margin: 15px 15px 0 20px;
     &:nth-child(3) {
       color: gray;
@@ -110,8 +110,8 @@ const InfoBox = styled.div`
   display: flex;
   flex-direction: column;
   > span {
-    font-size: 15px;
-    margin: 15px 15px 0 20px;
+    font-size: 1rem;
+    margin: 0.8rem 0.8rem 0 1rem;
     &:first-child {
       cursor: pointer;
       margin-top: 25px;
@@ -130,15 +130,16 @@ const InfoBox = styled.div`
     width: 100%;
     justify-content: flex-end;
     span {
-      padding: 5px;
+      padding: 5px 8px;
       border-radius: 5px;
       color: white;
       cursor: pointer;
+      font-size: 1.1rem;
       &:first-child {
         background-color: #64d442;
       }
       &:nth-child(2) {
-        margin: 0 10px;
+        margin: 0 8px;
         padding: 5px 10px;
         background-color: ${mainColor};
       }
@@ -170,6 +171,7 @@ export interface Imarkers {
 }
 
 interface IProps {
+  planId: number;
   wishlist: ILocation[];
   createWishlist: (infoBox: Imarkers) => void;
   createLocation: (infoBox: Imarkers) => void;
@@ -177,6 +179,7 @@ interface IProps {
 }
 
 const SearchLocation = ({
+  planId,
   wishlist,
   createWishlist,
   createLocation,
@@ -329,6 +332,7 @@ const SearchLocation = ({
           ))}
         </Divs>
         <WishList
+          planId={planId}
           wishlist={wishlist}
           setWishlist={setWishlist}
           locationClose={locationClose}

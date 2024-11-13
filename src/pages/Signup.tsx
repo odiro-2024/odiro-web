@@ -28,7 +28,7 @@ import Modal from "../components/shared/Modal";
 import { mainColor } from "../utils/color";
 
 const EnrollBox = styled(LoginBox)<{ $emailVerifing: boolean }>`
-  max-height: ${(props) => (props.$emailVerifing ? "40rem" : "36rem")};
+  max-height: ${(props) => (props.$emailVerifing ? "42rem" : "37rem")};
   max-width: 28rem;
   display: flex;
   flex-direction: column;
@@ -57,6 +57,7 @@ const InputBox = styled.div`
 const EnrollInput = styled(Input)`
   width: 100%;
   height: 2.8rem;
+  font-family: "HakgyoansimGeurimilgi";
   &:first-child {
     margin: 0;
   }

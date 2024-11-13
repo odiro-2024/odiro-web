@@ -61,6 +61,7 @@ const CommentList = styled.li<{ $url: string }>`
 `;
 
 interface IProps {
+  planId: number;
   comment: IComment[];
   setComment: Dispatch<SetStateAction<IComment[]>>;
   isMemo: boolean;
@@ -73,6 +74,7 @@ interface FormData {
 }
 
 const Comment = ({
+  planId,
   comment,
   setComment,
   isMemo,
@@ -87,7 +89,7 @@ const Comment = ({
 
     axios
       .post(
-        "/api/comment/create",
+        `/api/${planId}/comment/create`,
         {
           day_plan_id,
           content: comment,

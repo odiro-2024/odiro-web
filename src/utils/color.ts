@@ -12,7 +12,7 @@ export const color = [
   "#b3e0e6",
 ];
 
-export const g1 = "#333";
+export const g1 = "#323232";
 export const g2 = "#666";
 export const g3 = "#999";
 export const g4 = "#eaeaea";

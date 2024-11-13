@@ -34,18 +34,20 @@ const BottomLine = styled(TopLine)`
 const ScheduleBox = styled.div`
   width: 30%;
   max-width: 210px;
-  height: 600px;
-  margin-left: 2px;
+  height: 520px;
   border-left: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 0 0.5rem 0.5rem 0;
   span,
   h2 {
     display: block;
     color: ${mainColor};
-    font-size: 19px;
+    font-size: 1.5rem;
     font-weight: 600;
     margin-top: 25px;
     margin-left: 1rem;
     position: relative;
+    text-align: start;
   }
   div {
     font-size: 14.3px;
@@ -103,9 +105,10 @@ const MakePlanBtn = styled.div`
   color: white;
   font-weight: bold;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 1.1rem;
   transition: 0.3s;
   transform-origin: center;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
   &:hover {
     scale: 1.08;
   }

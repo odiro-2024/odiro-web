@@ -56,7 +56,7 @@ const MapBox = ({ setMap, markers }: IProps) => {
         style={{
           width: "100%",
           height: "100%",
-          borderRadius: "15px",
+          borderRadius: "0.5rem",
         }}
         level={2}
         onCreate={setMap}

@@ -20,6 +20,7 @@ const Container = styled.header`
   position: fixed;
   top: 0;
   left: 0;
+  height: 5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -42,11 +43,12 @@ const Nav = styled.nav`
 
 const Logo = styled.h1`
   color: ${mainColor};
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bold;
   cursor: pointer;
   height: 70px;
   align-content: center;
+  font-family: "HakgyoansimNadeuri";
   @media (max-width: ${phone}) {
     font-size: 1.5rem;
     height: 50px;
@@ -60,8 +62,8 @@ const Gnb = styled.ul<{ $active: boolean }>`
   li {
     font-weight: bold;
     margin-left: 2rem;
-    font-size: 1rem;
-    padding: 1.2rem 1.5rem;
+    font-size: 1.2rem;
+    padding: 0.9rem 1.2rem;
     border-radius: 2rem;
     color: rgba(0, 0, 0, 0.8);
     cursor: pointer;
@@ -107,7 +109,7 @@ const HamBtn = styled.button<{ $active: boolean }>`
   height: 2.5rem;
   display: none;
   span {
-    width: 100%;
+    width: 70%;
     height: ${(props) => (props.$active ? "0px" : "4px")};
     display: block;
     border-radius: 3px;
@@ -146,7 +148,10 @@ const Header = () => {
 
   const onLoginClicked = () => dispatch(toggleLogin());
   const onSignupClicked = () => dispatch(toggleSignup());
-  const onProfileClicked = () => navigate("/profile");
+  const handleNavClicked = (url: string) => {
+    navigate(`/${url}`);
+    setIsHamActive(false);
+  };
   const onLogoutClicked = () => {
     axios.get("/api/logout", {
       headers: {
@@ -161,13 +166,13 @@ const Header = () => {
   return (
     <Container>
       <Nav>
-        <Logo onClick={() => navigate("/")}>Odiro</Logo>
+        <Logo onClick={() => handleNavClicked("")}>ODIRO</Logo>
         <Gnb $active={isHamActive}>
-          <li onClick={() => navigate("/")}>홈</li>
-          <li onClick={() => navigate("/search/user")}>친구찾기</li>
+          <li onClick={() => handleNavClicked("")}>홈</li>
+          <li onClick={() => handleNavClicked("search/user")}>친구찾기</li>
           {isLoggedInVar ? (
             <>
-              <li onClick={onProfileClicked}>회원정보</li>
+              <li onClick={() => handleNavClicked("profile")}>회원정보</li>
               <li onClick={onLogoutClicked}>로그아웃</li>
             </>
           ) : (

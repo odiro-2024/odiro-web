@@ -102,6 +102,7 @@ const WishDelete = styled.div`
 `;
 
 interface IProps {
+  planId: number;
   wishlist: ILocation[];
   setWishlist: React.Dispatch<React.SetStateAction<ILocation[]>>;
   locationClose: () => void;
@@ -109,6 +110,7 @@ interface IProps {
 }
 
 const WishList = ({
+  planId,
   wishlist,
   setWishlist,
   locationClose,
@@ -138,7 +140,7 @@ const WishList = ({
 
   const onWishDelete = (id: number, index: number) => {
     axios
-      .delete(`/api/wishLocation/delete/${id}`, {
+      .delete(`/api/${planId}/wishLocation/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

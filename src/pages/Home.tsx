@@ -1,7 +1,5 @@
 import styled from "styled-components";
-import HomeCalendar from "../components/calendar/HomeCalendar";
 import HomeBg from "../components/home/HomeBg";
-import HomePlus from "../components/home/HomeDefault";
 import { isLoggedInVar } from "../services/useUser";
 import Festival from "../components/home/Festival";
 import ShowPlans from "../components/home/ShowPlans";
@@ -21,7 +19,6 @@ const Home = () => {
     <>
       <Container>
         <HomeBg />
-        {isLoggedInVar ? <HomeCalendar /> : <HomePlus />}
         {isLoggedInVar ? <Festival /> : null}
         <ShowPlans></ShowPlans>
       </Container>

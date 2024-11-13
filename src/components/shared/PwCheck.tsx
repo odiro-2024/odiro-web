@@ -21,6 +21,8 @@ const Form = styled.form`
 const PwInput = styled(Input)`
   border-radius: 1.3rem;
   width: 24rem;
+  font-family: "HakgyoansimGeurimilgi";
+  font-size: 1rem;
   border: 2px solid
     ${({ $isvalid }) =>
       $isvalid === "true" ? `${mainColor}` : "rgba(209, 64, 64, 0.61)"};
@@ -39,8 +41,9 @@ const Button = styled.button`
   width: 3.5rem;
   height: 2.5rem;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.1rem;
   border-radius: 0.5rem;
+  font-family: "HakgyoansimGeurimilgi";
   cursor: pointer;
 `;
 

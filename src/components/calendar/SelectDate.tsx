@@ -30,6 +30,7 @@ const Button = styled.button`
   cursor: pointer;
   font-weight: bold;
   transition: 0.3s;
+  font-family: "HakgyoansimGeurimilgi", sans-serif;
   &:hover {
     scale: 1.05;
   }
