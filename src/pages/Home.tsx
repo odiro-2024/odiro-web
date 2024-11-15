@@ -20,7 +20,7 @@ const Home = () => {
       <Container>
         <HomeBg />
         {isLoggedInVar ? <Festival /> : null}
-        <ShowPlans></ShowPlans>
+        <ShowPlans isAnimation={true} dropDownExist={true} h2="공개여행 보기" />
       </Container>
     </>
   );

@@ -3,21 +3,14 @@ import Dropdown from "../shared/Dropdown";
 import { useEffect, useRef, useState } from "react";
 import PlanItem from "./PlanItem";
 
-const Container = styled.section`
+const Container = styled.section<{ $isAnimation: boolean }>`
   max-width: 1200px;
   margin: auto;
   margin-bottom: 6rem;
   position: relative;
-  left: -10rem;
-  opacity: 0;
+  left: ${(props) => (props.$isAnimation ? "-10rem" : "0")};
+  opacity: ${(props) => (props.$isAnimation ? "0" : "1")};
   transition: 1.5s;
-  &::before {
-    content: "공개 여행 보기";
-    margin-bottom: 2rem;
-    display: block;
-    font-size: 1.8rem;
-    font-weight: bold;
-  }
   &.frame-in {
     left: 0rem;
     opacity: 1;
@@ -25,6 +18,13 @@ const Container = styled.section`
   @media (max-width: 700px) {
     margin: 0 2rem;
   }
+`;
+
+const H2 = styled.h2`
+  margin-bottom: 2rem;
+  display: block;
+  font-size: 1.8rem;
+  font-weight: bold;
 `;
 
 const DropdownArea = styled.div`
@@ -354,7 +354,13 @@ const data = [
   },
 ];
 
-const ShowPlans = () => {
+interface IProps {
+  isAnimation: boolean;
+  h2: string;
+  dropDownExist: boolean;
+}
+
+const ShowPlans = ({ isAnimation, h2, dropDownExist }: IProps) => {
   const [groupSize, setGroupSize] = useState("전체"); // 그룹 크기
   const [mood, setMood] = useState("전체"); // 분위기 또는 상태
   const [gender, setGender] = useState("전체"); // 성별
@@ -369,7 +375,7 @@ const ShowPlans = () => {
 
     const callback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && isAnimation) {
           // 요소가 뷰포트에 나타났을 경우
           setIsInViewport(true);
         } else {
@@ -389,23 +395,30 @@ const ShowPlans = () => {
   }, []);
 
   return (
-    <Container className={isInViewport ? "frame-in" : ""} ref={ref}>
-      <DropdownArea>
-        <Dropdown
-          category="그룹 크기"
-          data={GROUP_SIZE}
-          setState={setGroupSize}
-        />
-        <Dropdown category="분위기" data={MOOD} setState={setMood} />
-        <Dropdown category="성별" data={GENDER} setState={setGender} />
-        <Dropdown category="예산" data={BUDGET} setState={setBudget} />
-        <Dropdown
-          category="선호도"
-          data={PREFERENCE}
-          setState={setPreference}
-        />
-        <Dropdown category="타입" data={TYPE} setState={setType} />
-      </DropdownArea>
+    <Container
+      $isAnimation={isAnimation}
+      className={isInViewport ? "frame-in" : ""}
+      ref={ref}
+    >
+      <H2>{h2}</H2>
+      {dropDownExist && (
+        <DropdownArea>
+          <Dropdown
+            category="그룹 크기"
+            data={GROUP_SIZE}
+            setState={setGroupSize}
+          />
+          <Dropdown category="분위기" data={MOOD} setState={setMood} />
+          <Dropdown category="성별" data={GENDER} setState={setGender} />
+          <Dropdown category="예산" data={BUDGET} setState={setBudget} />
+          <Dropdown
+            category="선호도"
+            data={PREFERENCE}
+            setState={setPreference}
+          />
+          <Dropdown category="타입" data={TYPE} setState={setType} />
+        </DropdownArea>
+      )}
       <PlanArea>
         {data.map((value, index) => (
           <PlanItem key={index} data={value}></PlanItem>
