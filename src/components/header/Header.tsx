@@ -153,11 +153,18 @@ const Header = () => {
     setIsHamActive(false);
   };
   const onLogoutClicked = () => {
-    axios.get("/api/logout", {
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-    });
+    // axios
+    //   .get("/api/logout", {
+    //     headers: {
+    //       Authorization: `Bearer ${ACCESS_TOKEN}`,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     logUserOut();
+    //     navigate("/");
+    //     window.location.reload();
+    //   })
+    //   .catch((error) => console.log(error));
     logUserOut();
     navigate("/");
     window.location.reload();

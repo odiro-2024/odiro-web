@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import ShowPlans from "../home/ShowPlans";
 import { g1, mainColor } from "../../utils/color";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { ACCESS_TOKEN } from "../../services/useUser";
 
 const Container = styled.div`
   margin-top: 10rem;
@@ -51,20 +54,56 @@ const Btn = styled.button`
   }
 `;
 
-const data = [
-  { id: 1, title: "제목1" },
-  { id: 2, title: "제목2" },
-];
+interface IData {
+  plan_id: number;
+  plan_title: string;
+}
 
 const PlanList = () => {
+  const [planRequestList, setPlanRequestList] = useState<IData[]>();
+
+  const handleRequestOK = (id: number, index: number) => {
+    axios
+      .post(
+        "/api/plan/join",
+        {
+          id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
+      .then((res) => {
+        setPlanRequestList((prev) =>
+          prev ? prev.filter((_, i) => i !== index) : []
+        );
+      })
+      .catch((error) => console.log(error));
+  };
+
+  useEffect(() => {
+    axios
+      .get("/api/plan/wait/list", {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then((res) => setPlanRequestList(res.data))
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <Container>
       <H2>초대받은 여행</H2>
       <Ul>
-        {data?.map((value, index) => (
+        {planRequestList?.map((value, index) => (
           <Li key={index}>
-            <Username>{value.title}</Username>
-            <Btn>초대수락</Btn>
+            <Username>{value.plan_title}</Username>
+            <Btn onClick={() => handleRequestOK(value.plan_id, index)}>
+              초대수락
+            </Btn>
           </Li>
         ))}
       </Ul>

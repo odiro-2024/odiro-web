@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { mainColor } from "../../utils/color";
 import { phone, tablet_M } from "../../utils/size";
+import { useEffect, useState } from "react";
 
 const Container = styled.ul`
   width: calc(100% / 3);
@@ -72,17 +73,41 @@ const checkBoxList = [
 ];
 
 interface IProps {
-  checkBoxValue: boolean[];
+  checkBoxValue: string;
 }
 
 const CheckBoxs = ({ checkBoxValue }: IProps) => {
+  const [selectedList, setSelectedList] = useState<string[]>([]);
+
+  useEffect(() => {
+    const selectedList = [];
+    for (let i = 0; i < checkBoxValue.length; i++) {
+      const char = checkBoxValue[i]; // 현재 글자
+      const index = parseInt(char, 10); // 글자를 숫자로 변환
+
+      // 현재 글자의 자리수에 해당하는 인덱스 계산
+      const firstIndex = i * 2; // 자리수 * 2
+      const secondIndex = i * 2 + 1; // 자리수 * 2 + 1
+
+      if (index === 0) {
+        // 아무것도 선택되지 않음
+        continue;
+      } else if (index === 1) {
+        // 첫 번째 항목 선택
+        selectedList.push(checkBoxList[firstIndex]);
+      } else if (index === 2) {
+        // 두 번째 항목 선택
+        selectedList.push(checkBoxList[secondIndex]);
+      }
+    }
+    setSelectedList(selectedList);
+  }, [checkBoxValue]);
+
   return (
     <Container className="boxs">
-      {checkBoxValue.map((value: boolean, index: number) => {
-        return value ? (
-          <CheckBox key={index}>{checkBoxList[index]}</CheckBox>
-        ) : null;
-      })}
+      {selectedList.map((value: string, index: number) => (
+        <CheckBox key={index}>{value}</CheckBox>
+      ))}
     </Container>
   );
 };

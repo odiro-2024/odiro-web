@@ -1,33 +1,39 @@
 import styled from "styled-components";
 import { g4, mainColor } from "../utils/color";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { phone } from "../utils/size";
+import axios from "axios";
+import { ACCESS_TOKEN } from "../services/useUser";
 
 const Container = styled.main`
   width: 450px;
-  height: 50vh;
-  margin: 10rem auto;
+  height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   @media (max-width: ${phone}) {
     width: 90%;
   }
 `;
 
 const Input = styled.input`
-  width: 100%;
-  height: 2.8rem;
+  width: 450px;
+  height: 3.3rem;
   border-radius: 1rem;
   outline: none;
   border: 1px solid ${mainColor};
   padding: 0;
   text-indent: 1rem;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
+  font-family: "HakgyoansimNadeuri";
 `;
 
 const UserBoxs = styled.ul`
-  margin-top: 2.5rem;
-  width: 100%;
-  height: 400px;
+  margin-top: 2rem;
+  width: 450px;
+  height: 50vh;
   border: 1px solid ${mainColor};
   border-radius: 1rem;
   overflow-y: scroll;
@@ -63,14 +69,25 @@ const Avatar = styled.div<{ $url: string }>`
 
 const Btn = styled.button`
   background-color: ${mainColor};
+  font-family: "HakgyoansimNadeuri";
   color: white;
   border: none;
   cursor: pointer;
   width: 80px;
   height: 40px;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
+`;
+
+const EmptyText = styled.div`
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  align-content: center;
+  font-size: 1.5rem;
+  font-family: "HakgyoansimNadeuri";
+  opacity: 0.7;
 `;
 
 const data = [
@@ -120,30 +137,42 @@ interface IData {
 
 const SearchUser = () => {
   const [username, setUsername] = useState("");
-
-  //   const searchUser = async (): Promise<IData[]> => {
-  //     //get요청
-  //     //username을 파라메타로
-  //     //응답은 유저들의 배열
-  //     //username이 있다면 한명 or 없음
-  //     //username이 없다면 랜덤 여러명
-  //   };
-
-  //   const { data, refetch } = useQuery({
-  //     queryKey: ["user", username],
-  //     queryFn: searchUser,
-  //   });
+  const [data, setData] = useState<IData[]>([]);
+  const [sendList, setSendList] = useState<number[]>([]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    //refetch();
-    setUsername("");
+    setSendList([]);
+    axios
+      .get(`/api/user/search/${username}`, {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then((res) => {
+        setUsername("");
+        setData(res.data);
+      })
+      .catch((error) => console.log(error));
   };
 
-  const SendFriendRequest = (id: number) => {
-    //get요청
-    //id를 파라메타로
-    //응답은 성공여부만
+  const SendFriendRequest = (id: number, index: number) => {
+    axios
+      .post(
+        "/api/friend/request",
+        {
+          receiver_id: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
+      .then((res) => {
+        setSendList((prev) => [...prev, index]);
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -156,15 +185,24 @@ const SearchUser = () => {
         ></Input>
       </form>
       <UserBoxs>
-        {data.map((value, index) => (
-          <UserBox key={index}>
-            <div>
-              <Avatar $url={value.profile_img}></Avatar>
-              <span>{value.username}</span>
-            </div>
-            <Btn onClick={() => SendFriendRequest(value.id)}>친구요청</Btn>
-          </UserBox>
-        ))}
+        {data?.length !== 0 ? (
+          data?.map((value, index) => (
+            <UserBox key={index}>
+              <div>
+                <Avatar $url={value.profile_img}></Avatar>
+                <span>{value.username}</span>
+              </div>
+              <Btn
+                style={{ opacity: sendList.includes(index) ? "0.5" : "1" }}
+                onClick={() => SendFriendRequest(value.id, index)}
+              >
+                {sendList.includes(index) ? "전송완료" : "친구요청"}
+              </Btn>
+            </UserBox>
+          ))
+        ) : (
+          <EmptyText>친구를 찾아보세요</EmptyText>
+        )}
       </UserBoxs>
     </Container>
   );

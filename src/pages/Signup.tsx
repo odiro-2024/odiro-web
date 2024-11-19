@@ -117,6 +117,7 @@ const Signup = () => {
     getValues,
     setValue,
     handleSubmit,
+    clearErrors,
     formState: { errors },
   } = useForm<FormData>();
 
@@ -130,6 +131,7 @@ const Signup = () => {
     setEmailValid(false);
     setEmailVerifing(false);
     setErrorMsg("");
+    clearErrors();
   };
 
   const onSignupClose = () => {
@@ -141,8 +143,20 @@ const Signup = () => {
     if (usernameValid) return;
     const { username } = getValues();
     //
-    setUsernameValidLoader(false);
-    setUsernameValid(true);
+    axios
+      .get("/api/user/check-username", {
+        params: { username },
+      })
+      .then((res) => {
+        if (res.data) {
+          setErrorMsg("유저네임이 존재합니다.");
+          setUsernameValidLoader(false);
+          return;
+        }
+        setUsernameValidLoader(false);
+        setUsernameValid(true);
+      })
+      .catch((error) => console.log(error));
   };
 
   const onEmailCheck = () => {
@@ -160,7 +174,7 @@ const Signup = () => {
       .get("/api/emails/verification-requests", { params: { email } })
       .then(() => {})
       .catch((error) => {
-        setErrorMsg(error.response.data.message);
+        setErrorMsg("이메일이 존재합니다.");
         setEmailValidLoader(false);
         clearTimeout(emailSuccessCallback);
       });
@@ -179,7 +193,12 @@ const Signup = () => {
           code: emailVerify,
         },
       })
-      .then(() => {
+      .then((res) => {
+        if (!res.data) {
+          setEmailVerifyValidLoader(false);
+          setErrorMsg("인증번호가 틀립니다.");
+          return;
+        }
         setEmailVerifyValid(true);
         setEmailVerifyValidLoader(false);
       })
