@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import HomeBg from "../components/home/HomeBg";
-import { isLoggedInVar } from "../services/useUser";
 import Festival from "../components/home/Festival";
 import ShowPlans from "../components/home/ShowPlans";
 
@@ -19,7 +18,7 @@ const Home = () => {
     <>
       <Container>
         <HomeBg />
-        {isLoggedInVar ? <Festival /> : null}
+        <Festival />
         <ShowPlans isAnimation={true} dropDownExist={true} h2="공개여행 보기" />
       </Container>
     </>
