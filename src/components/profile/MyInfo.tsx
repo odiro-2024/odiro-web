@@ -4,12 +4,12 @@ import { faCircleCheck as faCircleCheckSolid } from "@fortawesome/free-solid-svg
 import { faCircleCheck as faCircleCheckRegular } from "@fortawesome/free-regular-svg-icons";
 import { g1, g3, mainColor } from "../../utils/color";
 import axios from "axios";
-import { ACCESS_TOKEN } from "../../services/useUser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Loader } from "../../pages/Signup";
 import { ErrorMsg as errormsg } from "../../pages/Login";
 import PwCheck from "../shared/PwCheck";
+import { getAccessToken } from "../../services/useUser";
 
 const Container = styled.section``;
 
@@ -115,14 +115,13 @@ const ProfileLoader = styled(Loader)`
 
 const ErrorMsg = styled(errormsg)``;
 
-const data = {
-  user_id: 1,
-  username: "jinhyukSeo777",
-  password: "11",
-  email: "tjwlsgur2556@naver.com",
-  profile_img: "/images/1.jpg",
-  summary: "11111111",
-};
+interface IData {
+  id: number;
+  email: string;
+  password: string;
+  username: string;
+  profileImage: string;
+}
 
 interface FormData {
   username: string;
@@ -133,6 +132,7 @@ interface FormData {
 }
 
 const MyInfo = () => {
+  const [data, setData] = useState<IData>();
   const [isEditing, setIsEditing] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File>();
   const [newProfileImg, setNewProfileImg] = useState("");
@@ -145,6 +145,20 @@ const MyInfo = () => {
   const [emailValidLoader, setEmailValidLoader] = useState(false);
   const [emailVerifyValidLoader, setEmailVerifyValidLoader] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    const ACCESS_TOKEN = getAccessToken();
+    axios
+      .get("/api/mypage", {
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      })
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   const { register, getValues, setValue } = useForm<FormData>();
 
@@ -168,21 +182,22 @@ const MyInfo = () => {
       return;
     }
 
-    // FormData 객체 생성
     const formData = new FormData();
 
     // 필요한 필드만 추가
-    if (username !== data.username) formData.append("username", username);
-    if (email !== data.email) formData.append("email", email);
-    if (password !== data.password) formData.append("password", password);
+    if (username !== data?.username) formData.append("username", username);
+    if (email !== data?.email) formData.append("email", email);
+    if (password !== "") formData.append("password", password);
+
     if (avatarFile && avatarFile.size > 0) {
       // avatarFile이 존재하고 유효한 경우만 추가
-      formData.append("avatarFile", avatarFile);
+      formData.append("file", avatarFile);
     }
 
+    const ACCESS_TOKEN = localStorage.getItem("accessToken");
     // 요청 전송
     axios
-      .patch("/api/user/update", formData, {
+      .patch("/api/update", formData, {
         headers: {
           "Content-Type": "multipart/form-data", // FormData 사용 시 헤더 설정
           Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -191,16 +206,15 @@ const MyInfo = () => {
       .then(() => {
         setIsEditing(false);
         clear();
+        window.location.reload();
       })
       .catch((error) => setErrorMsg(error.response.data.message));
   };
 
   const onPwCorrect = () => {
     setIsEditing(true);
-    setValue("username", data.username);
-    setValue("email", data.email);
-    setValue("password", data.password);
-    setValue("password2", data.password);
+    setValue("username", data?.username || "");
+    setValue("email", data?.email || "");
   };
 
   const onAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,7 +230,7 @@ const MyInfo = () => {
   };
 
   const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === data.username) {
+    if (e.target.value === data?.username) {
       setUsernameValid(true);
     } else {
       setUsernameValid(false);
@@ -224,7 +238,7 @@ const MyInfo = () => {
   };
 
   const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === data.email) {
+    if (e.target.value === data?.email) {
       setEmailValid(true);
       setEmailVerifing(false);
     } else {
@@ -240,9 +254,6 @@ const MyInfo = () => {
     axios
       .get("/api/user/check-username", {
         params: { username },
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
       })
       .then((res) => {
         if (res.data) {
@@ -315,7 +326,7 @@ const MyInfo = () => {
       <UserInfoBox>
         <Form>
           <ProfileImg
-            url={newProfileImg ? newProfileImg : data.profile_img}
+            url={newProfileImg ? newProfileImg : data?.profileImage || ""}
           ></ProfileImg>
           {isEditing && (
             <>
@@ -337,7 +348,7 @@ const MyInfo = () => {
                 <Input
                   {...register("username")}
                   type="text"
-                  placeholder={data.username}
+                  placeholder={data?.username}
                   onChange={(e) => onUsernameChange(e)}
                 />
                 <DuplicateCheck onClick={onUsernameCheck}>
@@ -353,7 +364,7 @@ const MyInfo = () => {
                 <Input
                   {...register("email")}
                   type="email"
-                  placeholder={data.email}
+                  placeholder={data?.email}
                   onChange={(e) => onEmailChange(e)}
                 />
                 <DuplicateCheck onClick={onEmailCheck}>
@@ -383,28 +394,32 @@ const MyInfo = () => {
                   {emailVerifyValidLoader && <ProfileLoader></ProfileLoader>}
                 </InputBox>
               )}
-              <InputBox>
-                <Input
-                  {...register("password")}
-                  type="password"
-                  placeholder={"new password"}
-                  autoComplete="off"
-                />
-              </InputBox>
-              <InputBox>
-                <Input
-                  {...register("password2")}
-                  type="password"
-                  placeholder={"new password2"}
-                  autoComplete="off"
-                />
-              </InputBox>
+              {data?.password && (
+                <>
+                  <InputBox>
+                    <Input
+                      {...register("password")}
+                      type="password"
+                      placeholder={"new password"}
+                      autoComplete="off"
+                    />
+                  </InputBox>
+                  <InputBox>
+                    <Input
+                      {...register("password2")}
+                      type="password"
+                      placeholder={"new password2"}
+                      autoComplete="off"
+                    />
+                  </InputBox>
+                </>
+              )}
               <ErrorMsg>{errorMsg}</ErrorMsg>
             </>
           ) : (
             <>
-              <p>{data.username}</p>
-              <span>{data.email}</span>
+              <p>{data?.username}</p>
+              <span>{data?.email}</span>
             </>
           )}
         </Form>
