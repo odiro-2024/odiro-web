@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { ACCESS_TOKEN } from "../../services/useUser";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
@@ -173,22 +172,15 @@ const Festival = () => {
     const date = new Date();
     const today = formatDateToYYYYMMDD(date);
     axios
-      .post(
-        "/api/location/festival/research",
-        {
-          yyyymmdd: today,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        }
-      )
+      .post("http://localhost:8080/api/location/festival/research", {
+        yyyymmdd: today,
+      })
       .then((res) => {
         const {
           data: { items },
         } = res;
         setData(items);
+        console.log(data);
       })
       .catch((error) => console.log(error));
   }, []);

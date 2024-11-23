@@ -6,9 +6,9 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
-import { ACCESS_TOKEN } from "../../services/useUser";
 import axios from "axios";
 import { Imarkers } from "../location/SearchLocation";
+import { getAccessToken } from "../../services/useUser";
 
 const Container = styled.ul`
   position: absolute;
@@ -139,6 +139,8 @@ const WishList = ({
   };
 
   const onWishDelete = (id: number, index: number) => {
+    const ACCESS_TOKEN = getAccessToken();
+    console.log(id);
     axios
       .delete(`/api/${planId}/wishLocation/delete/${id}`, {
         headers: {

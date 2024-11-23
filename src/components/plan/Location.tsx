@@ -6,11 +6,11 @@ import { useDispatch } from "react-redux";
 import { toggleLocation } from "../../contexts/counterSlice";
 import DraggableLocation from "../location/DraggableLocation";
 import axios from "axios";
-import { ACCESS_TOKEN } from "../../services/useUser";
 import styled from "styled-components";
 import { g1, mainColor } from "../../utils/color";
 import { tablet_M } from "../../utils/size";
 import { Dispatch, SetStateAction } from "react";
+import { getAccessToken } from "../../services/useUser";
 
 const LocationBox = styled.div`
   flex-grow: 1;
@@ -81,6 +81,7 @@ const Location = ({
       copy.forEach((v) => reordered_location_ids.push(v.id));
       return copy;
     });
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         `/api/${planId}/location/reorder`,
@@ -99,6 +100,7 @@ const Location = ({
   };
 
   const deleteLocation = (index: number, id: number) => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .delete(`/api/${planId}/location/delete/${id}`, {
         headers: {

@@ -7,7 +7,7 @@ import { color, mainColor } from "../../utils/color";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SelectDateForm from "./SelectDate";
-import { ACCESS_TOKEN } from "../../services/useUser";
+import { getAccessToken } from "../../services/useUser";
 import { phone, tablet_M } from "../../utils/size";
 
 const Overlay = styled.div`
@@ -123,11 +123,19 @@ interface Ischedule {
   title: string;
 }
 
+interface ILocation {
+  lat: number;
+  lng: number;
+  imgUrl: string;
+  plans: any;
+}
+
 interface Iplan {
   id: number;
   title: string;
-  first_day: string;
-  last_day: string;
+  firstDay: string;
+  lastDay: string;
+  locationList: ILocation[];
 }
 
 function HomeCalendar() {
@@ -147,7 +155,7 @@ function HomeCalendar() {
     if (i === 0) {
       chooseLine.push(1);
       continue;
-    } else if (plan[i].first_day <= plan[i - 1].last_day) {
+    } else if (plan[i].firstDay <= plan[i - 1].lastDay) {
       if (chooseLine[i - 1] === 1) {
         chooseLine.push(2);
         continue;
@@ -162,8 +170,9 @@ function HomeCalendar() {
   }
 
   useEffect(() => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
-      .get("/api/home", {
+      .get("/api/plan/myplan", {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -180,8 +189,8 @@ function HomeCalendar() {
     setSchedule([]);
     for (let i = 0; i < plan.length; i++) {
       const isPlanHit =
-        value.toISOString() >= plan[i].first_day &&
-        value.toISOString() <= plan[i].last_day;
+        value.toISOString() >= plan[i].firstDay &&
+        value.toISOString() <= plan[i].lastDay;
       if (isPlanHit) {
         setSchedule((prev) => [
           ...prev,
@@ -242,8 +251,8 @@ function HomeCalendar() {
         tileContent={({ date }) =>
           plan.map((value, index) => {
             const isPlanHit =
-              date.toISOString() >= value.first_day &&
-              date.toISOString() <= value.last_day;
+              date.toISOString() >= value.firstDay &&
+              date.toISOString() <= value.lastDay;
             if (!isPlanHit) {
               return null;
             }

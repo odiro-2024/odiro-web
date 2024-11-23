@@ -3,8 +3,8 @@ import { g2, mainColor } from "../../utils/color";
 import { IData } from "../../pages/Plan";
 import { useEffect, useState } from "react";
 import Modal from "../shared/Modal";
-import { ACCESS_TOKEN } from "../../services/useUser";
 import axios from "axios";
+import { getAccessToken } from "../../services/useUser";
 
 const Container = styled.div`
   width: calc(100% / 3);
@@ -62,6 +62,8 @@ const FriendAvatar = styled.div<{ $url: string }>`
   border-radius: 50%;
   background-color: #addd85;
   margin-right: 0.5rem;
+  background: url(${({ $url }) => $url}) no-repeat center;
+  background-size: cover;
 `;
 
 const Username = styled.span`
@@ -99,7 +101,7 @@ const CloseBtn = styled.button`
 interface IFriend {
   id: number;
   username: string;
-  profile_img: string;
+  profileImg: string;
 }
 
 interface IProps {
@@ -110,6 +112,7 @@ const AvatarBox = ({ data }: IProps) => {
   const [openInviteBox, setOpenInviteBox] = useState(false);
   const [friendList, setFriendList] = useState<IFriend[]>();
   const [sendList, setSendList] = useState<number[]>([]);
+  const ACCESS_TOKEN = getAccessToken();
 
   const handleInvite = (id: number, index: number) => {
     axios
@@ -138,7 +141,7 @@ const AvatarBox = ({ data }: IProps) => {
       })
       .then((res) => setFriendList(res.data))
       .catch((error) => console.log(error));
-  }, []);
+  }, [ACCESS_TOKEN]);
 
   return (
     <Container>
@@ -160,7 +163,7 @@ const AvatarBox = ({ data }: IProps) => {
             <Ul>
               {friendList?.map((value, index) => (
                 <Li key={index}>
-                  <FriendAvatar $url={value.profile_img} />
+                  <FriendAvatar $url={value.profileImg} />
                   <Username>{value.username}</Username>
                   <Btn
                     style={{ opacity: sendList.includes(index) ? "0.5" : "1" }}

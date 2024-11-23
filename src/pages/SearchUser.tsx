@@ -3,7 +3,7 @@ import { g4, mainColor } from "../utils/color";
 import { useState } from "react";
 import { phone } from "../utils/size";
 import axios from "axios";
-import { ACCESS_TOKEN } from "../services/useUser";
+import { getAccessToken } from "../services/useUser";
 
 const Container = styled.main`
   width: 450px;
@@ -90,49 +90,10 @@ const EmptyText = styled.div`
   opacity: 0.7;
 `;
 
-const data = [
-  {
-    id: 1,
-    username: "진혁",
-    profile_img:
-      "https://cdn.imweb.me/upload/S202207202685e30f16e24/8b48c67f8cdf6.jpeg",
-  },
-  {
-    id: 1,
-    username: "진혁",
-    profile_img:
-      "https://cdn.imweb.me/upload/S202207202685e30f16e24/8b48c67f8cdf6.jpeg",
-  },
-  {
-    id: 1,
-    username: "진혁",
-    profile_img:
-      "https://cdn.imweb.me/upload/S202207202685e30f16e24/8b48c67f8cdf6.jpeg",
-  },
-  {
-    id: 1,
-    username: "진혁",
-    profile_img:
-      "https://cdn.imweb.me/upload/S202207202685e30f16e24/8b48c67f8cdf6.jpeg",
-  },
-  {
-    id: 1,
-    username: "진혁",
-    profile_img:
-      "https://cdn.imweb.me/upload/S202207202685e30f16e24/8b48c67f8cdf6.jpeg",
-  },
-  {
-    id: 1,
-    username: "진혁",
-    profile_img:
-      "https://cdn.imweb.me/upload/S202207202685e30f16e24/8b48c67f8cdf6.jpeg",
-  },
-];
-
 interface IData {
   id: number;
   username: string;
-  profile_img: string;
+  profileImg: string;
 }
 
 const SearchUser = () => {
@@ -143,6 +104,7 @@ const SearchUser = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSendList([]);
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .get(`/api/user/search/${username}`, {
         headers: {
@@ -157,6 +119,7 @@ const SearchUser = () => {
   };
 
   const SendFriendRequest = (id: number, index: number) => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         "/api/friend/request",
@@ -189,7 +152,7 @@ const SearchUser = () => {
           data?.map((value, index) => (
             <UserBox key={index}>
               <div>
-                <Avatar $url={value.profile_img}></Avatar>
+                <Avatar $url={value.profileImg}></Avatar>
                 <span>{value.username}</span>
               </div>
               <Btn

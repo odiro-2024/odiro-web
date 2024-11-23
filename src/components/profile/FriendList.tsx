@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { g1, g3, mainColor } from "../../utils/color";
+import { g1, mainColor } from "../../utils/color";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { ACCESS_TOKEN } from "../../services/useUser";
+import { getAccessToken } from "../../services/useUser";
 
 const Container = styled.section`
   margin-top: 10rem;
@@ -34,6 +34,8 @@ const Avatar = styled.div<{ $url: string }>`
   border-radius: 50%;
   background-color: #addd85;
   margin-right: 1rem;
+  background: url(${({ $url }) => $url}) no-repeat center;
+  background-size: cover;
 `;
 
 const Username = styled.span`
@@ -64,14 +66,13 @@ const DeleteBtn = styled(Btn)`
 interface IData {
   id: number;
   username: string;
-  profile_img: string;
+  profileImg: string;
 }
 
 interface IRequestData {
   id: number;
-  userId: number;
   username: string;
-  profile_img: string;
+  profileImg: string;
 }
 
 const FriendList = () => {
@@ -81,6 +82,7 @@ const FriendList = () => {
   );
 
   const handleDeleteFriend = (id: number, index: number) => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         "/api/friend/delete",
@@ -101,6 +103,7 @@ const FriendList = () => {
   };
 
   const handleRequestOK = (id: number, index: number) => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         "/api/friend/accept",
@@ -120,9 +123,9 @@ const FriendList = () => {
         setFriendList([
           ...friendList,
           {
-            id: removedElement.userId,
+            id: removedElement.id,
             username: removedElement.username,
-            profile_img: removedElement.profile_img,
+            profileImg: removedElement.profileImg,
           },
         ]);
       })
@@ -130,6 +133,7 @@ const FriendList = () => {
   };
 
   useEffect(() => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .get("/api/friend/list", {
         headers: {
@@ -141,13 +145,16 @@ const FriendList = () => {
   }, []);
 
   useEffect(() => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .get("/api/friend/wait/list", {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
       })
-      .then((res) => setFriendRequestList(res.data))
+      .then((res) => {
+        setFriendRequestList(res.data);
+      })
       .catch((error) => console.log(error));
   }, []);
 
@@ -157,7 +164,7 @@ const FriendList = () => {
       <Ul>
         {friendList?.map((value, index) => (
           <Li key={index}>
-            <Avatar $url={value.profile_img} />
+            <Avatar $url={value.profileImg} />
             <Username>{value.username}</Username>
             <DeleteBtn onClick={() => handleDeleteFriend(value.id, index)}>
               친구삭제
@@ -169,7 +176,7 @@ const FriendList = () => {
       <Ul>
         {friendRequestList?.map((value, index) => (
           <Li key={index}>
-            <Avatar $url={value.profile_img} />
+            <Avatar $url={value.profileImg} />
             <Username>{value.username}</Username>
             <Btn onClick={() => handleRequestOK(value.id, index)}>초대수락</Btn>
           </Li>

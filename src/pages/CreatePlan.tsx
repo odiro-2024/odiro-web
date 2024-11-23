@@ -4,8 +4,8 @@ import { useState } from "react";
 import { mainColor } from "../utils/color";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ACCESS_TOKEN } from "../services/useUser";
 import { phone } from "../utils/size";
+import { getAccessToken } from "../services/useUser";
 
 const Container = styled.main`
   width: 100%;
@@ -158,6 +158,7 @@ const CreatePlan = () => {
     const last_day = lastDay.toISOString();
     const plan_filter = getFilter();
 
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         "/api/plan/create",

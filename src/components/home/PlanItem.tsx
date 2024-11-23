@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { IData } from "../../pages/Plan";
-import { Imarkers } from "../location/SearchLocation";
 import { CustomOverlayMap, Map } from "react-kakao-maps-sdk";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -27,17 +26,37 @@ const InfoArea = styled.div`
   }
 `;
 
-interface IProps {
-  data: IData;
+// interface ILocation {
+//   lat: number;
+//   lng: number;
+//   imgUrl: string;
+//   plans: any;
+// }
+
+// interface IData {
+//   id: number;
+//   title: string;
+//   firstDay: string;
+//   lastDay: string;
+//   locationList: ILocation[];
+// }
+
+// interface IProps {
+//   data: IData[];
+// }
+
+interface Imarkers {
+  position: { lat: number; lng: number };
+  imgUrl: string;
 }
 
-const PlanItem = ({ data }: IProps) => {
+const PlanItem = ({ data }: any) => {
   const [map, setMap] = useState<any>();
   const [markers, setMarkers] = useState<Imarkers[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const location = data.day_plan[0].location;
+    const location = data.locationList;
     // 등록된 장소가 있다면
     if (location.length !== 0) {
       const bounds = new kakao.maps.LatLngBounds();
@@ -46,18 +65,8 @@ const PlanItem = ({ data }: IProps) => {
       for (var i = 0; i < location.length; i++) {
         // @ts-ignore
         markers.push({
-          address_name: location[i].address_name,
-          id: location[i].kakao_map_id,
-          phone: location[i].phone,
-          place_name: location[i].place_name,
-          place_url: location[i].place_url,
-          road_address_name: location[i].road_address_name,
-          position: {
-            lat: +location[i].lat,
-            lng: +location[i].lng,
-          },
-          img_url: location[i].img_url,
-          category_group_name: location[i].category_group_name,
+          position: { lat: +location[i].lat, lng: +location[i].lng },
+          imgUrl: location[i].imgUrl,
         });
         // @ts-ignore
         bounds.extend(new kakao.maps.LatLng(location[i].lat, location[i].lng));
@@ -94,14 +103,14 @@ const PlanItem = ({ data }: IProps) => {
       >
         {markers.map((marker, index) => (
           <CustomOverlayMap key={index} position={marker.position}>
-            <PlacePhoto $url={marker.img_url}></PlacePhoto>
+            <PlacePhoto $url={marker.imgUrl}></PlacePhoto>
           </CustomOverlayMap>
         ))}
       </Map>
       <InfoArea>
         <span>{data.title}</span>
         <p>
-          {formatDate(data.first_day)} ~ {formatDate(data.last_day)}
+          {formatDate(data.firstDay)} ~ {formatDate(data.lastDay)}
         </p>
       </InfoArea>
     </Container>

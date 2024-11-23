@@ -3,7 +3,7 @@ import ShowPlans from "../home/ShowPlans";
 import { g1, mainColor } from "../../utils/color";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ACCESS_TOKEN } from "../../services/useUser";
+import { getAccessToken } from "../../services/useUser";
 
 const Container = styled.div`
   margin-top: 10rem;
@@ -63,6 +63,7 @@ const PlanList = () => {
   const [planRequestList, setPlanRequestList] = useState<IData[]>();
 
   const handleRequestOK = (id: number, index: number) => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         "/api/plan/join",
@@ -84,6 +85,7 @@ const PlanList = () => {
   };
 
   useEffect(() => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .get("/api/plan/wait/list", {
         headers: {

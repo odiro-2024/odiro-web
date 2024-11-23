@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp, faToggleOff } from "@fortawesome/free-solid-svg-icons";
 import { IComment } from "../../pages/Plan";
 import { Dispatch, SetStateAction } from "react";
-import { ACCESS_TOKEN } from "../../services/useUser";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { getAccessToken } from "../../services/useUser";
 
 const CommentBox = styled(MemoBox)`
   transform: ${({ $active }) =>
@@ -87,6 +87,7 @@ const Comment = ({
     const { comment } = getValues();
     if (!comment) return;
 
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         `/api/${planId}/comment/create`,
@@ -140,14 +141,14 @@ const Comment = ({
           {comment.map((value, index) => (
             <CommentList
               $url={
-                "https://t1.daumcdn.net/brunch/service/user/8LOK/file/d0LZ8mYR5L0ZFf6vqc8buq8WkKE.jpg?download"
+                "http://k.kakaocdn.net/dn/ipvVQ/btsA7YZAoMc/JZOiSiYYIoCcm3lgcOiVhK/img_640x640.jpg"
               }
               key={index}
             >
               <div className="avatar"></div>
               <div className="content">
                 <div>
-                  <span>Seo_jh</span>
+                  <span>진혁</span>
                   <p>{value.content}</p>
                 </div>
                 <div>

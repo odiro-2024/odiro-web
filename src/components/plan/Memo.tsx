@@ -6,8 +6,8 @@ import { faArrowUp, faToggleOn, faX } from "@fortawesome/free-solid-svg-icons";
 import { IMemo } from "../../pages/Plan";
 import { font_cute } from "../../utils/font";
 import axios from "axios";
-import { ACCESS_TOKEN } from "../../services/useUser";
 import { useForm } from "react-hook-form";
+import { getAccessToken } from "../../services/useUser";
 
 export const MemoBox = styled.div<{ $active: boolean }>`
   width: 100%;
@@ -159,6 +159,7 @@ const Memo = ({
   const onMemoSubmit = () => {
     const { memo } = getValues();
     if (!memo) return;
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         `/api/${planId}/memo/create`,
@@ -183,6 +184,7 @@ const Memo = ({
   };
 
   const memoDeleteClicked = (index: number, id: number) => {
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .delete(`/api/${planId}/memo/delete/${id}`, {
         headers: {

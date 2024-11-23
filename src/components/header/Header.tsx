@@ -5,15 +5,10 @@ import { toggleSignup, toggleLogin } from "../../contexts/counterSlice";
 import { useDispatch } from "react-redux";
 import LoginForm from "../../pages/Login";
 import EnrollForm from "../../pages/Signup";
-import {
-  ACCESS_TOKEN,
-  isLoggedInVar,
-  logUserOut,
-} from "../../services/useUser";
+import { isLoggedInVar, logUserOut } from "../../services/useUser";
 import { g1 } from "../../utils/color";
 import { useState } from "react";
 import { phone, tablet_L } from "../../utils/size";
-import axios from "axios";
 
 const Container = styled.header`
   width: 100%;

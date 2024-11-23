@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Imarkers } from "../components/location/SearchLocation";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { ACCESS_TOKEN } from "../services/useUser";
 import { tablet_M, mw, desktop } from "../utils/size";
 import LocationBox from "../components/plan/Location";
 import Memo from "../components/plan/Memo";
@@ -16,6 +15,7 @@ import CheckBoxs from "../components/plan/CheckBoxs";
 import SearchLocation from "../components/location/SearchLocation";
 import { RootState } from "../contexts/store";
 import { useSelector } from "react-redux";
+import { getAccessToken } from "../services/useUser";
 
 const Container = styled.main`
   width: 90%;
@@ -89,21 +89,6 @@ const MemoCommentBox = styled.div`
   }
 `;
 
-const checkBoxValue = [
-  false,
-  true,
-  false,
-  false,
-  true,
-  false,
-  false,
-  false,
-  true,
-  true,
-  true,
-  false,
-];
-
 export interface IData {
   id: number;
   title: string;
@@ -114,6 +99,7 @@ export interface IData {
   participant: IOwner[];
   day_plan: IDayPlan[];
   wish_location: ILocation[];
+  plan_filter: string;
 }
 
 interface IOwner {
@@ -184,6 +170,7 @@ const Plan = () => {
       owner: scopeData.owner,
       participant: scopeData.participant,
       wish_location: scopeData.wish_location,
+      plan_filter: scopeData.plan_filter,
       day_plan: scopeData.day_plan.map((v, i) => {
         if (i !== index) {
           return v;
@@ -233,6 +220,7 @@ const Plan = () => {
       category_group_name,
     } = infoBox;
 
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         `/api/${data.id}/location/create`,
@@ -291,6 +279,7 @@ const Plan = () => {
       category_group_name,
     } = infoBox;
 
+    const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
         `/api/${data.id}/wishLocation/create`,
@@ -316,6 +305,7 @@ const Plan = () => {
         const {
           data: { id, img_url },
         } = res;
+        console.log(data);
         setWishList((prev) => [
           ...prev,
           {
@@ -417,7 +407,7 @@ const Plan = () => {
           <Container>
             <TopBox>
               <EmptyDiv />
-              <CheckBoxs checkBoxValue={checkBoxValue}></CheckBoxs>
+              <CheckBoxs checkBoxValue={data.plan_filter}></CheckBoxs>
               <Title>{data.title}</Title>
               <AvatarBox data={data}></AvatarBox>
             </TopBox>
