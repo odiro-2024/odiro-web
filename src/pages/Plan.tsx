@@ -141,6 +141,8 @@ export interface IComment {
   member_id: number;
   content: string;
   created_at: string;
+  username: string;
+  profileImage: string;
 }
 
 const Plan = () => {

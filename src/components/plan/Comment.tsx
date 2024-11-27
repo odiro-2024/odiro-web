@@ -105,16 +105,29 @@ const Comment = ({
         const {
           data: { write_time, comment_id },
         } = res;
-        setComment((prev) => [
-          {
-            id: comment_id,
-            content: comment,
-            member_id: 1,
-            created_at: write_time,
-          },
-          ...prev,
-        ]);
-        setValue("comment", "");
+        axios
+          .get(`${process.env.REACT_APP_BASE_URL}/api/mypage`, {
+            headers: {
+              Authorization: `Bearer ${ACCESS_TOKEN}`,
+            },
+          })
+          .then((res) => {
+            const {
+              data: { username, profileImage },
+            } = res;
+            setComment((prev) => [
+              {
+                id: comment_id,
+                content: comment,
+                member_id: 1,
+                created_at: write_time,
+                username,
+                profileImage,
+              },
+              ...prev,
+            ]);
+            setValue("comment", "");
+          });
       });
   };
 
@@ -139,16 +152,11 @@ const Comment = ({
         </MemoHeader>
         <MemoListBox>
           {comment.map((value, index) => (
-            <CommentList
-              $url={
-                "http://k.kakaocdn.net/dn/ipvVQ/btsA7YZAoMc/JZOiSiYYIoCcm3lgcOiVhK/img_640x640.jpg"
-              }
-              key={index}
-            >
+            <CommentList $url={value.profileImage} key={index}>
               <div className="avatar"></div>
               <div className="content">
                 <div>
-                  <span>진혁</span>
+                  <span>{value.username}</span>
                   <p>{value.content}</p>
                 </div>
                 <div>
