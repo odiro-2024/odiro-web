@@ -66,7 +66,7 @@ const PlanList = () => {
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        "/api/plan/join",
+        `${process.env.REACT_APP_BASE_URL}/api/plan/join`,
         {
           id,
         },
@@ -87,7 +87,7 @@ const PlanList = () => {
   useEffect(() => {
     const ACCESS_TOKEN = getAccessToken();
     axios
-      .get("/api/plan/wait/list", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/plan/wait/list`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

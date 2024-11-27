@@ -85,7 +85,6 @@ const PwCheck = ({ setModalOpen, onPwCorrect }: IProps) => {
 
   const onSubmitValid = () => {
     const { password } = getValues();
-    console.log(password);
     //success
     onPwCorrect();
     modalClose();

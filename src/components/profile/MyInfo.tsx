@@ -149,7 +149,7 @@ const MyInfo = () => {
   useEffect(() => {
     const ACCESS_TOKEN = getAccessToken();
     axios
-      .get("/api/mypage", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/mypage`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -197,7 +197,7 @@ const MyInfo = () => {
     const ACCESS_TOKEN = localStorage.getItem("accessToken");
     // 요청 전송
     axios
-      .patch("/api/update", formData, {
+      .patch(`${process.env.REACT_APP_BASE_URL}/api/update`, formData, {
         headers: {
           "Content-Type": "multipart/form-data", // FormData 사용 시 헤더 설정
           Authorization: `Bearer ${ACCESS_TOKEN}`,
@@ -252,7 +252,7 @@ const MyInfo = () => {
     setUsernameValidLoader(true);
     //
     axios
-      .get("/api/user/check-username", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/user/check-username`, {
         params: { username },
       })
       .then((res) => {
@@ -279,7 +279,10 @@ const MyInfo = () => {
       setEmailValidLoader(false);
     }, 500);
     axios
-      .get("/api/emails/verification-requests", { params: { email } })
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/api/emails/verification-requests`,
+        { params: { email } }
+      )
       .then(() => {})
       .catch((error) => {
         setErrorMsg("이메일이 존재합니다.");
@@ -295,7 +298,7 @@ const MyInfo = () => {
     setEmailVerifyValidLoader(true);
     //
     axios
-      .get("/api/emails/verifications", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/emails/verifications`, {
         params: {
           email,
           code: emailVerify,

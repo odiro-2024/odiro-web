@@ -144,7 +144,7 @@ const Signup = () => {
     const { username } = getValues();
     //
     axios
-      .get("/api/user/check-username", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/user/check-username`, {
         params: { username },
       })
       .then((res) => {
@@ -171,7 +171,10 @@ const Signup = () => {
       setEmailValidLoader(false);
     }, 500);
     axios
-      .get("/api/emails/verification-requests", { params: { email } })
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/api/emails/verification-requests`,
+        { params: { email } }
+      )
       .then(() => {})
       .catch((error) => {
         setErrorMsg("이메일이 존재합니다.");
@@ -187,7 +190,7 @@ const Signup = () => {
     setEmailVerifyValidLoader(true);
     //
     axios
-      .get("/api/emails/verifications", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/emails/verifications`, {
         params: {
           email,
           code: emailVerify,
@@ -218,7 +221,7 @@ const Signup = () => {
     }
 
     axios
-      .post("/api/signup", {
+      .post(`${process.env.REACT_APP_BASE_URL}/api/signup`, {
         username,
         password,
         email,

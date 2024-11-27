@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { IData } from "../../pages/Plan";
 import { CustomOverlayMap, Map } from "react-kakao-maps-sdk";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -25,25 +24,6 @@ const InfoArea = styled.div`
     display: block;
   }
 `;
-
-// interface ILocation {
-//   lat: number;
-//   lng: number;
-//   imgUrl: string;
-//   plans: any;
-// }
-
-// interface IData {
-//   id: number;
-//   title: string;
-//   firstDay: string;
-//   lastDay: string;
-//   locationList: ILocation[];
-// }
-
-// interface IProps {
-//   data: IData[];
-// }
 
 interface Imarkers {
   position: { lat: number; lng: number };

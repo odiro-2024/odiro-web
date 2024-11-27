@@ -117,7 +117,7 @@ const AvatarBox = ({ data }: IProps) => {
   const handleInvite = (id: number, index: number) => {
     axios
       .post(
-        "/api/plan/invite",
+        `${process.env.REACT_APP_BASE_URL}/api/plan/invite`,
         {
           plan_id: data.id,
           receiver_id: id,
@@ -134,7 +134,7 @@ const AvatarBox = ({ data }: IProps) => {
 
   useEffect(() => {
     axios
-      .get("/api/friend/list", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/friend/list`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

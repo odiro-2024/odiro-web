@@ -84,7 +84,7 @@ const Location = ({
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        `/api/${planId}/location/reorder`,
+        `${process.env.REACT_APP_BASE_URL}/api/${planId}/location/reorder`,
         {
           day_plan_id,
           reordered_location_ids,
@@ -102,11 +102,14 @@ const Location = ({
   const deleteLocation = (index: number, id: number) => {
     const ACCESS_TOKEN = getAccessToken();
     axios
-      .delete(`/api/${planId}/location/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      })
+      .delete(
+        `${process.env.REACT_APP_BASE_URL}/api/${planId}/location/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
       .then((res) => {
         const { status } = res;
         if (status === 204) {

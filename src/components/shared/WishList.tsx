@@ -142,11 +142,14 @@ const WishList = ({
     const ACCESS_TOKEN = getAccessToken();
     console.log(id);
     axios
-      .delete(`/api/${planId}/wishLocation/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      })
+      .delete(
+        `${process.env.REACT_APP_BASE_URL}/api/${planId}/wishLocation/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
       .then((res) => {
         const { status } = res;
         if (status === 204) {

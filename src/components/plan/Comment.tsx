@@ -90,7 +90,7 @@ const Comment = ({
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        `/api/${planId}/comment/create`,
+        `${process.env.REACT_APP_BASE_URL}/api/${planId}/comment/create`,
         {
           day_plan_id,
           content: comment,

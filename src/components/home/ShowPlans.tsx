@@ -107,7 +107,7 @@ const ShowPlans = ({ isAnimation, h2, dropDownExist }: IProps) => {
   useEffect(() => {
     const filterNum = getFilterNum();
     axios
-      .get("/api/home/plan", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/home/plan`, {
         params: {
           filterNum,
         },

@@ -223,7 +223,7 @@ const Plan = () => {
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        `/api/${data.id}/location/create`,
+        `${process.env.REACT_APP_BASE_URL}/api/${data.id}/location/create`,
         {
           day_plan_id: data.day_plan[index].id,
           address_name,
@@ -282,7 +282,7 @@ const Plan = () => {
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        `/api/${data.id}/wishLocation/create`,
+        `${process.env.REACT_APP_BASE_URL}/api/${data.id}/wishLocation/create`,
         {
           plan_id: data.id,
           address_name,
@@ -329,7 +329,7 @@ const Plan = () => {
   useEffect(() => {
     const ACCESS_TOKEN = localStorage.getItem("accessToken");
     axios
-      .get(`/api/plan/${id}`, {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/plan/${id}`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

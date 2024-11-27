@@ -85,7 +85,7 @@ const FriendList = () => {
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        "/api/friend/delete",
+        `${process.env.REACT_APP_BASE_URL}/api/friend/delete`,
         {
           friendId: id,
         },
@@ -106,7 +106,7 @@ const FriendList = () => {
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        "/api/friend/accept",
+        `${process.env.REACT_APP_BASE_URL}/api/friend/accept`,
         {
           sender_id: id,
         },
@@ -135,7 +135,7 @@ const FriendList = () => {
   useEffect(() => {
     const ACCESS_TOKEN = getAccessToken();
     axios
-      .get("/api/friend/list", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/friend/list`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -147,7 +147,7 @@ const FriendList = () => {
   useEffect(() => {
     const ACCESS_TOKEN = getAccessToken();
     axios
-      .get("/api/friend/wait/list", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/friend/wait/list`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

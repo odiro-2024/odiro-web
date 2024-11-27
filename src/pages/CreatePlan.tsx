@@ -161,7 +161,7 @@ const CreatePlan = () => {
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        "/api/plan/create",
+        `${process.env.REACT_APP_BASE_URL}/api/plan/create`,
         {
           title,
           first_day,

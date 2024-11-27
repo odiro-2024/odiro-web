@@ -162,7 +162,7 @@ const Memo = ({
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        `/api/${planId}/memo/create`,
+        `${process.env.REACT_APP_BASE_URL}/api/${planId}/memo/create`,
         {
           day_plan_id,
           content: memo,
@@ -186,11 +186,14 @@ const Memo = ({
   const memoDeleteClicked = (index: number, id: number) => {
     const ACCESS_TOKEN = getAccessToken();
     axios
-      .delete(`/api/${planId}/memo/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-        },
-      })
+      .delete(
+        `${process.env.REACT_APP_BASE_URL}/api/${planId}/memo/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+          },
+        }
+      )
       .then((res) => {
         const { status } = res;
         if (status === 204) {

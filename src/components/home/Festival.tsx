@@ -172,15 +172,17 @@ const Festival = () => {
     const date = new Date();
     const today = formatDateToYYYYMMDD(date);
     axios
-      .post("http://localhost:8080/api/location/festival/research", {
-        yyyymmdd: today,
-      })
+      .post(
+        `${process.env.REACT_APP_BASE_URL}/api/location/festival/research`,
+        {
+          yyyymmdd: today,
+        }
+      )
       .then((res) => {
         const {
           data: { items },
         } = res;
         setData(items);
-        console.log(data);
       })
       .catch((error) => console.log(error));
   }, []);

@@ -10,7 +10,7 @@ const Auth = () => {
     const params = new URL(document.location.toString()).searchParams;
     const code = params.get("code");
     axios
-      .get(`/api/kakao`, {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/kakao`, {
         params: { code },
       })
       .then((res) => {

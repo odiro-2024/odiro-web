@@ -172,7 +172,7 @@ function HomeCalendar() {
   useEffect(() => {
     const ACCESS_TOKEN = getAccessToken();
     axios
-      .get("/api/plan/myplan", {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/plan/myplan`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },

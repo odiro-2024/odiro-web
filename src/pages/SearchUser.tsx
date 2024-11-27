@@ -106,7 +106,7 @@ const SearchUser = () => {
     setSendList([]);
     const ACCESS_TOKEN = getAccessToken();
     axios
-      .get(`/api/user/search/${username}`, {
+      .get(`${process.env.REACT_APP_BASE_URL}/api/user/search/${username}`, {
         headers: {
           Authorization: `Bearer ${ACCESS_TOKEN}`,
         },
@@ -122,7 +122,7 @@ const SearchUser = () => {
     const ACCESS_TOKEN = getAccessToken();
     axios
       .post(
-        "/api/friend/request",
+        `${process.env.REACT_APP_BASE_URL}/api/friend/request`,
         {
           receiver_id: id,
         },
