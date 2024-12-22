@@ -2,6 +2,7 @@
 
 ### 여럿이 함께 여행 계획을 세우고 다른 사람들의 계획을 참고할 수 있는 플랫폼
 
+<a href="https://www.youtube.com/watch?v=ywpwN-OCDNE&t=12s" style="text-decoration: none;">유튜브 시연 영상</a>
 
 <br>
 
